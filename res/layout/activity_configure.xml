@@ -1,0 +1,890 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+	<LinearLayout
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:orientation="vertical"
+	    android:background="@color/white_gray" >
+	    
+        <LinearLayout
+            android:id="@+id/script_status_layout_2a010ab8"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="true" >
+	    
+	        <LinearLayout
+	            android:layout_width="match_parent"
+	            android:layout_height="wrap_content"
+	            android:orientation="vertical"
+	            android:paddingLeft="14dp"
+	            android:paddingRight="10dp"
+	            android:paddingTop="7dp"
+	            android:paddingBottom="7dp" >
+	            
+		        <LinearLayout
+		            android:layout_width="match_parent"
+		            android:layout_height="wrap_content"
+		            android:orientation="horizontal"
+		            android:gravity="center_vertical"
+		            android:layout_marginBottom="4dp" >
+	            
+		            <TextView
+		                android:id="@+id/item_header_2a010ab8"
+		                android:layout_width="0dp"
+		                android:layout_height="wrap_content"
+		                android:layout_weight="1"
+		                android:text="@string/global_status_headline"
+		                android:textAppearance="?android:attr/textAppearanceMedium" />
+		
+		            <ImageView
+		                android:id="@+id/item_checkbox_2a010ab8"
+		                android:paddingRight="7dp"
+		                android:layout_width="wrap_content"
+		                android:layout_height="wrap_content"
+		                android:src="@drawable/btn_checkbox_off"
+		                android:clickable="true" />
+	            
+	            </LinearLayout>
+	            
+	            <TextView
+	                android:id="@+id/item_description_2a010ab8"
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:paddingRight="50dp"
+	                android:text="Enable/Disable the script. Warning, disabling will NOT restore anything to the original locations"
+	                android:textColor="@color/dark_gray"
+	                android:textAppearance="?android:attr/textAppearanceSmall" />
+	            
+	        </LinearLayout>
+        
+        </LinearLayout>
+        
+		<TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/gradient_background"
+            android:paddingTop="7dp"
+            android:paddingBottom="7dp"
+            android:paddingRight="14dp"
+            android:paddingLeft="14dp"
+            android:text="@string/storage_headline"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="@color/dark_gray"
+            android:textStyle="bold" />
+		
+        <LinearLayout
+            android:id="@+id/storage_rmount_status_layout_2a010ab8"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="true" >
+		
+	        <LinearLayout
+	            android:layout_width="match_parent"
+	            android:layout_height="wrap_content"
+	            android:orientation="vertical"
+	            android:paddingLeft="14dp"
+	            android:paddingRight="10dp"
+	            android:paddingTop="7dp"
+	            android:paddingBottom="7dp" >
+	            
+		        <LinearLayout
+		            android:layout_width="match_parent"
+		            android:layout_height="wrap_content"
+		            android:orientation="horizontal"
+		            android:gravity="center_vertical"
+		            android:layout_marginBottom="4dp" >
+	            
+		            <TextView
+		                android:id="@+id/item_header_2a010ab8"
+		                android:layout_width="0dp"
+		                android:layout_height="wrap_content"
+		                android:layout_weight="1"
+		                android:text="@string/storage_rmount_header"
+		                android:textAppearance="?android:attr/textAppearanceMedium" />
+		
+		            <ImageView
+		                android:id="@+id/item_checkbox_2a010ab8"
+		                android:paddingRight="7dp"
+		                android:layout_width="wrap_content"
+		                android:layout_height="wrap_content"
+		                android:src="@drawable/btn_checkbox_off"
+		                android:clickable="true" />
+	            
+	            </LinearLayout>
+	            
+	            <TextView
+	                android:id="@+id/item_description_2a010ab8"
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:paddingRight="50dp"
+	                android:text="Reverses the mount point so that sd-ext is used as internal data while data is used as external"
+	                android:textColor="@color/dark_gray"
+	                android:textAppearance="?android:attr/textAppearanceSmall" />
+	            
+	        </LinearLayout>
+        
+        </LinearLayout>
+        
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/gradient_background"
+            android:paddingTop="7dp"
+            android:paddingBottom="7dp"
+            android:paddingRight="14dp"
+            android:paddingLeft="14dp"
+            android:text="@string/content_headline"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="@color/dark_gray"
+            android:textStyle="bold" />
+        
+        <LinearLayout
+            android:id="@+id/content_apps_status_layout_2a010ab8"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="true" >
+        
+	        <LinearLayout
+	            android:layout_width="match_parent"
+	            android:layout_height="wrap_content"
+	            android:orientation="vertical"
+	            android:paddingLeft="14dp"
+	            android:paddingRight="10dp"
+	            android:paddingTop="7dp"
+	            android:paddingBottom="7dp"
+		        android:background="@drawable/border_bottom_line" >
+	            
+		        <LinearLayout
+		            android:layout_width="match_parent"
+		            android:layout_height="wrap_content"
+		            android:orientation="horizontal"
+		            android:gravity="center_vertical"
+		            android:layout_marginBottom="4dp" >
+	            
+		            <TextView
+		                android:id="@+id/item_header_2a010ab8"
+		                android:layout_width="0dp"
+		                android:layout_height="wrap_content"
+		                android:layout_weight="1"
+		                android:text="@string/content_apps_header"
+		                android:textAppearance="?android:attr/textAppearanceMedium" />
+		
+		            <ImageView
+		                android:id="@+id/item_checkbox_2a010ab8"
+		                android:paddingRight="7dp"
+		                android:layout_width="wrap_content"
+		                android:layout_height="wrap_content"
+		                android:src="@drawable/btn_checkbox_off"
+		                android:clickable="true" />
+	            
+	            </LinearLayout>
+	            
+	            <TextView
+	                android:id="@+id/item_description_2a010ab8"
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:paddingRight="50dp"
+	                android:text="Moves all applications from /data/app into /sd-ext/app"
+	                android:textColor="@color/dark_gray"
+	                android:textAppearance="?android:attr/textAppearanceSmall" />
+	            
+	        </LinearLayout>
+        
+        </LinearLayout>
+        
+        <LinearLayout
+            android:id="@+id/content_data_status_layout_2a010ab8"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="true" >
+        
+	        <LinearLayout
+	            android:layout_width="match_parent"
+	            android:layout_height="wrap_content"
+	            android:orientation="vertical"
+	            android:paddingLeft="14dp"
+	            android:paddingRight="10dp"
+	            android:paddingTop="7dp"
+	            android:paddingBottom="7dp"
+		        android:background="@drawable/border_bottom_line" >
+	            
+		        <LinearLayout
+		            android:layout_width="match_parent"
+		            android:layout_height="wrap_content"
+		            android:orientation="horizontal"
+		            android:gravity="center_vertical"
+		            android:layout_marginBottom="4dp" >
+	            
+		            <TextView
+		                android:id="@+id/item_header_2a010ab8"
+		                android:layout_width="0dp"
+		                android:layout_height="wrap_content"
+		                android:layout_weight="1"
+		                android:text="@string/content_data_header"
+		                android:textAppearance="?android:attr/textAppearanceMedium" />
+		
+		            <ImageView
+		                android:id="@+id/item_checkbox_2a010ab8"
+		                android:paddingRight="7dp"
+		                android:layout_width="wrap_content"
+		                android:layout_height="wrap_content"
+		                android:src="@drawable/btn_checkbox_off"
+		                android:clickable="true" />
+	            
+	            </LinearLayout>
+	            
+	            <TextView
+	                android:id="@+id/item_description_2a010ab8"
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:paddingRight="50dp"
+	                android:text="Moves all application data from /data/data into /sd-ext/data"
+	                android:textColor="@color/dark_gray"
+	                android:textAppearance="?android:attr/textAppearanceSmall" />
+	            
+	        </LinearLayout>
+        
+        </LinearLayout>
+        
+        <LinearLayout
+            android:id="@+id/content_dalvik_status_layout_2a010ab8"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="true" >
+        
+	        <LinearLayout
+	            android:layout_width="match_parent"
+	            android:layout_height="wrap_content"
+	            android:orientation="vertical"
+	            android:paddingLeft="14dp"
+	            android:paddingRight="10dp"
+	            android:paddingTop="7dp"
+	            android:paddingBottom="7dp"
+		        android:background="@drawable/border_bottom_line" >
+	            
+		        <LinearLayout
+		            android:layout_width="match_parent"
+		            android:layout_height="wrap_content"
+		            android:orientation="horizontal"
+		            android:gravity="center_vertical"
+		            android:layout_marginBottom="4dp" >
+	            
+		            <TextView
+		                android:id="@+id/item_header_2a010ab8"
+		                android:layout_width="0dp"
+		                android:layout_height="wrap_content"
+		                android:layout_weight="1"
+		                android:text="@string/content_dalvik_header"
+		                android:textAppearance="?android:attr/textAppearanceMedium" />
+		
+		            <ImageView
+		                android:id="@+id/item_checkbox_2a010ab8"
+		                android:paddingRight="7dp"
+		                android:layout_width="wrap_content"
+		                android:layout_height="wrap_content"
+		                android:src="@drawable/btn_checkbox_off"
+		                android:clickable="true" />
+	            
+	            </LinearLayout>
+	            
+	            <TextView
+	                android:id="@+id/item_description_2a010ab8"
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:paddingRight="50dp"
+	                android:text="Moves dalvik cache from /data/dalvik-cache into /sd-ext/dalvik-cache"
+	                android:textColor="@color/dark_gray"
+	                android:textAppearance="?android:attr/textAppearanceSmall" />
+	            
+	        </LinearLayout>
+        
+        </LinearLayout>
+        
+        <LinearLayout
+            android:id="@+id/storage_cache_status_layout_2a010ab8"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="true" >
+        
+	        <LinearLayout
+	            android:layout_width="match_parent"
+	            android:layout_height="wrap_content"
+	            android:orientation="vertical"
+	            android:paddingLeft="14dp"
+	            android:paddingRight="10dp"
+	            android:paddingTop="7dp"
+	            android:paddingBottom="7dp" >
+	            
+		        <LinearLayout
+		            android:layout_width="match_parent"
+		            android:layout_height="wrap_content"
+		            android:orientation="horizontal"
+		            android:gravity="center_vertical"
+		            android:layout_marginBottom="4dp" >
+	            
+		            <TextView
+		                android:id="@+id/item_header_2a010ab8"
+		                android:layout_width="0dp"
+		                android:layout_height="wrap_content"
+		                android:layout_weight="1"
+		                android:text="@string/storage_cache_header"
+		                android:textAppearance="?android:attr/textAppearanceMedium" />
+		
+		            <ImageView
+		                android:id="@+id/item_checkbox_2a010ab8"
+		                android:paddingRight="7dp"
+		                android:layout_width="wrap_content"
+		                android:layout_height="wrap_content"
+		                android:src="@drawable/btn_checkbox_off"
+		                android:clickable="true" />
+	            
+	            </LinearLayout>
+	            
+	            <TextView
+	                android:id="@+id/item_description_2a010ab8"
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:paddingRight="50dp"
+	                android:text="Moves /cache into /data/cache or /sd-ext/cache depending of which have most available space"
+	                android:textColor="@color/dark_gray"
+	                android:textAppearance="?android:attr/textAppearanceSmall" />
+	            
+	        </LinearLayout>
+        
+        </LinearLayout>
+        
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/gradient_background"
+            android:paddingTop="7dp"
+            android:paddingBottom="7dp"
+            android:paddingRight="14dp"
+            android:paddingLeft="14dp"
+            android:text="@string/memory_headline"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="@color/dark_gray"
+            android:textStyle="bold" />
+        
+        <LinearLayout
+            android:id="@+id/memory_swap_status_layout_2a010ab8"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="true" >
+        
+	        <LinearLayout
+	            android:layout_width="match_parent"
+	            android:layout_height="wrap_content"
+	            android:orientation="vertical"
+	            android:paddingLeft="14dp"
+	            android:paddingRight="10dp"
+	            android:paddingTop="7dp"
+	            android:paddingBottom="7dp" >
+	            
+		        <LinearLayout
+		            android:layout_width="match_parent"
+		            android:layout_height="wrap_content"
+		            android:orientation="horizontal"
+		            android:gravity="center_vertical"
+		            android:layout_marginBottom="4dp" >
+	            
+		            <TextView
+		                android:id="@+id/item_header_2a010ab8"
+		                android:layout_width="0dp"
+		                android:layout_height="wrap_content"
+		                android:layout_weight="1"
+		                android:text="@string/memory_swap_header"
+		                android:textAppearance="?android:attr/textAppearanceMedium" />
+		
+		            <ImageView
+		                android:id="@+id/item_checkbox_2a010ab8"
+		                android:paddingRight="7dp"
+		                android:layout_width="wrap_content"
+		                android:layout_height="wrap_content"
+		                android:src="@drawable/btn_checkbox_off"
+		                android:clickable="true" />
+	            
+	            </LinearLayout>
+	            
+	            <TextView
+	                android:id="@+id/item_description_2a010ab8"
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:paddingRight="50dp"
+	                android:text="Enable SWAP partition (3td sdcard partition) during boot"
+	                android:textColor="@color/dark_gray"
+	                android:textAppearance="?android:attr/textAppearanceSmall" />
+	            
+	        </LinearLayout>
+        
+        </LinearLayout>
+        
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/gradient_background"
+            android:paddingTop="7dp"
+            android:paddingBottom="7dp"
+            android:paddingRight="14dp"
+            android:paddingLeft="14dp"
+            android:text="@string/partition_headline"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="@color/dark_gray"
+            android:textStyle="bold" />
+        
+        <LinearLayout
+            android:id="@+id/partition_fschk_status_layout_2a010ab8"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="true" >
+        
+	        <LinearLayout
+	            android:layout_width="match_parent"
+	            android:layout_height="wrap_content"
+	            android:orientation="vertical"
+	            android:paddingLeft="14dp"
+	            android:paddingRight="10dp"
+	            android:paddingTop="7dp"
+	            android:paddingBottom="7dp"
+	            android:background="@drawable/border_bottom_line" >
+	            
+		        <LinearLayout
+		            android:layout_width="match_parent"
+		            android:layout_height="wrap_content"
+		            android:orientation="horizontal"
+		            android:gravity="center_vertical"
+		            android:layout_marginBottom="4dp" >
+	            
+		            <TextView
+		                android:id="@+id/item_header_2a010ab8"
+		                android:layout_width="0dp"
+		                android:layout_height="wrap_content"
+		                android:layout_weight="1"
+		                android:text="@string/partition_fschk_header"
+		                android:textAppearance="?android:attr/textAppearanceMedium" />
+		
+		            <ImageView
+		                android:id="@+id/item_checkbox_2a010ab8"
+		                android:paddingRight="7dp"
+		                android:layout_width="wrap_content"
+		                android:layout_height="wrap_content"
+		                android:src="@drawable/btn_checkbox_off" />
+	            
+	            </LinearLayout>
+	            
+	            <TextView
+	                android:id="@+id/item_description_2a010ab8"
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:paddingRight="50dp"
+	                android:text="Perform a file system check/repair on the sd-ext partition during boot"
+	                android:textColor="@color/dark_gray"
+	                android:textAppearance="?android:attr/textAppearanceSmall" />
+	            
+	        </LinearLayout>
+        
+        </LinearLayout>
+        
+        <LinearLayout
+            android:id="@+id/partition_journal_status_layout_2a010ab8"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="true" >
+        
+	        <LinearLayout
+	            android:layout_width="match_parent"
+	            android:layout_height="wrap_content"
+	            android:orientation="vertical"
+	            android:paddingLeft="14dp"
+	            android:paddingRight="10dp"
+	            android:paddingTop="7dp"
+	            android:paddingBottom="7dp"
+	            android:background="@drawable/border_bottom_line" >
+	            
+		        <LinearLayout
+		            android:layout_width="match_parent"
+		            android:layout_height="wrap_content"
+		            android:orientation="horizontal"
+		            android:gravity="center_vertical"
+		            android:layout_marginBottom="4dp" >
+	            
+		            <TextView
+		                android:id="@+id/item_header_2a010ab8"
+		                android:layout_width="0dp"
+		                android:layout_height="wrap_content"
+		                android:layout_weight="1"
+		                android:text="@string/partition_journal_header"
+		                android:textAppearance="?android:attr/textAppearanceMedium" />
+		
+		            <ImageView
+		                android:id="@+id/item_checkbox_2a010ab8"
+		                android:paddingRight="7dp"
+		                android:layout_width="wrap_content"
+		                android:layout_height="wrap_content"
+		                android:src="@drawable/btn_checkbox_off" />
+	            
+	            </LinearLayout>
+	            
+	            <TextView
+	                android:id="@+id/item_description_2a010ab8"
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:paddingRight="50dp"
+	                android:text="Enable/Disable ext(3/4) journal during boot (Set to auto for file system default)"
+	                android:textColor="@color/dark_gray"
+	                android:textAppearance="?android:attr/textAppearanceSmall" />
+	            
+	        </LinearLayout>
+        
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/partition_fstype_value_layout_2a010ab8"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="true" >
+        
+	        <LinearLayout
+	            android:layout_width="match_parent"
+	            android:layout_height="wrap_content"
+	            android:orientation="vertical"
+	            android:paddingLeft="14dp"
+	            android:paddingRight="10dp"
+	            android:paddingTop="7dp"
+	            android:paddingBottom="7dp" >
+	            
+		        <LinearLayout
+		            android:layout_width="match_parent"
+		            android:layout_height="wrap_content"
+		            android:orientation="horizontal"
+		            android:gravity="center_vertical"
+		            android:layout_marginBottom="4dp" >
+	            
+		            <TextView
+		                android:id="@+id/item_header_2a010ab8"
+		                android:layout_width="0dp"
+		                android:layout_height="wrap_content"
+		                android:layout_weight="1"
+		                android:text="@string/partition_fstype_header"
+		                android:textAppearance="?android:attr/textAppearanceMedium" />
+		
+		            <TextView
+		                android:id="@+id/item_value_2a010ab8"
+		                android:paddingRight="14dp"
+		                android:layout_width="wrap_content"
+		                android:layout_height="wrap_content"
+		                android:textAppearance="?android:attr/textAppearanceSmall" />
+	            
+	            </LinearLayout>
+	            
+	            <TextView
+	                android:id="@+id/item_description_2a010ab8"
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:paddingRight="50dp"
+	                android:text="Set the file system type for the sd-ext partition that should be forced opon boot"
+	                android:textColor="@color/dark_gray"
+	                android:textAppearance="?android:attr/textAppearanceSmall" />
+	            
+	        </LinearLayout>
+        
+        </LinearLayout>
+        
+		<TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/gradient_background"
+            android:paddingTop="7dp"
+            android:paddingBottom="7dp"
+            android:paddingRight="14dp"
+            android:paddingLeft="14dp"
+            android:text="@string/device_headline"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="@color/dark_gray"
+            android:textStyle="bold" />
+		
+        <LinearLayout
+            android:id="@+id/device_readahead_value_layout_2a010ab8"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="true" >
+        
+	        <LinearLayout
+	            android:layout_width="match_parent"
+	            android:layout_height="wrap_content"
+	            android:orientation="vertical"
+	            android:paddingLeft="14dp"
+	            android:paddingRight="10dp"
+	            android:paddingTop="7dp"
+	            android:paddingBottom="7dp" >
+	            
+		        <LinearLayout
+		            android:layout_width="match_parent"
+		            android:layout_height="wrap_content"
+		            android:orientation="horizontal"
+		            android:gravity="center_vertical"
+		            android:layout_marginBottom="4dp" >
+	            
+		            <TextView
+		                android:id="@+id/item_header_2a010ab8"
+		                android:layout_width="0dp"
+		                android:layout_height="wrap_content"
+		                android:layout_weight="1"
+		                android:text="@string/device_readahead_header"
+		                android:textAppearance="?android:attr/textAppearanceMedium" />
+		
+		            <TextView
+		                android:id="@+id/item_value_2a010ab8"
+		                android:paddingRight="14dp"
+		                android:layout_width="wrap_content"
+		                android:layout_height="wrap_content"
+		                android:textAppearance="?android:attr/textAppearanceSmall" />
+	            
+	            </LinearLayout>
+	            
+	            <TextView
+	                android:id="@+id/item_description_2a010ab8"
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:paddingRight="50dp"
+	                android:text="Set the readahead for the sdcard"
+	                android:textColor="@color/dark_gray"
+	                android:textAppearance="?android:attr/textAppearanceSmall" />
+	            
+	        </LinearLayout>
+        
+        </LinearLayout>
+        
+		<TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/gradient_background"
+            android:paddingTop="7dp"
+            android:paddingBottom="7dp"
+            android:paddingRight="14dp"
+            android:paddingLeft="14dp"
+            android:text="@string/misc_headline"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="@color/dark_gray"
+            android:textStyle="bold" />
+		
+        <LinearLayout
+            android:id="@+id/misc_safemode_status_layout_2a010ab8"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="true" >
+        
+	        <LinearLayout
+	            android:layout_width="match_parent"
+	            android:layout_height="wrap_content"
+	            android:orientation="vertical"
+	            android:paddingLeft="14dp"
+	            android:paddingRight="10dp"
+	            android:paddingTop="7dp"
+	            android:paddingBottom="7dp"
+	            android:background="@drawable/border_bottom_line" >
+	            
+		        <LinearLayout
+		            android:layout_width="match_parent"
+		            android:layout_height="wrap_content"
+		            android:orientation="horizontal"
+		            android:gravity="center_vertical"
+		            android:layout_marginBottom="4dp" >
+	            
+		            <TextView
+		                android:id="@+id/item_header_2a010ab8"
+		                android:layout_width="0dp"
+		                android:layout_height="wrap_content"
+		                android:layout_weight="1"
+		                android:text="@string/misc_safemode_header"
+		                android:textAppearance="?android:attr/textAppearanceMedium" />
+		
+		            <ImageView
+		                android:id="@+id/item_checkbox_2a010ab8"
+		                android:paddingRight="7dp"
+		                android:layout_width="wrap_content"
+		                android:layout_height="wrap_content"
+		                android:src="@drawable/btn_checkbox_off" />
+	            
+	            </LinearLayout>
+	            
+	            <TextView
+	                android:id="@+id/item_description_2a010ab8"
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:paddingRight="50dp"
+	                android:text="Whether or not safe-mode should be used whenever un-proper init.d support is detected"
+	                android:textColor="@color/dark_gray"
+	                android:textAppearance="?android:attr/textAppearanceSmall" />
+	            
+	        </LinearLayout>
+        
+        </LinearLayout>
+        
+        <LinearLayout
+            android:id="@+id/misc_cache_tmpfs_status_layout_2a010ab8"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="true" >
+        
+	        <LinearLayout
+	            android:layout_width="match_parent"
+	            android:layout_height="wrap_content"
+	            android:orientation="vertical"
+	            android:paddingLeft="14dp"
+	            android:paddingRight="10dp"
+	            android:paddingTop="7dp"
+	            android:paddingBottom="7dp"
+	            android:background="@drawable/border_bottom_line" >
+	            
+		        <LinearLayout
+		            android:layout_width="match_parent"
+		            android:layout_height="wrap_content"
+		            android:orientation="horizontal"
+		            android:gravity="center_vertical"
+		            android:layout_marginBottom="4dp" >
+	            
+		            <TextView
+		                android:id="@+id/item_header_2a010ab8"
+		                android:layout_width="0dp"
+		                android:layout_height="wrap_content"
+		                android:layout_weight="1"
+		                android:text="@string/misc_tmpfs_header"
+		                android:textAppearance="?android:attr/textAppearanceMedium" />
+		
+		            <ImageView
+		                android:id="@+id/item_checkbox_2a010ab8"
+		                android:paddingRight="7dp"
+		                android:layout_width="wrap_content"
+		                android:layout_height="wrap_content"
+		                android:src="@drawable/btn_checkbox_off" />
+	            
+	            </LinearLayout>
+	            
+	            <TextView
+	                android:id="@+id/item_description_2a010ab8"
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:paddingRight="50dp"
+	                android:text="Only use /data or /sd-ext as cache replacement, never tmpfs"
+	                android:textColor="@color/dark_gray"
+	                android:textAppearance="?android:attr/textAppearanceSmall" />
+	            
+	        </LinearLayout>
+        
+        </LinearLayout>
+        
+        <LinearLayout
+            android:id="@+id/misc_cache_folders_status_layout_2a010ab8"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="true" >
+        
+	        <LinearLayout
+	            android:layout_width="match_parent"
+	            android:layout_height="wrap_content"
+	            android:orientation="vertical"
+	            android:paddingLeft="14dp"
+	            android:paddingRight="10dp"
+	            android:paddingTop="7dp"
+	            android:paddingBottom="7dp"
+	            android:background="@drawable/border_bottom_line" >
+	            
+		        <LinearLayout
+		            android:layout_width="match_parent"
+		            android:layout_height="wrap_content"
+		            android:orientation="horizontal"
+		            android:gravity="center_vertical"
+		            android:layout_marginBottom="4dp" >
+	            
+		            <TextView
+		                android:id="@+id/item_header_2a010ab8"
+		                android:layout_width="0dp"
+		                android:layout_height="wrap_content"
+		                android:layout_weight="1"
+		                android:text="@string/misc_cache_folders_header"
+		                android:textAppearance="?android:attr/textAppearanceMedium" />
+		
+		            <ImageView
+		                android:id="@+id/item_checkbox_2a010ab8"
+		                android:paddingRight="7dp"
+		                android:layout_width="wrap_content"
+		                android:layout_height="wrap_content"
+		                android:src="@drawable/btn_checkbox_off" />
+	            
+	            </LinearLayout>
+	            
+	            <TextView
+	                android:id="@+id/item_description_2a010ab8"
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:paddingRight="50dp"
+	                android:text="M2SD automatically moves cache folders for the download manager and package manager into the storage with most available space. This will disable that function"
+	                android:textColor="@color/dark_gray"
+	                android:textAppearance="?android:attr/textAppearanceSmall" />
+	            
+	        </LinearLayout>
+        
+        </LinearLayout>
+        
+        <LinearLayout
+            android:id="@+id/misc_debug_status_layout_2a010ab8"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="true" >
+        
+	        <LinearLayout
+	            android:layout_width="match_parent"
+	            android:layout_height="wrap_content"
+	            android:orientation="vertical"
+	            android:paddingLeft="14dp"
+	            android:paddingRight="10dp"
+	            android:paddingTop="7dp"
+	            android:paddingBottom="7dp"
+	            android:background="@drawable/border_bottom_line" >
+	            
+		        <LinearLayout
+		            android:layout_width="match_parent"
+		            android:layout_height="wrap_content"
+		            android:orientation="horizontal"
+		            android:gravity="center_vertical"
+		            android:layout_marginBottom="4dp" >
+	            
+		            <TextView
+		                android:id="@+id/item_header_2a010ab8"
+		                android:layout_width="0dp"
+		                android:layout_height="wrap_content"
+		                android:layout_weight="1"
+		                android:text="@string/misc_debug_header"
+		                android:textAppearance="?android:attr/textAppearanceMedium" />
+		
+		            <ImageView
+		                android:id="@+id/item_checkbox_2a010ab8"
+		                android:paddingRight="7dp"
+		                android:layout_width="wrap_content"
+		                android:layout_height="wrap_content"
+		                android:src="@drawable/btn_checkbox_off" />
+	            
+	            </LinearLayout>
+	            
+	            <TextView
+	                android:id="@+id/item_description_2a010ab8"
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:paddingRight="50dp"
+	                android:text="By enabling debug, you will get a larger and more detailed log entry"
+	                android:textColor="@color/dark_gray"
+	                android:textAppearance="?android:attr/textAppearanceSmall" />
+	            
+	        </LinearLayout>
+        
+        </LinearLayout>
+	    
+	</LinearLayout>
+	
+</ScrollView>

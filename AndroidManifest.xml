@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.spazedog.mounts2sd"
+    android:versionCode="5"
+    android:versionName="1.0.5" >
+
+    <uses-sdk
+        android:minSdkVersion="8"
+        android:targetSdkVersion="16" />
+    
+    <uses-permission android:name="android.permission.REBOOT" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+    <application
+        android:name="com.spazedog.mounts2sd.BaseApplication"
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+	    
+		<receiver android:name="com.spazedog.mounts2sd.StartupReceiver">
+		    <intent-filter>
+		        <action android:name="android.intent.action.BOOT_COMPLETED" />
+		    </intent-filter>
+		</receiver>
+		
+		<service android:enabled="true" android:name="com.spazedog.mounts2sd.StartupService" />
+        
+        <activity
+            android:name="com.spazedog.mounts2sd.StatusActivity"
+            android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:label="Settings" android:name="com.spazedog.mounts2sd.SettingsActivity"></activity>
+        <activity android:label="Configurations" android:name="com.spazedog.mounts2sd.ConfigureActivity"></activity>
+        <activity android:label="View Log" android:name="com.spazedog.mounts2sd.LogActivity"></activity>
+    </application>
+
+</manifest>

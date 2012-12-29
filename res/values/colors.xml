@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<!-- <color name="light_gray">#dddddd</color> -->
+	<!-- <color name="dark_gray">#828282</color>  -->
+   
+    <color name="white_gray">#f8f8f8</color>
+	<color name="light_gray">#ffcccccc</color>
+	<color name="dark_gray">#ff888888</color>
+	<color name="light">#ffffff</color>
+	<color name="dark">#000000</color>
+	<color name="red">#CC0000</color>
+
+	<color name="status_ok">#68a21c</color>
+	<color name="status_error">#eb1313</color>
+	<color name="status_warning">#f7901e</color>
+	<color name="status_debug">#0060ff</color>
+</resources>

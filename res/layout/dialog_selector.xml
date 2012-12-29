@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="14dp"
+    android:orientation="vertical"
+    android:background="@android:color/transparent" >
+    
+    <TextView
+        android:id="@+id/dialog_selector_title_8d4e10e5"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/gradient_background"
+        android:paddingTop="7dp"
+        android:paddingBottom="7dp"
+        android:paddingRight="14dp"
+        android:paddingLeft="14dp"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="@color/dark_gray"
+        android:textStyle="bold" />
+
+	<ScrollView 
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:background="@android:color/transparent" >
+	
+	    <LinearLayout
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:orientation="vertical" >
+	
+		     <LinearLayout
+		         android:id="@+id/dialog_selector_wrapper_e7f45199"
+		         android:layout_width="match_parent"
+		         android:layout_height="wrap_content"
+		         android:orientation="vertical"
+		         android:background="@color/white_gray" >
+	
+			 </LinearLayout>
+	
+	         <LinearLayout
+	            android:layout_width="match_parent"
+	            android:layout_height="wrap_content"
+	            android:orientation="horizontal" >
+		         
+		        <LinearLayout
+		           android:id="@+id/dialog_selector_btn_cancel_1aa48a56"
+		           android:background="@drawable/border_right"
+			       android:layout_width="0dp"
+			       android:layout_height="wrap_content"
+			       android:layout_weight="1"
+			       android:clickable="true" >
+			       
+		           <LinearLayout
+		              android:id="@+id/dialog_selector_btn_layout"
+		              android:layout_width="match_parent"
+		              android:layout_height="wrap_content"
+		              android:gravity="center" >
+	       
+					    <TextView
+					        android:layout_width="wrap_content"
+					        android:layout_height="wrap_content"
+					        android:padding="14dp"
+					        android:text="@string/selector_btn_cancel"
+					        android:textAppearance="?android:attr/textAppearanceSmall"
+					        android:textColor="@color/dark" />
+					
+				    </LinearLayout>
+				
+		        </LinearLayout>
+	
+		        <LinearLayout
+		           android:id="@+id/dialog_selector_btn_okay_e91793b2"
+			       android:background="@color/white_gray"
+		           android:layout_width="0dp"
+			       android:layout_height="wrap_content"
+		           android:layout_weight="1"
+		           android:clickable="true" >
+		           
+		           <LinearLayout
+		              android:id="@+id/dialog_selector_btn_layout"
+		              android:layout_width="match_parent"
+		              android:layout_height="wrap_content"
+		              android:gravity="center" >
+				
+					    <TextView
+					        android:layout_width="wrap_content"
+					        android:layout_height="wrap_content"
+					        android:padding="14dp"
+					        android:text="@string/selector_btn_okay"
+					        android:textAppearance="?android:attr/textAppearanceSmall"
+					        android:textColor="@color/dark" />
+					
+				    </LinearLayout>
+		       
+		         </LinearLayout>
+		         
+		     </LinearLayout>
+	
+	    </LinearLayout>
+	
+	</ScrollView>
+	
+</LinearLayout>

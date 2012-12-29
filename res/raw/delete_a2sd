@@ -1,0 +1,13 @@
+#!/system/bin/sh
+
+a2sd="/etc/init.d/10diskManager.rc /etc/init.d/*2sd /etc/init.d/*2sdx /etc/init.d/*2ext /etc/init.d/*2s /etc/init.d/*2x /etc/init.d/*swap /etc/init.d/*internal /etc/init.d/*internalsd /etc/init.d/*mountdl /etc/init.d/*mountext /etc/init.d/*mountsd /etc/init.d/*cache"
+
+if busybox [ ! -d /etc/init.d ]; then
+    busybox mkdir /etc/init.d
+fi
+
+for i in $a2sd; do
+	if busybox [ -f $i ]; then
+        busybox rm -rf $i
+    fi
+done

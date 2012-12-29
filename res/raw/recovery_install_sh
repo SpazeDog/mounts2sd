@@ -1,0 +1,57 @@
+#!/system/bin/sh
+
+for x in /cache /data; do
+    for i in /init.*.rc; do
+        mountCommand="`busybox grep mount $i | busybox grep /dev/ | busybox grep $x | busybox grep -v -e '^[ \t]*#' | busybox sed -n '1p'`"
+
+        if busybox [ ! -z "$mountCommand" ]; then
+            mountDevice="`busybox echo $mountCommand | busybox awk '{print $3}'`"
+
+            if busybox [ ! -z "$mountDevice" ] && busybox [ -b $mountDevice ]; then
+                busybox [ "$x" = "/cache" ] && cacheDevice=$mountDevice || dataDevice=$mountDevice; 
+
+                break
+            fi
+        fi
+    done
+done
+
+if busybox [ -z "$cacheDevice" ] || busybox [ -z "$dataDevice" ]; then
+    exit 1
+fi
+
+dataLocation="`busybox grep "/$(busybox basename $dataDevice) " /proc/mounts | busybox sed -n '1p' | busybox awk '{print $2}'`"
+
+if busybox [ -z "$dataLocation" ] || busybox [ ! -d $dataLocation ]; then
+    exit 2
+fi
+
+if busybox [ -z "`busybox grep "/$(busybox basename $cacheDevice) " /proc/mounts | busybox grep /cache`" ]; then
+    cacheLocation=/tmpCache
+
+    busybox mkdir /tmpCache
+    busybox mount $cacheDevice /tmpCache
+
+    if busybox [ -z "`busybox grep $cacheDevice /proc/mounts`" ]; then
+        exit 3
+    fi
+
+else 
+    cacheLocation=/cache
+fi
+
+if busybox [ ! -d $cacheLocation/recovery ]; then
+    busybox mkdir $cacheLocation/recovery
+fi
+
+busybox mv /update.zip $dataLocation/
+busybox echo --update_package=/data/update.zip > $cacheLocation/recovery/command
+
+if busybox [ -f $dataLocation/update.zip ] && busybox [ -f $cacheLocation/recovery/command ]; then
+    toolbox reboot recovery
+
+    exit 0
+
+else
+    exit 4
+fi

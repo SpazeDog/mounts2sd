@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+	<LinearLayout
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:orientation="vertical"
+	    android:background="@color/white_gray" >
+	    
+        <LinearLayout
+            android:id="@+id/busybox_configuration_layout_a845e349"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="true" >
+	    
+	        <LinearLayout
+	            android:layout_width="match_parent"
+	            android:layout_height="wrap_content"
+	            android:orientation="vertical"
+	            android:paddingLeft="14dp"
+	            android:paddingRight="10dp"
+	            android:paddingTop="7dp"
+	            android:paddingBottom="7dp"
+	            android:background="@drawable/border_bottom_line" >
+	            
+		        <LinearLayout
+		            android:layout_width="match_parent"
+		            android:layout_height="wrap_content"
+		            android:orientation="horizontal"
+		            android:gravity="center_vertical"
+		            android:layout_marginBottom="4dp" >
+	            
+		            <TextView
+		                android:id="@+id/item_header_a845e349"
+		                android:layout_width="0dp"
+		                android:layout_height="wrap_content"
+		                android:layout_weight="1"
+		                android:text="@string/settings_busybox_headline"
+		                android:textAppearance="?android:attr/textAppearanceMedium" />
+		
+		            <ImageView
+		                android:id="@+id/item_loader_a845e349"
+		                android:paddingRight="7dp"
+		                android:layout_width="wrap_content"
+		                android:layout_height="wrap_content"
+		                android:src="@drawable/btn_refresh"
+		                android:clickable="true" />
+	            
+	            </LinearLayout>
+	            
+	            <TextView
+	                android:id="@+id/item_description_a845e349"
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:paddingRight="50dp"
+	                android:text="Do a proper busybox configuration to make sure that the binary is working properly to avoid issues"
+	                android:textColor="@color/dark_gray"
+	                android:textAppearance="?android:attr/textAppearanceSmall" />
+	            
+	        </LinearLayout>
+        
+        </LinearLayout>
+        
+        <LinearLayout
+            android:id="@+id/script_installation_layout_a845e349"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="true" >
+	    
+	        <LinearLayout
+	            android:layout_width="match_parent"
+	            android:layout_height="wrap_content"
+	            android:orientation="vertical"
+	            android:paddingLeft="14dp"
+	            android:paddingRight="10dp"
+	            android:paddingTop="7dp"
+	            android:paddingBottom="7dp"
+	            android:background="@drawable/border_bottom_line" >
+	            
+		        <LinearLayout
+		            android:layout_width="match_parent"
+		            android:layout_height="wrap_content"
+		            android:orientation="horizontal"
+		            android:gravity="center_vertical"
+		            android:layout_marginBottom="4dp" >
+	            
+		            <TextView
+		                android:id="@+id/item_header_a845e349"
+		                android:layout_width="0dp"
+		                android:layout_height="wrap_content"
+		                android:layout_weight="1"
+		                android:text="@string/settings_script_headline"
+		                android:textAppearance="?android:attr/textAppearanceMedium" />
+		
+		            <ImageView
+		                android:id="@+id/item_loader_a845e349"
+		                android:paddingRight="7dp"
+		                android:layout_width="wrap_content"
+		                android:layout_height="wrap_content"
+		                android:src="@drawable/btn_refresh"
+		                android:clickable="true" />
+	            
+	            </LinearLayout>
+	            
+	            <TextView
+	                android:id="@+id/item_description_a845e349"
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:paddingRight="50dp"
+	                android:text="Copy the init.d startup script from app resources into /system/etc/init.d"
+	                android:textColor="@color/dark_gray"
+	                android:textAppearance="?android:attr/textAppearanceSmall" />
+	            
+	        </LinearLayout>
+        
+        </LinearLayout>
+	    
+	</LinearLayout>
+	
+</ScrollView>
