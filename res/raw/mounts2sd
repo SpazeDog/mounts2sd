@@ -337,7 +337,7 @@ for loopwrapper in true; do
 
                         # We use this for both r-mount protection and for later status review
                         for i in /data/property/m2sd.*; do
-                            doLog d log "Moving property $i into /props/"
+                            doLog d log "Moving property $($bb basename $i)='$($bb cat $i)' into /props/"
                             doProp set config.$($bb echo $($bb basename $i) | $bb sed "s/^m2sd\.//") $($bb cat $i)
                         done
 
