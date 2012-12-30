@@ -1,0 +1,9 @@
+Release Version 1.0.5 (5.0.16)
+
+Script
+ * Check to make sure that the sd-ext partition is not already being used by another script
+ * Extended the debug log further
+
+Application
+ * Fixed compatibillity with some busybox versions when using the auto recovery installation on S-On devices
+ * Updated launcher icons to fix view on black and white backgrounds
