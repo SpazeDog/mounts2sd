@@ -35,10 +35,6 @@ public class SettingsHelper {
 		new Config("log.status", "log", "log", null, null, null, 0, false, true, null, null)
 	};
 	
-	protected static final String APP_ID="d11378a782b088769b10cbef8bdf2dg2";
-	protected static final String SCRIPT_ID="729e043b557c7fcc4380a7ca96107918";
-	protected static final String SCRIPT_PATH="/system/etc/init.d/10mounts2sd";
-	
 	protected static Map<String, Integer> KEYS = new HashMap<String, Integer>();
 	
 	protected static Boolean COMMIT = false;
@@ -191,12 +187,15 @@ public class SettingsHelper {
 	public static Boolean loadConfigs() {
 		RUNNING = true;
 		
+		String appid = BaseApplication.getContext().getResources().getString(R.string.config_app_id);
+		String scriptpath = BaseApplication.getContext().getResources().getString(R.string.config_script_path);
+		
 		RootAccount root = null;
 		SharedPreferences settings = BaseApplication.getContext().getSharedPreferences("prop_configuration", 0x00000000);
 		Editor editor = null;
 		Boolean status = false;
 		
-		if ((!LOADED && !(LOADED = new File("/props/app.config.loaded").isFile())) || !APP_ID.equals( settings.getString("app.id", null) )) {
+		if ((!LOADED && !(LOADED = new File("/props/app.config.loaded").isFile())) || !appid.equals( settings.getString("app.id", null) )) {
 			root = RootAccount.getInstance(true);
 			editor = settings.edit();
 			
@@ -223,7 +222,7 @@ public class SettingsHelper {
 						
 						if (!new File("/props/app.finalized.script").isFile()) {
 							// Execute whatever needs to be done after boot
-							root.execute("/system/etc/init.d/10mounts2sd finalize", RootAccount.RETURN_CODE);
+							root.execute(scriptpath + " finalize", RootAccount.RETURN_CODE);
 							root.execute("busybox [ ! -d /props ] && busybox mkdir /props\nbusybox echo 1 > /props/app.finalized.script", RootAccount.RETURN_CODE);
 						}
 						
@@ -300,7 +299,7 @@ public class SettingsHelper {
 
 						root.execute("busybox [ ! -d /props ] && busybox mkdir /props\nbusybox echo 1 > /props/app.config.loaded", RootAccount.RETURN_CODE);
 
-						editor.putString("app.id", APP_ID);
+						editor.putString("app.id", appid);
 						
 						status = LOADED = true;
 					} 
@@ -334,11 +333,11 @@ public class SettingsHelper {
 	
 	public static Boolean checkScript() {
 		RootAccount root = RootAccount.getInstance(false);
-		String scriptId = root.execute("busybox md5sum " + SCRIPT_PATH, RootAccount.RETURN_LINE);
+		String scriptId = root.execute("busybox md5sum " + BaseApplication.getContext().getResources().getString(R.string.config_script_path), RootAccount.RETURN_LINE);
 		root.close();
 		
 		if (scriptId != null) {
-			return scriptId.contains(SCRIPT_ID);
+			return scriptId.contains( BaseApplication.getContext().getResources().getString(R.string.config_script_id) );
 		}
 		
 		return false;
@@ -377,7 +376,7 @@ public class SettingsHelper {
 	public static Boolean isLoaded() {
 		SharedPreferences settings = BaseApplication.getContext().getSharedPreferences("prop_configuration", 0x00000000);
 		
-		return LOADED && APP_ID.equals( settings.getString("app.id", null) ) ? true : false;
+		return LOADED && BaseApplication.getContext().getResources().getString(R.string.config_app_id).equals( settings.getString("app.id", null) ) ? true : false;
 	}
 	
 	public static Boolean isRunning() {
