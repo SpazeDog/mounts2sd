@@ -2,7 +2,7 @@
 
 scriptAction=$1
 scriptVersion="5.0.16"
-scriptProps="enabled=1 move_apps=1 move_dalvik=1 move_data=1 enable_reversed_mount=0 enable_cache=1 no_tmpfs_cache=0 enable_swap=1 enable_sdext_journal=0 enable_debug=0 set_sdext_fstype=ext4 set_sdcard_readahead=512 run_sdext_fschk=1 disable_safemode=0 disable_cache_folders=0"
+scriptProps="enabled=1 move_apps=1 move_dalvik=0 move_data=0 enable_reversed_mount=0 enable_cache=1 no_tmpfs_cache=0 enable_swap=1 enable_sdext_journal=0 enable_debug=0 set_sdext_fstype=ext4 set_sdcard_readahead=512 run_sdext_fschk=1 disable_safemode=0 disable_cache_folders=0"
 bb=/system/xbin/busybox
 tb=/system/bin/toolbox
 
@@ -879,7 +879,7 @@ for loopwrapper in true; do
                                                         doLinkContent=
 
                                                         doLog v log "Attaching /sd-ext/$x to /data/$x"
-                                                        lastError$($bb mount --bind /sd-ext/$x /data/$x 2>&1)
+                                                        lastError=$($bb mount --bind /sd-ext/$x /data/$x 2>&1)
 
                                                         if $bb [ ! -z "`$bb grep " /data/$x " /proc/mounts`" ]; then
                                                             case $x in
@@ -972,7 +972,7 @@ for loopwrapper in true; do
 
                         if $bb [ ! -z "`doProp get status.device.sdcard.partition.swap`" ] && $bb [ $(doProp get config.enable_swap) -eq 1 ]; then
                                 doLog v log "Activating SWAP partition"
-                                lastError=$($bb swapon $(doProp get device.sdcard.partition.swap) 2>&1)
+                                lastError=$($bb swapon $(doProp get status.device.sdcard.partition.swap) 2>&1)
 
                                 if $bb [ "$?" = "0" ]; then
                                         doProp set status.enable_swap 1
