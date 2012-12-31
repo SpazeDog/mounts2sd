@@ -726,13 +726,14 @@ for loopwrapper in true; do
                                     doLog v log "Preparing to move content between /data and /sd-ext"
 
                                     doRevert="`$bb grep mkdir /init.rc | $bb grep -e ' \/data\/[^\/]* ' | $bb tr -s ' ' | $bb sed 's/mkdir \/data\/\([^ ]*\).*$/\1/' | $bb grep -ve 'secure\|lost+found\|local\|misc\|system\|tombstones\|property\|data\|dalvik\-\(cache\|system\)\|app\(\-system\|\-asec\|\-private\)*'`"
-                                    
+                                    appFolders="app-system $($bb grep mkdir /init.rc | $bb grep -e ' \/data\/app\(\-[^ ]*\)*[^\/]* ' | $bb tr -s ' ' | $bb sed 's/mkdir \/data\/\([^ ]*\).*$/\1/' | $bb grep -v 'app-system')"                                    
+
                                     externalSize=$(doGetSize /sd-ext)
                                     internalSize=$(doGetSize /data)
 
                                     $bb [ $(doProp get config.move_data) -eq 1 ] && doMove="$doMove data" || doRevert="$doRevert data"
                                     $bb [ $(doProp get config.move_dalvik) -eq 1 ] && doMove="$doMove dalvik-cache" || doRevert="$doRevert dalvik-cache"
-                                    $bb [ $(doProp get config.move_apps) -eq 1 ] && doMove="$doMove app app-private app-asec app-system" || doRevert="$doRevert app app-private app-asec app-system"
+                                    $bb [ $(doProp get config.move_apps) -eq 1 ] && doMove="$doMove $appFolders" || doRevert="$doRevert app $appFolders"
                                     $bb [ $externalSize -lt $internalSize ] && doMoveOrder="revert move revert-retry move-force link" || doMoveOrder="move revert move revert-retry move-force link"
 
                                     # Failsafe in case r-mount fails, content will stay on the same selected devices
@@ -858,7 +859,7 @@ for loopwrapper in true; do
                                             link)
                                                 if $bb [ ! -z "$attention" ]; then
                                                     for x in $attention; do
-                                                        case $($bb echo $x | $bb cut -d ':' -f1) in
+                                                        case $($bb echo $x | $bb cut -d ':' -f1 | $bb cut -d '-' -f1) in
                                                             app) reporter="move_apps" ;;
                                                             dalvik-cache) reporter="move_dalvik" ;;
                                                             data) reporter="move_data" ;;
