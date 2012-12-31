@@ -73,7 +73,7 @@ doCreateFolder() {
     $bb [ "$2" = "1" ] && doCfFolderExt="/sd-ext/$(basename $doCfFolder)"
 
     if $bb [ ! -d $doCfFolder ] || ( $bb [ "$2" = "1" ] && $bb [ ! -d $doCfFolderExt ] ); then
-        doCfBuildIn="$($bb grep mkdir /init.rc | $bb grep " $doCfFolder ")"
+        doCfBuildIn="$($bb grep mkdir /init.rc | $bb grep -ve '^[ \t]*#' | $bb grep " $doCfFolder ")"
 
         if $bb [ -z "$doCfBuildIn" ]; then
             doCfFolderOwner="1000.1000"
@@ -725,8 +725,8 @@ for loopwrapper in true; do
 
                                     doLog v log "Preparing to move content between /data and /sd-ext"
 
-                                    doRevert="`$bb grep mkdir /init.rc | $bb grep -e ' \/data\/[^\/]* ' | $bb tr -s ' ' | $bb sed 's/mkdir \/data\/\([^ ]*\).*$/\1/' | $bb grep -ve '\(secure\|lost+found\|local\|misc\|system\|tombstones\|property\|data\|dalvik\-\(cache\|system\)\|app\(\-[^ ]*\)*\)$'`"
-                                    appFolders="app app-private app-system $($bb grep mkdir /init.rc | $bb grep -e ' \/data\/app\(\-[^ ]*\)*[^\/]* ' | $bb tr -s ' ' | $bb sed 's/mkdir \/data\/\([^ ]*\).*$/\1/' | $bb grep -ve 'app\(\-system\|\-private\)*$')"                                    
+                                    doRevert="`$bb grep mkdir /init.rc | $bb grep -ve '^[ \t]*#' | $bb grep -e ' \/data\/[^\/]* ' | $bb tr -s ' ' | $bb sed 's/mkdir \/data\/\([^ ]*\).*$/\1/' | $bb grep -ve '\(secure\|lost+found\|local\|misc\|system\|tombstones\|property\|data\|dalvik\-\(cache\|system\)\|app\(\-[^ ]*\)*\)$'`"
+                                    appFolders="app app-private app-system $($bb grep mkdir /init.rc | $bb grep -ve '^[ \t]*#' | $bb grep -e ' \/data\/app\(\-[^ ]*\)*[^\/]* ' | $bb tr -s ' ' | $bb sed 's/mkdir \/data\/\([^ ]*\).*$/\1/' | $bb grep -ve 'app\(\-system\|\-private\)*$')"                                    
 
                                     externalSize=$(doGetSize /sd-ext)
                                     internalSize=$(doGetSize /data)
