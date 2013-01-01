@@ -764,9 +764,10 @@ for loopwrapper in true; do
                                         case $action in
                                             revert|revert-retry)
                                                 if $bb [ ! -z "$doRevertContent" ]; then
-                                                    for x in $doRevertContent; do
-                                                        doRevertContent=
+                                                    doHandleContent="$doRevertContent"
+                                                    doRevertContent=
 
+                                                    for x in $doRevertContent; do
                                                         doCreateFolder /data/$x
 
                                                         doLog d log "Looking in /sd-ext/$x to see if something should be reverted back to /data/$x"
@@ -820,9 +821,10 @@ for loopwrapper in true; do
 
                                             move|move-force)
                                                 if $bb [ ! -z "$doMoveContent" ]; then
-                                                    for x in $doMoveContent; do
-                                                        doMoveContent=
+                                                    doHandleContent="$doMoveContent"
+                                                    doMoveContent=
 
+                                                    for x in $doMoveContent; do
                                                         doCreateFolder /data/$x 1
 
                                                         doLog d log "Looking in /data/$x to see if something should be moved into /sd-ext/$x"
