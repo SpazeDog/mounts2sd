@@ -122,6 +122,19 @@ doGetSize() {
     done
 }
 
+doCheckFolder() {
+    doCheckFolderPath=$1
+    doCheckFolderValue=0
+
+    for i in /*.rc; do
+        if $bb [ ! -z "`$bb grep mkdir /init.rc | $bb grep -ve '^[ \t]*#' | grep " $doCheckFolderPath "`" ]; then
+            doCheckFolderValue=1; break
+        fi
+    done
+
+    echo $doCheckFolderValue
+}
+
 # This is used as a hack to break out of at any time
 for loopwrapper in true; do
 
@@ -728,6 +741,12 @@ for loopwrapper in true; do
                                     doRevert="`$bb grep mkdir /init.rc | $bb grep -ve '^[ \t]*#' | $bb grep -e ' \/data\/[^\/]* ' | $bb tr -s ' ' | $bb sed 's/mkdir \/data\/\([^ ]*\).*$/\1/' | $bb grep -ve '\(secure\|lost+found\|local\|misc\|system\|tombstones\|property\|data\|dalvik\-\(cache\|system\)\|app\(\-[^ ]*\)*\)$'`"
                                     appFolders="app app-private app-system $($bb grep mkdir /init.rc | $bb grep -ve '^[ \t]*#' | $bb grep -e ' \/data\/app\(\-[^ ]*\)*[^\/]* ' | $bb tr -s ' ' | $bb sed 's/mkdir \/data\/\([^ ]*\).*$/\1/' | $bb grep -ve 'app\(\-system\|\-private\)*$')"                                    
 
+                                    for i in property misc system local tombstones secure media; do
+                                        if $bb [ $(doCheckFolder /data/$i) -eq 1 ]; then
+                                            sysFolders="$sysFolders $i"
+                                        fi
+                                    done
+
                                     externalSize=$(doGetSize /sd-ext)
                                     internalSize=$(doGetSize /data)
 
@@ -739,7 +758,7 @@ for loopwrapper in true; do
                                     # Failsafe in case r-mount fails, content will stay on the same selected devices
                                     $bb [ $(doProp get attention.enable_reversed_mount 0) -eq 1 ] && doRevertContent="$doMove" || doRevertContent="$doRevert"
                                     $bb [ $(doProp get attention.enable_reversed_mount 0) -eq 1 ] && doMoveContent="$doRevert" || doMoveContent="$doMove"
-                                    $bb [ $(doProp get status.enable_reversed_mount 0) -eq 1 ] && doMoveContent="$doMoveContent property misc system local tombstones secure" || doRevertContent="$doRevertContent property misc system local tombstones secure"
+                                    $bb [ $(doProp get status.enable_reversed_mount 0) -eq 1 ] && doMoveContent="$doMoveContent $sysFolders" || doRevertContent="$doRevertContent $sysFolders"
 
                                     for action in $doMoveOrder; do
                                         case $action in
