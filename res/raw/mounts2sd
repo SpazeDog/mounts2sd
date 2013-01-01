@@ -127,7 +127,7 @@ doCheckFolder() {
     doCheckFolderValue=0
 
     for i in /*.rc; do
-        if $bb [ ! -z "`$bb grep mkdir /init.rc | $bb grep -ve '^[ \t]*#' | grep " $doCheckFolderPath "`" ]; then
+        if $bb [ ! -z "`$bb grep mkdir $i | $bb grep -ve '^[ \t]*#' | grep " $doCheckFolderPath "`" ]; then
             doCheckFolderValue=1; break
         fi
     done
