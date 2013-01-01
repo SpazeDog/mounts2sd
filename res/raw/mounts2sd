@@ -73,7 +73,13 @@ doCreateFolder() {
     $bb [ "$2" = "1" ] && doCfFolderExt="/sd-ext/$(basename $doCfFolder)"
 
     if $bb [ ! -d $doCfFolder ] || ( $bb [ "$2" = "1" ] && $bb [ ! -d $doCfFolderExt ] ); then
-        doCfBuildIn="$($bb grep mkdir /init.rc | $bb grep -ve '^[ \t]*#' | $bb grep " $doCfFolder ")"
+        for doCfFolderX in /*.rc; do
+            doCfBuildIn="$($bb grep mkdir $doCfFolderX | $bb grep -ve '^[ \t]*#' | $bb grep " $doCfFolder ")"
+
+            if $bb [ ! -z "$doCfBuildIn" ]; then
+                break
+            fi
+        done
 
         if $bb [ -z "$doCfBuildIn" ]; then
             doCfFolderOwner="1000.1000"
@@ -738,8 +744,12 @@ for loopwrapper in true; do
 
                                     doLog v log "Preparing to move content between /data and /sd-ext"
 
-                                    doRevert="`$bb grep mkdir /init.rc | $bb grep -ve '^[ \t]*#' | $bb grep -e ' \/data\/[^\/]* ' | $bb tr -s ' ' | $bb sed 's/mkdir \/data\/\([^ ]*\).*$/\1/' | $bb grep -ve '\(secure\|lost+found\|local\|misc\|system\|tombstones\|property\|data\|dalvik\-\(cache\|system\)\|app\(\-[^ ]*\)*\)$'`"
-                                    appFolders="app app-private app-system $($bb grep mkdir /init.rc | $bb grep -ve '^[ \t]*#' | $bb grep -e ' \/data\/app\(\-[^ ]*\)*[^\/]* ' | $bb tr -s ' ' | $bb sed 's/mkdir \/data\/\([^ ]*\).*$/\1/' | $bb grep -ve 'app\(\-system\|\-private\)*$')"                                    
+                                    appFolders="app app-private app-system"
+
+                                    for i in /*.rc; do
+                                        doRevert="$doRevert $($bb grep mkdir $i | $bb grep -ve '^[ \t]*#' | $bb grep -e ' \/data\/[^\/]* ' | $bb tr -s ' ' | $bb sed 's/mkdir \/data\/\([^ ]*\).*$/\1/' | $bb grep -ve '\(media\|secure\|lost+found\|local\|misc\|system\|tombstones\|property\|data\|dalvik\-\(cache\|system\)\|app\(\-[^ ]*\)*\)$')"
+                                        appFolders="$appFolders $($bb grep mkdir $i | $bb grep -ve '^[ \t]*#' | $bb grep -e ' \/data\/app\(\-[^ ]*\)*[^\/]* ' | $bb tr -s ' ' | $bb sed 's/mkdir \/data\/\([^ ]*\).*$/\1/' | $bb grep -ve 'app\(\-system\|\-private\)*$')"
+                                    done
 
                                     for i in property misc system local tombstones secure media; do
                                         if $bb [ $(doCheckFolder /data/$i) -eq 1 ]; then
@@ -760,6 +770,10 @@ for loopwrapper in true; do
                                     $bb [ $(doProp get attention.enable_reversed_mount 0) -eq 1 ] && doMoveContent="$doRevert" || doMoveContent="$doMove"
                                     $bb [ $(doProp get status.enable_reversed_mount 0) -eq 1 ] && doMoveContent="$doMoveContent $sysFolders" || doRevertContent="$doRevertContent $sysFolders"
 
+                                    # Remove dupplicates
+                                    doRevertContent="`echo $doRevertContent | sed 's/ /\n/g' | awk '!a[$0]++'`"
+                                    doMoveContent="`echo $doMoveContent | sed 's/ /\n/g' | awk '!a[$0]++'`"
+
                                     for action in $doMoveOrder; do
                                         case $action in
                                             revert|revert-retry)
@@ -767,7 +781,7 @@ for loopwrapper in true; do
                                                     doHandleContent="$doRevertContent"
                                                     doRevertContent=
 
-                                                    for x in $doRevertContent; do
+                                                    for x in $doHandleContent; do
                                                         doCreateFolder /data/$x
 
                                                         doLog d log "Looking in /sd-ext/$x to see if something should be reverted back to /data/$x"
@@ -824,7 +838,7 @@ for loopwrapper in true; do
                                                     doHandleContent="$doMoveContent"
                                                     doMoveContent=
 
-                                                    for x in $doMoveContent; do
+                                                    for x in $doHandleContent; do
                                                         doCreateFolder /data/$x 1
 
                                                         doLog d log "Looking in /data/$x to see if something should be moved into /sd-ext/$x"
@@ -932,7 +946,11 @@ for loopwrapper in true; do
  
                                     if $bb [ $(doProp get status.enable_reversed_mount 0) -eq 1 ]; then
                                         # Make sure that important sub-folders from init.rc exists. Android 4.x will create issues if they do.
-                                        doCreate="`$bb grep mkdir /init.rc | $bb grep -e ' \/data\/[^\/]*\(\/[^\/]*\)* ' | $bb tr -s ' ' | $bb sed 's/mkdir \(\/data\/[^ ]*\).*$/\1/'`"
+                                        for x in /*.rc; do
+                                            doCreate="$doCreate $($bb grep mkdir $x | $bb grep -e ' \/data\/[^\/]*\(\/[^\/]*\)* ' | $bb tr -s ' ' | $bb sed 's/mkdir \(\/data\/[^ ]*\).*$/\1/')"
+                                        done
+
+                                        doCreate="`echo $doCreate | sed 's/ /\n/g' | awk '!a[$0]++'`"
 
                                         for i in $doCreate; do
                                             doLog d log "Making sure that the init.rc defined folder $i exists"
