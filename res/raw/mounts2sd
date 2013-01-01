@@ -909,13 +909,15 @@ for loopwrapper in true; do
                                         esac
                                     done
  
-                                    # Make sure that important sub-folders from init.rc exists. Android 4.x will create issues if they do.
-                                    doCreate="`$bb grep mkdir /init.rc | $bb grep -e ' \/data\/[^\/]*\(\/[^\/]*\)* ' | $bb tr -s ' ' | $bb sed 's/mkdir \(\/data\/[^ ]*\).*$/\1/'`"
+                                    if $bb [ $(doProp get status.enable_reversed_mount 0) -eq 1 ]; then
+                                        # Make sure that important sub-folders from init.rc exists. Android 4.x will create issues if they do.
+                                        doCreate="`$bb grep mkdir /init.rc | $bb grep -e ' \/data\/[^\/]*\(\/[^\/]*\)* ' | $bb tr -s ' ' | $bb sed 's/mkdir \(\/data\/[^ ]*\).*$/\1/'`"
 
-                                    for i in $doCreate; do
-                                        doLog d log "Making sure that the init.rc defined folder $i exists"
-                                        doCreateFolder $i
-                                    done
+                                        for i in $doCreate; do
+                                            doLog d log "Making sure that the init.rc defined folder $i exists"
+                                            doCreateFolder $i
+                                        done
+                                    fi
 
                                     break 2
                                 fi
