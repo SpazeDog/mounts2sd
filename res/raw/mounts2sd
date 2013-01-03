@@ -379,7 +379,7 @@ for loopwrapper in true; do
                                 $bb echo 0 > /props/config.$i
                             done
 
-                            doLog v message.enabled "The script is running in safe-mode!"
+                            doLog v enabled "The script is running in safe-mode!"
                         fi
 
                         doLog v log "Optimizing the internal nand partitions"
