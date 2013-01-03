@@ -203,6 +203,17 @@ for loopwrapper in true; do
             else
                 case "$scriptAction" in
                     "finalize")
+                        # Used by safe-mode in order to allow the first part to finish before the second part is executed
+                        if $bb [ $(doProp get status.enabled 0) -eq 2 ]; then
+                            for countdown in `$bb seq 1 10`; do
+                                $bb sleep 1
+
+                                if $bb [ $(doProp get status.enabled 0) -lt 2 ]; then
+                                    break
+                                fi
+                            done
+                        fi
+
                         if $bb [ $(doProp get status.enabled 0) -eq 0 ]; then
                             doLog e log "The script has not been fully executed during boot!"
 
@@ -345,6 +356,8 @@ for loopwrapper in true; do
 
                         doLog v log "Preparing configurations"
 
+                        doProp set status.enabled 2
+
                         for i in $scriptProps; do
                             iName="`$bb echo $i | $bb cut -d '=' -f1`"
 
@@ -380,32 +393,8 @@ for loopwrapper in true; do
                             done
 
                             doLog v enabled "The script is running in safe-mode!"
+                            doProp set status.script_safe_mode 1
                         fi
-
-                        doLog v log "Optimizing the internal nand partitions"
-
-                        for i in system data cache; do
-                                mtdDevice="`$bb grep '/dev/' /proc/mounts | $bb grep " /$i " | $bb awk '{print $1}'`"
-
-                                doLog d log "Located the device $mtdDevice belonging to /$i"
-
-                                if $bb [ -b $mtdDevice ]; then
-                                        mtdMM="`$bb ls -l $mtdDevice | $bb tr -s ' ' | $bb sed -ne 's/^.*[ ]\([0-9]*\),[ ]\([0-9]*\)[ ].*$/\1:\2/p'`"
-
-                                        doLog d log "Located the device MM number $mtdMM belonging to /$i"
-
-                                        if $bb [ -e /sys/devices/virtual/bdi/$mtdMM/read_ahead_kb ]; then
-                                                doLog v log "Setting $i nand readahead to 4kb"
-                                                $bb echo 4 > /sys/devices/virtual/bdi/$mtdMM/read_ahead_kb
-                                        fi
-
-                                        doLog v log "Setting optimized mount parameters on $i"
-                                        $bb mount -o remount,noatime,nodiratime,relatime /$i
-
-                                else
-                                        doLog w log "Could not locate the device file for /$i"
-                                fi
-                        done
 
                         doLog v log "Waiting for sdcard to initiate"
 
@@ -740,6 +729,13 @@ for loopwrapper in true; do
                                         fi
 
                                         break 2
+
+                                    elif $bb [ $(doProp get status.script_safe_mode 0) -eq 1 ]; then
+                                        doLog d log "Safe-mode detected, creating temp symlinks between /sd-ext/app(-*) and /data/app(-*)"
+
+                                        for i in /sd-ext/app/* /sd-ext/app-*/*; do
+                                            $bb ln -s $i $($bb echo $i | $bb sed -e 's/^\/sd-ext\//\/data\//') 2> /dev/null
+                                        done
                                     fi
 
                                     doLog v log "Preparing to move content between /data and /sd-ext"
@@ -798,16 +794,21 @@ for loopwrapper in true; do
                                                                     for i in /sd-ext/$x/*; do
                                                                         ii="`$bb basename $i`"
 
-                                                                        if $bb [ -e /data/$x/$ii ]; then
-                                                                            $bb rm -rf /data/$x/$ii
-                                                                        fi
+                                                                        if $bb [ ! -L /sd-ext/$x/$ii ] || ( $bb [ ! -f /data/$x/$ii ] && $bb [ ! -d /data/$x/$ii ] ); then
+                                                                            if $bb [ -e /data/$x/$ii ]; then
+                                                                                $bb rm -rf /data/$x/$ii
+                                                                            fi
 
-                                                                        $bb mv -f /sd-ext/$x/$ii /data/$x/
+                                                                            $bb mv -f /sd-ext/$x/$ii /data/$x/
+
+                                                                        else
+                                                                            $bb rm -rf /sd-ext/$x/$ii
+                                                                        fi
                                                                     done
 
                                                                     xSize=$($bb echo $($bb du -s -m /data/$x) | $bb awk '{print $1}')
 
-                                                                    ( $bb [ -d /sd-ext/$x ] && $bb [ ! -z "`$bb ls -v /sd-ext/$x`" ] ) && attention="$attention ${x}:revert:notempty" || $bb rm -rf /sd-ext/$x
+                                                                    ( $bb [ -d /sd-ext/$x ] && $bb [ ! -z "`$bb ls -v /sd-ext/$x`" ] && $bb [ ! -z "`$bb find /sd-ext/$x -type f`" ] ) && attention="$attention ${x}:revert:notempty" || $bb rm -rf /sd-ext/$x
 
                                                                 else
                                                                     $bb rm -rf /sd-ext/$x
@@ -855,16 +856,23 @@ for loopwrapper in true; do
                                                                     for i in /data/$x/*; do
                                                                         ii="`$bb basename $i`"
 
-                                                                        if $bb [ -e /sd-ext/$x/$ii ]; then
-                                                                            $bb rm -rf /sd-ext/$x/$ii
-                                                                        fi
+                                                                        if $bb [ ! -L /data/$x/$ii ] || ( $bb [ ! -f /sd-ext/$x/$ii ] && $bb [ ! -d /sd-ext/$x/$ii ] ); then
+                                                                            if $bb [ -e /sd-ext/$x/$ii ]; then
+                                                                                $bb rm -rf /sd-ext/$x/$ii
+                                                                            fi
 
-                                                                        $bb mv -f /data/$x/$ii /sd-ext/$x/
+                                                                            $bb mv -f /data/$x/$ii /sd-ext/$x/
+
+                                                                            if $bb [ $(doProp get status.script_safe_mode 0) -eq 1 ]; then
+                                                                                # The system may boot before init.d is done and we need the package manager to register all the apps
+                                                                                $bb ln -sf /sd-ext/$x/$ii /data/$x/$ii
+                                                                            fi
+                                                                        fi
                                                                     done
 
                                                                     xSize=$($bb echo $($bb du -s -m /sd-ext/$x) | $bb awk '{print $1}')
 
-                                                                    ( $bb [ -d /data/$x ] && $bb [ ! -z "`$bb ls -v /data/$x`" ] ) && attention="$attention ${x}:move:notempty"
+                                                                    ( $bb [ -d /data/$x ] && $bb [ ! -z "`$bb ls -v /data/$x`" ] && $bb [ ! -z "`$bb find /data/$x -type f`" ] ) && attention="$attention ${x}:move:notempty"
 
                                                                 else
                                                                     $bb rm -rf /data/$x/*
@@ -896,16 +904,16 @@ for loopwrapper in true; do
                                                     for x in $attention; do
                                                         case $($bb echo $x | $bb cut -d ':' -f1 | $bb cut -d '-' -f1) in
                                                             app) reporter="move_apps" ;;
-                                                            dalvik-cache) reporter="move_dalvik" ;;
+                                                            dalvik) reporter="move_dalvik" ;;
                                                             data) reporter="move_data" ;;
                                                             *) reporter="log" ;;
                                                         esac
 
                                                         if $bb [ "`$bb echo $x | $bb cut -d ':' -f2`" = "move" ]; then
-                                                            $bb [ "`$bb echo $x | $bb cut -d ':' -f3`" = "size" ] && doLog e $reporter "The content of /data/$($bb echo $x | $bb cut -d ':' -f1) is to big to be moved to sd-ext!" || doLog e $reporter "Not everything from /data/$($bb echo $x | $bb cut -d ':' -f1) could be moved to /sd-ext/$x. Check available disk space!"
+                                                            $bb [ "`$bb echo $x | $bb cut -d ':' -f3`" = "size" ] && doLog e $reporter "The content of /data/$($bb echo $x | $bb cut -d ':' -f1) is to big to be moved to sd-ext!" || doLog e $reporter "Not everything from /data/$($bb echo $x | $bb cut -d ':' -f1) could be moved to /sd-ext/$($bb echo $x | $bb cut -d ':' -f1). Check available disk space!"
 
                                                         else
-                                                            $bb [ "`$bb echo $x | $bb cut -d ':' -f3`" = "size" ] && doLog e $reporter "The content of /sd-ext/$($bb echo $x | $bb cut -d ':' -f1) is to big to be reverted back to data!" || doLog e $reporter "Not everything from /sd-ext/$($bb echo $x | $bb cut -d ':' -f1) could be reverted back to /data/$x. Check available disk space!"
+                                                            $bb [ "`$bb echo $x | $bb cut -d ':' -f3`" = "size" ] && doLog e $reporter "The content of /sd-ext/$($bb echo $x | $bb cut -d ':' -f1) is to big to be reverted back to data!" || doLog e $reporter "Not everything from /sd-ext/$($bb echo $x | $bb cut -d ':' -f1) could be reverted back to /data/$($bb echo $x | $bb cut -d ':' -f1). Check available disk space!"
                                                         fi
                                                     done
                                                 fi
@@ -914,20 +922,31 @@ for loopwrapper in true; do
                                                     for x in $doLinkContent; do
                                                         doLinkContent=
 
+                                                        # Do some cleanup
+                                                        if $bb [ $(doProp get status.script_safe_mode 0) -eq 1 ] && $bb [ "$($bb echo $x $bb cut -d '-' -f1)" = "app" ]; then
+                                                            doLog d log "Safe-mode detected, cleaning up some unused symlinks"
+
+                                                            for i in /data/$x/*; do
+                                                                if $bb [ -L $i ] && $bb [ ! -e $($bb readlink -f $i) ]; then
+                                                                    $bb rm -rf $i
+                                                                fi
+                                                            done
+                                                        fi
+
                                                         doLog v log "Attaching /sd-ext/$x to /data/$x"
                                                         lastError=$($bb mount --bind /sd-ext/$x /data/$x 2>&1)
 
                                                         if $bb [ ! -z "`$bb grep " /data/$x " /proc/mounts`" ]; then
-                                                            case $x in
+                                                            case $($bb echo $x | $bb cut -d '-' -f1) in
                                                                 app) doProp set status.move_apps 1 ;;
-                                                                dalvik-cache) doProp set status.move_dalvik 1 ;;
+                                                                dalvik) doProp set status.move_dalvik 1 ;;
                                                                 data) doProp set status.move_data 1 ;;
                                                             esac
 
                                                         else
-                                                            case $x in
+                                                            case $($bb echo $x | $bb cut -d '-' -f1) in
                                                                 app) reporter="move_apps" ;;
-                                                                dalvik-cache) reporter="move_dalvik" ;;
+                                                                dalvik) reporter="move_dalvik" ;;
                                                                 data) reporter="move_data" ;;
                                                                 *) reporter="log" ;;
                                                             esac
@@ -968,6 +987,31 @@ for loopwrapper in true; do
                             else
                                     $bb sleep 1
                             fi
+                        done
+
+                        doLog v log "Optimizing the internal nand partitions"
+
+                        for i in system data cache; do
+                                mtdDevice="`$bb grep '/dev/' /proc/mounts | $bb grep " /$i " | $bb awk '{print $1}'`"
+
+                                doLog d log "Located the device $mtdDevice belonging to /$i"
+
+                                if $bb [ -b $mtdDevice ]; then
+                                        mtdMM="`$bb ls -l $mtdDevice | $bb tr -s ' ' | $bb sed -ne 's/^.*[ ]\([0-9]*\),[ ]\([0-9]*\)[ ].*$/\1:\2/p'`"
+
+                                        doLog d log "Located the device MM number $mtdMM belonging to /$i"
+
+                                        if $bb [ -e /sys/devices/virtual/bdi/$mtdMM/read_ahead_kb ]; then
+                                                doLog v log "Setting $i nand readahead to 4kb"
+                                                $bb echo 4 > /sys/devices/virtual/bdi/$mtdMM/read_ahead_kb
+                                        fi
+
+                                        doLog v log "Setting optimized mount parameters on $i"
+                                        $bb mount -o remount,noatime,nodiratime,relatime /$i
+
+                                else
+                                        doLog w log "Could not locate the device file for /$i"
+                                fi
                         done
 
                         $bb sync
