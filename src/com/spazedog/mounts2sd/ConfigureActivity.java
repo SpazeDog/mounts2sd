@@ -11,10 +11,11 @@ import android.view.View.OnTouchListener;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.spazedog.mounts2sd.MessageDialog.MessageDialogListener;
 import com.spazedog.mounts2sd.SelectorDialog.SelectorChoice;
 import com.spazedog.mounts2sd.SelectorDialog.SelectorListener;
 
-public class ConfigureActivity extends FragmentActivity implements SelectorListener {
+public class ConfigureActivity extends FragmentActivity implements SelectorListener,MessageDialogListener {
 	
 	Map<String, View> ELEMENTS = new HashMap<String, View>();
 	
@@ -197,6 +198,10 @@ public class ConfigureActivity extends FragmentActivity implements SelectorListe
 		
 		dependerState(id, !"1".equals(value) ? true : false, false);
 		reverseProps(id);
+		
+		if (id == "misc.safemode.status" && !"1".equals(value)) {
+			((MessageDialog) new MessageDialog()).addMessage("Safe-mode Disabled", "The safe-mode option was made to avoid issues. Disabling it will be at your own risk and any issues caused by it will not be supported. Instead of disabling safe-mode you should implement a proper init.d method into your ramdisk so that safe-mode is never needed and therefor never used by the script!").show(getSupportFragmentManager(), "MessageDialog");
+		}
 	}
 
 	public void onSelectorChange(SelectorChoice choice) {
@@ -216,4 +221,6 @@ public class ConfigureActivity extends FragmentActivity implements SelectorListe
 			dependerState(choice.getId(), "0".equals(choice.getValue()) || "".equals(choice.getValue()) ? false : true, false);
 		}
 	}
+	
+	public void onMessageDialogClose() {}
 }
