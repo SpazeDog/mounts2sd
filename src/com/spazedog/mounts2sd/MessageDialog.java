@@ -38,6 +38,11 @@ public class MessageDialog extends DialogFragment {
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 		super.onCreateDialog(savedInstanceState);
 		
+		if (savedInstanceState != null) {
+			TITLE = savedInstanceState.getString("title");
+			MESSAGE = savedInstanceState.getString("message");
+		}
+		
 		LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		
 		/* Get layout and fit the width */
@@ -87,5 +92,13 @@ public class MessageDialog extends DialogFragment {
 		super.onAttach(activity);
 		
 		LISTENER = (MessageDialogListener) activity;
+	}
+	
+	@Override
+	public void onSaveInstanceState(Bundle savedInstanceState) {
+		savedInstanceState.putString("title", TITLE);
+		savedInstanceState.putString("message", MESSAGE);
+		
+		super.onSaveInstanceState(savedInstanceState);
 	}
 }
