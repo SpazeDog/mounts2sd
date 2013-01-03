@@ -1,9 +1,8 @@
-Release Version 1.0.5 (5.0.16)
+Release Version 1.1.0 (5.1.0)
 
 Script
- * Check to make sure that the sd-ext partition is not already being used by another script
- * Extended the debug log further
-
-Application
- * Fixed compatibillity with some busybox versions when using the auto recovery installation on S-On devices
- * Updated launcher icons to fix view on black and white backgrounds
+ * Added /data/app-lib to the apps option for Android 4.2+
+ * Added support for Internal Fuse Storage (/data/media) when using r-mount
+ * Added better support for init(-*).rc defined folders
+ * Added better support in safe-mode to fix issues on fast booting devices like Galaxy S3 and others alike
+ * Other small bug fixes / changes
