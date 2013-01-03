@@ -923,7 +923,7 @@ for loopwrapper in true; do
                                                         doLinkContent=
 
                                                         # Do some cleanup
-                                                        if $bb [ $(doProp get status.script_safe_mode 0) -eq 1 ] && $bb [ "$($bb echo $x $bb cut -d '-' -f1)" = "app" ]; then
+                                                        if $bb [ $(doProp get status.script_safe_mode 0) -eq 1 ] && $bb [ "$($bb echo $x | $bb cut -d '-' -f1)" = "app" ]; then
                                                             doLog d log "Safe-mode detected, cleaning up some unused symlinks"
 
                                                             for i in /data/$x/*; do
