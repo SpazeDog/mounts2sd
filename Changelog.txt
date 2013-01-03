@@ -6,3 +6,7 @@ Script
  * Added better support for init(-*).rc defined folders
  * Added better support in safe-mode to fix issues on fast booting devices like Galaxy S3 and others alike
  * Other small bug fixes / changes
+
+Application
+ * Added warning to the safe-mode disable option
+ * Fixed the Message Dialog where title and message would be removed when rotating the screen
