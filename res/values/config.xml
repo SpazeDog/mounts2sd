@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="config_app_id">34cd1f67e8156bf27ba489aacd9acb1f</string>
-    <string name="config_script_id">fac61995ce94b07ba4f98dcab643300b</string>
+    <string name="config_app_id">cf63ef1b705ffa17ccc50697f18e13cb</string>
+    <string name="config_script_id">03a57d60f72edb30eb3aea741f71366a</string>
     <string name="config_script_path">/system/etc/init.d/10mounts2sd</string>
 </resources>
