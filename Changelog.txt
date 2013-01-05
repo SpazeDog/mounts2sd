@@ -1,12 +1,9 @@
-Release Version 1.1.0 (5.1.0)
+Release Version 1.1.1 (5.1.2)
 
 Script
- * Added /data/app-lib to the apps option for Android 4.2+
- * Added support for Internal Fuse Storage (/data/media) when using r-mount
- * Added better support for init(-*).rc defined folders
- * Added better support in safe-mode to fix issues on fast booting devices like Galaxy S3 and others alike
- * Other small bug fixes / changes
+ * Fixed R-Mount on Android 4.1+
+ * Fixed invalid error reporting
+ * Added Android 4.2 /data/user support (The new /data/data for multi users)
 
 Application
- * Added warning to the safe-mode disable option
- * Fixed the Message Dialog where title and message would be removed when rotating the screen
+ * 
