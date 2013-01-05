@@ -133,7 +133,7 @@ doCheckFolder() {
     doCheckFolderValue=0
 
     for doCheckFolderX in /*.rc; do
-        if $bb [ ! -z "`$bb grep mkdir $doCheckFolderX | $bb grep -ve '^[ \t]*#' | grep " $doCheckFolderPath "`" ]; then
+        if $bb [ ! -z "`$bb grep mkdir $doCheckFolderX | $bb grep -ve '^[ \t]*#' | $bb grep -e " $doCheckFolderPath\(\/\)* "`" ]; then
             doCheckFolderValue=1; break
         fi
     done
@@ -742,18 +742,14 @@ for loopwrapper in true; do
 
                                     appFolders="app app-private app-system"
 
+                                    $bb [ $(doCheckFolder /data/media) -eq 1 ] && sysFolders="property misc system local tombstones secure media" || sysFolders="property misc system local tombstones secure"
+
                                     # In Android 2.2+ /data/data is actually /data/user/0
                                     $bb [ $(doCheckFolder /data/user) -eq 1 ] && dataFolders="data user" || dataFolders="data"
 
                                     for i in /*.rc; do
                                         doRevert="$doRevert $($bb grep mkdir $i | $bb grep -ve '^[ \t]*#' | $bb grep -e ' \/data\/[^\/]* ' | $bb tr -s ' ' | $bb sed 's/mkdir \/data\/\([^ ]*\).*$/\1/' | $bb grep -ve '\(media\|secure\|lost+found\|local\|misc\|system\|tombstones\|property\|data\|dalvik\-\(cache\|system\)\|app\(\-[^ ]*\)*\)$')"
                                         appFolders="$appFolders $($bb grep mkdir $i | $bb grep -ve '^[ \t]*#' | $bb grep -e ' \/data\/app\(\-[^ ]*\)*[^\/]* ' | $bb tr -s ' ' | $bb sed 's/mkdir \/data\/\([^ ]*\).*$/\1/' | $bb grep -ve 'app\(\-system\|\-private\)*$')"
-                                    done
-
-                                    for i in property misc system local tombstones secure media; do
-                                        if $bb [ $(doCheckFolder /data/$i) -eq 1 ]; then
-                                            sysFolders="$sysFolders $i"
-                                        fi
                                     done
 
                                     externalSize=$(doGetSize /sd-ext)
@@ -979,6 +975,12 @@ for loopwrapper in true; do
                                             doCreateFolder $i
                                         done
                                     fi
+
+                                    # Android 4.2 has some hidden dependencies that it will not re-create of it's own. This is of cause for r-mount
+                                    for i in /sd-ext/.*; do
+                                        doLog d log "Reverting $i back to /data/"
+                                        $bb mv -f $i /data/
+                                    done
 
                                     break 2
                                 fi
