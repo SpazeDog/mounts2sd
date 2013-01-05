@@ -742,6 +742,9 @@ for loopwrapper in true; do
 
                                     appFolders="app app-private app-system"
 
+                                    # In Android 2.2+ /data/data is actually /data/user/0
+                                    $bb [ $(doCheckFolder /data/user) -eq 1 ] && dataFolders="data user" || dataFolders="data"
+
                                     for i in /*.rc; do
                                         doRevert="$doRevert $($bb grep mkdir $i | $bb grep -ve '^[ \t]*#' | $bb grep -e ' \/data\/[^\/]* ' | $bb tr -s ' ' | $bb sed 's/mkdir \/data\/\([^ ]*\).*$/\1/' | $bb grep -ve '\(media\|secure\|lost+found\|local\|misc\|system\|tombstones\|property\|data\|dalvik\-\(cache\|system\)\|app\(\-[^ ]*\)*\)$')"
                                         appFolders="$appFolders $($bb grep mkdir $i | $bb grep -ve '^[ \t]*#' | $bb grep -e ' \/data\/app\(\-[^ ]*\)*[^\/]* ' | $bb tr -s ' ' | $bb sed 's/mkdir \/data\/\([^ ]*\).*$/\1/' | $bb grep -ve 'app\(\-system\|\-private\)*$')"
@@ -756,9 +759,9 @@ for loopwrapper in true; do
                                     externalSize=$(doGetSize /sd-ext)
                                     internalSize=$(doGetSize /data)
 
-                                    $bb [ $(doProp get config.move_data) -eq 1 ] && doMove="$doMove data" || doRevert="$doRevert data"
+                                    $bb [ $(doProp get config.move_data) -eq 1 ] && doMove="$doMove $dataFolders" || doRevert="$doRevert $dataFolders"
                                     $bb [ $(doProp get config.move_dalvik) -eq 1 ] && doMove="$doMove dalvik-cache" || doRevert="$doRevert dalvik-cache"
-                                    $bb [ $(doProp get config.move_apps) -eq 1 ] && doMove="$doMove $appFolders" || doRevert="$doRevert app $appFolders"
+                                    $bb [ $(doProp get config.move_apps) -eq 1 ] && doMove="$doMove $appFolders" || doRevert="$doRevert $appFolders"
                                     $bb [ $externalSize -lt $internalSize ] && doMoveOrder="revert move revert-retry move-force link" || doMoveOrder="move revert move revert-retry move-force link"
 
                                     # Failsafe in case r-mount fails, content will stay on the same selected devices
@@ -905,7 +908,7 @@ for loopwrapper in true; do
                                                         case $($bb echo $x | $bb cut -d ':' -f1 | $bb cut -d '-' -f1) in
                                                             app) reporter="move_apps" ;;
                                                             dalvik) reporter="move_dalvik" ;;
-                                                            data) reporter="move_data" ;;
+                                                            data|user) reporter="move_data" ;;
                                                             *) reporter="log" ;;
                                                         esac
 
@@ -940,14 +943,14 @@ for loopwrapper in true; do
                                                             case $($bb echo $x | $bb cut -d '-' -f1) in
                                                                 app) doProp set status.move_apps 1 ;;
                                                                 dalvik) doProp set status.move_dalvik 1 ;;
-                                                                data) doProp set status.move_data 1 ;;
+                                                                data|user) doProp set status.move_data 1 ;;
                                                             esac
 
                                                         else
                                                             case $($bb echo $x | $bb cut -d '-' -f1) in
                                                                 app) reporter="move_apps" ;;
                                                                 dalvik) reporter="move_dalvik" ;;
-                                                                data) reporter="move_data" ;;
+                                                                data|user) reporter="move_data" ;;
                                                                 *) reporter="log" ;;
                                                             esac
 
