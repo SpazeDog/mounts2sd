@@ -1,9 +1,7 @@
-Release Version 1.1.1 (5.1.2)
+Release Version 1.1.2 (5.1.4)
 
 Script
- * Fixed R-Mount on Android 4.1+
- * Fixed invalid error reporting
- * Added Android 4.2 /data/user support (The new /data/data for multi users)
+ * Added support for CM's /cache/dalvik-cache
 
 Application
  * 
