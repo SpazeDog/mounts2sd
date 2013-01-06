@@ -18,7 +18,7 @@ public class SettingsHelper {
 		new Config("content.apps.status", "move_apps", "load", null, "storage.rmount.status", "script.status", 2, true, true, null, "1"),
 		new Config("content.dalvik.status", "move_dalvik", "load", null, "storage.rmount.status", "script.status", 2, true, true, null, "0"),
 		new Config("content.data.status", "move_data", "load", null, "storage.rmount.status", "script.status", 2, true, true, null, "0"),
-		new Config("storage.cache.status", "enable_cache", "load", "switch", null, "script.status", 0, true, true, null, "1"),
+		new Config("storage.cache.status", "enable_cache", "load", "switch", null, "script.status", 0, true, true, null, "2"),
 		new Config("storage.rmount.status", "enable_reversed_mount", "load", null, null, "script.status", 2, true, true, null, "0"),
 		new Config("memory.swap.status", "enable_swap", "load", null, null, "script.status", 3, true, true, null, "1"),
 		new Config("partition.fschk.status", "run_sdext_fschk", "execute", null, null, "script.status", 2, true, true, null, "1"),

@@ -1,8 +1,8 @@
 #!/system/bin/sh
 
 scriptAction=$1
-scriptVersion="5.1.2"
-scriptProps="enabled=1 move_apps=1 move_dalvik=0 move_data=0 enable_reversed_mount=0 enable_cache=1 no_tmpfs_cache=0 enable_swap=1 enable_sdext_journal=0 enable_debug=0 set_sdext_fstype=ext4 set_sdcard_readahead=512 run_sdext_fschk=1 disable_safemode=0 disable_cache_folders=0"
+scriptVersion="5.1.4"
+scriptProps="enabled=1 move_apps=1 move_dalvik=0 move_data=0 enable_reversed_mount=0 enable_cache=2 no_tmpfs_cache=0 enable_swap=1 enable_sdext_journal=0 enable_debug=0 set_sdext_fstype=ext4 set_sdcard_readahead=512 run_sdext_fschk=1 disable_safemode=0 disable_cache_folders=0"
 bb=/system/xbin/busybox
 tb=/system/bin/toolbox
 
@@ -1113,38 +1113,124 @@ for loopwrapper in true; do
                                 elif $bb [ ! -d $i ]; then
                                         $bb mkdir $i
                                         $bb chown 1000.2001 $i
-                                        $bb chmod 0770 $i
+                                        $bb chmod 0771 $i
                                 fi
-                             done
+                            done
 
-                             doLog v log "Unmounting internal cache partition"
-                             $bb umount /cache
+                            if $bb [ -z "`grep dalvik.vm.dexopt-data-only=1 /system/build.prop`" ] && $bb [ $(doCheckFolder /cache/dalvik-cache) -eq 1 ]; then
+                                if $bb [ $(doProp get status.script_safe_mode) -eq 1 ]; then
+                                    if $bb [ $(doProp config.enable_cache) -eq 1 ]; then
+                                        doLog w enable_cache "Cannot handle cache with CM's /cache/dalvik-cache on systems running in safe-mode!"
+                                    fi
 
-                             doLog v log "Attaching $cacheLocation to /cache"
-                             if $bb [ "$cacheLocation" = "tmpfs" ]; then
+                                    doLog d log "Safe-mode detected with CM /cache/dalvik-cache, skipping cache configurations"
+
+                                    doProp set status.enabled 1; break
+                                fi
+
+                                doCreateFolder /internal-cache
+
+                                doLog d log "Moving Internal cache mount point from /cache to /internal-cache"
+                                lastError=$($bb mount --move /cache /internal-cache 2>&1)
+
+                                if $bb [ -z "`$bb grep ' /internal-cache ' /proc/mounts`" ]; then
+                                    doLog d log "Moving Internal cache mount point failed. Trying manual umount/remount"
+                                    mtdDevice="`$bb grep '/dev/' /proc/mounts | $bb grep ' /cache ' | $bb awk '{print $1}'`"
+
+                                    doLog d log "Unmounting Internal cache from /cache"
+                                    $bb umount /cache || $bb umount -f /cache || $bb umount -l /cache
+
+                                    if $bb [ -z "`$bb grep ' /cache ' /proc/mounts`" ]; then
+                                        doLog d log "Trying to mount Internal cache on /internal-cache"
+                                        $bb mount $mtdDevice /internal-cache
+
+                                        if $bb [ -z "`$bb grep ' /internal-cache ' /proc/mounts`" ]; then
+                                            doLog e enable_cache "Could not move Internal cache from /cache to /internal-cache"
+
+                                            if $bb [ ! -z "$lastError" ]; then
+                                                doLog d log "Shell Error Message: [$($bb echo $lastError | $bb awk '{print substr($0, 0, 150)}') ...]"
+                                            fi
+
+                                            doProp set status.enabled 1; break
+                                        fi
+
+                                    else
+                                        doLog e enable_cache "Could not move Internal cache from /cache to /internal-cache"
+
+                                        doProp set status.enabled 1; break
+                                    fi
+                                fi
+
+                                if $bb [ ! -z "`$bb grep ' /internal-cache ' /proc/mounts`" ]; then
+                                    doLog v log "The internal cache was successfully moved to /internal-cache"
+                                fi
+
+                            else
+                                doLog v log "Unmounting internal cache partition"
+                                $bb umount /cache
+                            fi
+
+                            doLog v log "Attaching $cacheLocation to /cache"
+                            if $bb [ "$cacheLocation" = "tmpfs" ]; then
                                  lastError=$($bb mount -t tmpfs -o rw,nosuid,nodev,noatime,nodiratime,relatime,mode=0770,uid=1000,gid=2001 tmpfs /cache 2>&1)
-                             else
+                            else
                                  lastError=$($bb mount --bind $cacheLocation /cache 2>&1)
-                             fi
+                            fi
 
-                             if $bb [ ! -z "`$bb grep ' /cache ' /proc/mounts`" ] || ( $bb [ "$cacheLocation" != "tmpfs" ] && $bb [ ! -z "`$bb grep " $cacheLocation " /proc/mounts`" ] ); then
-                                 doProp set status.enable_cache 1
+                            if $bb [ ! -z "`$bb grep ' /cache ' /proc/mounts`" ] || ( $bb [ "$cacheLocation" != "tmpfs" ] && $bb [ ! -z "`$bb grep " $cacheLocation " /proc/mounts`" ] ); then
+                                doProp set status.enable_cache 1
 
-                                 if $bb [ "$cacheLocation" = "tmpfs" ]; then
+                                if $bb [ "$cacheLocation" = "tmpfs" ]; then
                                     doLog v destination.cache "Cache has been mounted as tmpfs"
                                     doProp set status.destination.cache /cache
 
-                                 else
+                                else
                                     doProp set status.destination.cache $cacheLocation
-                                 fi
+                                fi
+
+                                for x in /*.rc; do
+                                    doCreate="$doCreate $($bb grep mkdir $x | $bb grep -e ' \/cache\/[^\/]*\(\/[^\/]*\)* ' | $bb tr -s ' ' | $bb sed 's/mkdir \(\/cache\/[^ ]*\).*$/\1/')"
+                                done
+
+                                doCreate="`echo $doCreate | sed 's/ /\n/g' | awk '!a[$0]++'`"
+
+                                for i in $doCreate; do
+                                    doLog d log "Making sure that the init.rc defined folder $i exists"
+                                    doCreateFolder $i
+                                done
+
+                                if $bb [ $(doCheckFolder /cache/dalvik-cache) -eq 1 ]; then
+                                    doLog v log "Attaching /internal-cache/dalvik-cache to $(doProp get status.destination.cache /cache)/dalvik-cache"
+                                    lastError=$($bb mount --bind /internal-cache/dalvik-cache $(doProp get status.destination.cache /cache)/dalvik-cache 2>&1)
+
+                                    if $bb [ -z "`$bb grep ' /cache/dalvik-cache ' /proc/mounts`" ] && $bb [ -z "`$bb grep ' /internal-cache/dalvik-cache ' /proc/mounts`" ]; then
+                                        doLog w enable_cache "Could not attach /internal-cache/dalvik-cache to $(doProp get status.destination.cache /cache)/dalvik-cache"
+                                        $bb rm -rf /internal-cache/dalvik-cache/*
+
+                                        if $bb [ ! -z "$lastError" ]; then
+                                            doLog d log "Shell Error Message: [$($bb echo $lastError | $bb awk '{print substr($0, 0, 150)}') ...]"
+                                        fi
+
+                                    else
+                                        # Be very sure that these perms are as they should or you will end up with a lot of FC
+                                        $bb chmod 0771 /cache
+                                        $bb chmod 0771 /cache/dalvik-cache
+                                    fi
+                                fi
 
                              else
-                                 doLog e enable_cache "It was not possible to attach $cacheLocation to /cache!"
-                                 $bb mount /cache
+                                doLog e enable_cache "It was not possible to attach $cacheLocation to /cache!"
+            
+                                if $bb [ -z "`grep dalvik.vm.dexopt-data-only=1 /system/build.prop`" ] && $bb [ $(doCheckFolder /cache/dalvik-cache) -eq 1 ]; then
+                                    $bb umount /internal-cache && $bb mount /cache
 
-                                 if $bb [ ! -z "$lastError" ]; then
+                                else
+                                    $bb mount /cache
+                                fi
+
+                                if $bb [ ! -z "$lastError" ]; then
                                     doLog d log "Shell Error Message: [$($bb echo $lastError | $bb awk '{print substr($0, 0, 150)}') ...]"
-                                 fi
+                                fi
                              fi
 
                         elif $bb [ $(doProp get config.enable_cache) -eq 2 ]; then
