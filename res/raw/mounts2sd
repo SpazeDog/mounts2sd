@@ -977,7 +977,8 @@ for loopwrapper in true; do
                                     fi
 
                                     # Android 4.2 has some hidden dependencies that it will not re-create of it's own. This is of cause for r-mount
-                                    for i in /sd-ext/.*; do
+                                    doRevert="`$bb ls -av /sd-ext | $bb grep -e '^\.' | $bb grep -ve '^[\.]*$'`"
+                                    for i in $doRevert; do
                                         doLog d log "Reverting $i back to /data/"
                                         $bb mv -f $i /data/
                                     done
