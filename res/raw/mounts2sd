@@ -1199,7 +1199,7 @@ for loopwrapper in true; do
                                     doCreateFolder $i
                                 done
 
-                                if $bb [ $(doCheckFolder /cache/dalvik-cache) -eq 1 ]; then
+                                if $bb [ -z "`grep dalvik.vm.dexopt-data-only=1 /system/build.prop`" ] && $bb [ $(doCheckFolder /cache/dalvik-cache) -eq 1 ]; then
                                     doLog v log "Attaching /internal-cache/dalvik-cache to $(doProp get status.destination.cache /cache)/dalvik-cache"
                                     lastError=$($bb mount --bind /internal-cache/dalvik-cache $(doProp get status.destination.cache /cache)/dalvik-cache 2>&1)
 
