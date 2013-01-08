@@ -1,7 +1,8 @@
-Release Version 1.1.2 (5.1.4)
+Release Version 1.1.3 (5.1.6)
 
 Script
- * Added support for CM's /cache/dalvik-cache
+ * Added more support to more limited busybox versions (Fixes issues on some Android 4.2+ devices)
+ * Fixed a small bug in the cache option which created invalid warnings
 
 Application
  * 
