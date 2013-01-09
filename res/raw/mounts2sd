@@ -1202,10 +1202,11 @@ for loopwrapper in true; do
 
                                 if $bb [ -z "`grep dalvik.vm.dexopt-data-only=1 /system/build.prop`" ] && $bb [ $(doCheckFolder /cache/dalvik-cache) -eq 1 ]; then
                                     doLog v log "Attaching /internal-cache/dalvik-cache to $(doProp get status.destination.cache /cache)/dalvik-cache"
+                                    $bb rm -rf $(doProp get status.destination.cache /cache)/dalvik-cache/*
                                     lastError=$($bb mount --bind /internal-cache/dalvik-cache $(doProp get status.destination.cache /cache)/dalvik-cache 2>&1)
 
                                     if $bb [ -z "`$bb grep ' /cache/dalvik-cache ' /proc/mounts`" ] && $bb [ -z "`$bb grep ' /internal-cache/dalvik-cache ' /proc/mounts`" ] && $bb [ -z "`$bb grep " $(doProp get status.destination.cache /cache)/dalvik-cache " /proc/mounts`" ]; then
-                                        doLog w enable_cache "Could not attach /internal-cache/dalvik-cache to $(doProp get status.destination.cache /cache)/dalvik-cache"
+                                        doLog w enable_cache "Could not attach CM's cache dalvik to $(doProp get status.destination.cache /cache)/dalvik-cache"
                                         $bb rm -rf /internal-cache/dalvik-cache/*
 
                                         if $bb [ ! -z "$lastError" ]; then
