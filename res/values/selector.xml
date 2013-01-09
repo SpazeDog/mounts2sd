@@ -15,7 +15,6 @@
         <item>0</item>
    </string-array>
    
-   
     <string-array name="selector_filesystem_names">
         <item>Automatic</item>
         <item>Ext2</item>
@@ -31,6 +30,12 @@
     </string-array>
    
     <string-array name="selector_readahead_names">
+        <item>4Kb</item>
+        <item>8Kb</item>
+        <item>16Kb</item>
+        <item>32Kb</item>
+        <item>64Kb</item>
+        <item>128Kb</item>
         <item>256Kb</item>
         <item>512Kb</item>
         <item>1024Kb</item>
@@ -41,6 +46,12 @@
     </string-array>
    
     <string-array name="selector_readahead_values">
+        <item>4</item>
+        <item>8</item>
+        <item>16</item>
+        <item>32</item>
+        <item>64</item>
+        <item>128</item>
         <item>256</item>
         <item>512</item>
         <item>1024</item>
