@@ -336,7 +336,7 @@ for loopwrapper in true; do
 			                    done
 
                             elif $bb [ -z "`$bb which sqlite3`" ]; then
-                                doLog w log "Storage threshold not changed. Sqlite3 binary is missing!"
+                                doLog v log "Storage threshold not changed. Sqlite3 binary is missing!"
 		                    fi
                         fi
                     ;;
