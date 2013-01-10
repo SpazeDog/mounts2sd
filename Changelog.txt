@@ -1,8 +1,12 @@
-Release Version 1.1.3 (5.1.6)
+Release Version 1.2.0 (5.2.0)
 
 Script
- * Added more support to more limited busybox versions (Fixes issues on some Android 4.2+ devices)
- * Fixed a small bug in the cache option which created invalid warnings
+ * Fixed invalid warnings
+ * Fixed issue with HTC Desire on Android 4.2 (And properly more devices)
+ * Added swappiness action for the new app option
+ * Some other minor changes
 
 Application
- * 
+ * Added more Readahead values
+ * Added more File system types
+ * Added new option to set swappiness
