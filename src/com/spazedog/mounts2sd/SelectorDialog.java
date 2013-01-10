@@ -1,5 +1,7 @@
 package com.spazedog.mounts2sd;
 
+import com.spazedog.mounts2sd.UtilsHelper.SelectorOptions;
+
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
@@ -28,8 +30,7 @@ public class SelectorDialog extends DialogFragment {
 	
 	private SelectorListener LISTENER;
 	
-	private String ITEM_NAMES[];
-	private String ITEM_VALUES[];
+	private SelectorOptions OPTIONS;
 	private LinearLayout ITEMS[];
 	
 	public interface SelectorListener {
@@ -92,23 +93,14 @@ public class SelectorDialog extends DialogFragment {
 		/* ------------------------------------------------
 		 * Lets start populate the dialog */
 		
-		ITEM_NAMES = getResources().getStringArray(
-				PROP_SELECTOR_TYPE.equals("switch") ? R.array.selector_switch_names : 
-					PROP_SELECTOR_TYPE.equals("filesystem") ? R.array.selector_filesystem_names : R.array.selector_readahead_names
-		);
-		
-		ITEM_VALUES = getResources().getStringArray(
-				PROP_SELECTOR_TYPE.equals("switch") ? R.array.selector_switch_values : 
-					PROP_SELECTOR_TYPE.equals("filesystem") ? R.array.selector_filesystem_values : R.array.selector_readahead_values
-		);
-		
-		ITEMS = new LinearLayout[ITEM_NAMES.length];
+		OPTIONS = new SelectorOptions(PROP_SELECTOR_TYPE);
+		ITEMS = new LinearLayout[OPTIONS.getSize()];
 		
 		LinearLayout wrapper = (LinearLayout) dialog.findViewById(R.id.dialog_selector_wrapper_e7f45199);
 		
 		((TextView) dialog.findViewById(R.id.dialog_selector_title_8d4e10e5)).setText(PROP_TITLE);
 		
-		for(int i=0; i < ITEM_NAMES.length; i++) {
+		for(int i=0; i < OPTIONS.getSize(); i++) {
 			ITEMS[i] = (LinearLayout) inflater.inflate(R.layout.dialog_selector_item, null);
 			
 			ITEMS[i].setOnTouchListener(new OnTouchListener() {
@@ -128,10 +120,15 @@ public class SelectorDialog extends DialogFragment {
 				}
 			});
 			
-			((TextView) ITEMS[i].findViewById(R.id.item_text)).setText(ITEM_NAMES[i]);
-			((ImageView) ITEMS[i].findViewById(R.id.item_image)).setImageResource( ((String) ITEM_VALUES[i]).equals(PROP_SELECTOR_VALUE) ? R.drawable.btn_radio_on : R.drawable.btn_radio_off );
+			((TextView) ITEMS[i].findViewById(R.id.item_text)).setText(OPTIONS.getName(i));
+			((ImageView) ITEMS[i].findViewById(R.id.item_image)).setImageResource( ((String) OPTIONS.getValue(i)).equals(PROP_SELECTOR_VALUE) ? R.drawable.btn_radio_on : R.drawable.btn_radio_off );
 			
 			wrapper.addView( ITEMS[i] );
+			
+			if (!OPTIONS.isSupported(i)) {
+				ITEMS[i].setEnabled(false);
+				((TextView) ITEMS[i].findViewById(R.id.item_text)).setTextColor( getResources().getColor(R.color.light_gray) );
+			}
 		}
 		
 		/* ------------------------------------------------
@@ -175,7 +172,7 @@ public class SelectorDialog extends DialogFragment {
 				((ImageView) ITEMS[i].findViewById(R.id.item_image)).setImageResource( ITEMS[i] == v ? R.drawable.btn_radio_on : R.drawable.btn_radio_off );
 				
 				if (ITEMS[i] == v) {
-					PROP_SELECTOR_VALUE = ITEM_VALUES[i];
+					PROP_SELECTOR_VALUE = OPTIONS.getValue(i);
 				}
 			}
 		}

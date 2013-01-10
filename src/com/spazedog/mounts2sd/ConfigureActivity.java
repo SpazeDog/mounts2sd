@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.spazedog.mounts2sd.MessageDialog.MessageDialogListener;
 import com.spazedog.mounts2sd.SelectorDialog.SelectorChoice;
 import com.spazedog.mounts2sd.SelectorDialog.SelectorListener;
+import com.spazedog.mounts2sd.UtilsHelper.SelectorOptions;
 
 public class ConfigureActivity extends FragmentActivity implements SelectorListener,MessageDialogListener {
 	
@@ -77,6 +78,13 @@ public class ConfigureActivity extends FragmentActivity implements SelectorListe
 					text = (TextView) ELEMENTS.get(key).findViewById(R.id.item_value_2a010ab8);
 					
 					if (text != null) {
+						SelectorOptions options = new SelectorOptions(SettingsHelper.propSelector(key));
+						for (int i=0; i < options.getSize(); i++) {
+							if (value.equals(options.getValue(i))) {
+								value = options.getName(i); break;
+							}
+						}
+						
 						text.setText(value);
 					}
 				}
@@ -215,7 +223,15 @@ public class ConfigureActivity extends FragmentActivity implements SelectorListe
 				);
 				
 			} else {
-				((TextView) ELEMENTS.get(choice.getId()).findViewById(R.id.item_value_2a010ab8)).setText(choice.getValue());
+				String value = choice.getValue();
+				SelectorOptions options = new SelectorOptions(SettingsHelper.propSelector(choice.getId()));
+				for (int i=0; i < options.getSize(); i++) {
+					if (value.equals(options.getValue(i))) {
+						value = options.getName(i); break;
+					}
+				}
+				
+				((TextView) ELEMENTS.get(choice.getId()).findViewById(R.id.item_value_2a010ab8)).setText(value);
 			}
 			
 			dependerState(choice.getId(), "0".equals(choice.getValue()) || "".equals(choice.getValue()) ? false : true, false);

@@ -17,6 +17,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.spazedog.mounts2sd.MessageDialog.MessageDialogListener;
+import com.spazedog.mounts2sd.UtilsHelper.SelectorOptions;
 
 public class StatusActivity extends FragmentActivity implements MessageDialogListener {
 	
@@ -237,21 +238,12 @@ public class StatusActivity extends FragmentActivity implements MessageDialogLis
 					        		
 					        	} else if ((text = (TextView) view.findViewById(R.id.item_value_7975cd4b)) != null) {
 					        		if (propState != null && !"".equals(propState)) {
-					        			selectorNames = getResources().getStringArray(
-					        					"readahead".equals(SettingsHelper.propSelector(props[i])) ? R.array.selector_readahead_names : 
-					        						"filesystem".equals(SettingsHelper.propSelector(props[i])) ? R.array.selector_filesystem_names : null
-					        			);
-					        			
-					        			selectorValues = getResources().getStringArray(
-					        					"readahead".equals(SettingsHelper.propSelector(props[i])) ? R.array.selector_readahead_values : 
-					        						"filesystem".equals(SettingsHelper.propSelector(props[i])) ? R.array.selector_filesystem_values : null
-					        			);
-					        			
-					        			for(int x=0; x < selectorValues.length; x++) {
-					        				if (selectorValues[x].equals(propState)) {
-					        					propState = selectorNames[x]; break;
-					        				}
-					        			}
+					    				SelectorOptions options = new SelectorOptions(SettingsHelper.propSelector(props[i]));
+					    				for (int x=0; x < options.getSize(); x++) {
+					    					if (propState.equals(options.getValue(x))) {
+					    						propState = options.getName(x); break;
+					    					}
+					    				}
 					        			
 					        			text.setText(propState);
 					        		}

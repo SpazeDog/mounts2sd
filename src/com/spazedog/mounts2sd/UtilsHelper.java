@@ -2,6 +2,7 @@ package com.spazedog.mounts2sd;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -400,6 +401,65 @@ public class UtilsHelper {
 		
 		public final View getView(String pName) {
 			return VIEWS.get(pName);
+		}
+	}
+	
+	public static class SelectorOptions {
+		String VALUES[];
+		String NAMES[];
+		Boolean SUPPORTED[];
+		Integer SIZE;
+		
+		public SelectorOptions(String name) {
+			NAMES = BaseApplication.getContext().getResources().getStringArray(
+					name.equals("switch") ? R.array.selector_switch_names : 
+						name.equals("filesystem") ? R.array.selector_filesystem_names : R.array.selector_readahead_names
+			);
+			
+			VALUES = BaseApplication.getContext().getResources().getStringArray(
+					name.equals("switch") ? R.array.selector_switch_values : 
+						name.equals("filesystem") ? R.array.selector_filesystem_values : R.array.selector_readahead_values
+			);
+			
+			SUPPORTED = new Boolean[VALUES.length];
+			SIZE = VALUES.length;
+			
+			if (name.equals("filesystem")) {
+				try {
+					BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream("/proc/filesystems")));
+					String line;
+					String fsTypes = "auto";
+					
+					while ((line = br.readLine()) != null) {
+						if (!line.contains("nodev ")) {
+							fsTypes += " " + line;
+						}
+					}
+					
+					br.close();
+					
+					for (int i=0; i < VALUES.length; i++) {
+						SUPPORTED[i] = fsTypes.contains(VALUES[i]);
+					}
+					
+				} catch (Throwable e) { e.printStackTrace(); }
+			}
+		}
+		
+		public Integer getSize() {
+			return SIZE;
+		}
+		
+		public String getName(Integer index) {
+			return NAMES[index];
+		}
+		
+		public String getValue(Integer index) {
+			return VALUES[index];
+		}
+		
+		public Boolean isSupported(Integer index) {
+			return SUPPORTED[index] != null ? SUPPORTED[index] : true;
 		}
 	}
 }
