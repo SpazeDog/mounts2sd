@@ -69,48 +69,59 @@ doLog() {
 }
 
 doCreateFolder() {
-    doCfFolder="$1"
-    $bb [ "$2" = "1" ] && doCfFolderExt="/sd-ext/$(basename $doCfFolder)"
+    $bb [ "$2" = "1" ] && doCFFolder="$1 $($bb echo $1 | $bb sed -e 's/^\/[^\/]*\//\/sd-ext\//')" || doCFFolder="$1"
+    doCFCh=0
 
-    if $bb [ ! -d $doCfFolder ] || ( $bb [ "$2" = "1" ] && $bb [ ! -d $doCfFolderExt ] ); then
-        for doCfFolderX in /*.rc; do
-            doCfBuildIn="$($bb grep mkdir $doCfFolderX | $bb grep -ve '^[ \t]*#' | $bb grep " $doCfFolder ")"
+    for doCFx in $doCFFolder; do
+        if $bb [ ! -d $doCFx ]; then
+            $bb mkdir $doCFx
 
-            if $bb [ ! -z "$doCfBuildIn" ]; then
+            doCFCh=1
+        fi
+    done
+
+    if $bb [ $doCFCh -eq 1 ]; then
+        doSetPerms "$doCFFolder" 1000.1000 0771
+    fi
+}
+
+doSetPerms() {
+    doSPFolder="$1"
+    doSPOwner="$2"
+    doSPPerm="$3"
+    
+    for doSPi in $doSPFolder; do
+        for doSPx in /*.rc; do
+            doSPBuildIn="$($bb grep mkdir $doSPx | $bb grep -ve '^[ \t]*#' | $bb grep " $doSPi " | $bb tail -n1)"
+
+            if $bb [ ! -z "$doSPBuildIn" ]; then
+                doSPOwner="$($bb echo $doSPBuildIn | $bb awk '{print $4,$5}' | $bb sed 's/ /\./')"
+                doSPPerm="$($bb echo $doSPBuildIn | $bb awk '{print $3}')"
+
                 break
             fi
         done
 
-        if $bb [ -z "$doCfBuildIn" ]; then
-            doCfFolderOwner="1000.1000"
-            doCfFolderMod="0771"
+        break
+    done
 
+    if $bb [ -z "$cmdCH" ]; then
+        $tb chown 2> /dev/null
+        doSPStatus=$?
+
+        # Busybox cannot always set owners based on names, so we use toolbox whenever we can.
+        # However not all toolbox versions has chmod and chown included.
+        if $bb [ "$doSPStatus" = "255" ]; then
+            export cmdCH="$bb"
         else
-            doCfFolderOwner="$($bb echo $doCfBuildIn | $bb awk '{print $4,$5}' | $bb sed 's/ /\./')"
-            doCfFolderMod="$($bb echo $doCfBuildIn | $bb awk '{print $3}')"
+            export cmdCH="$tb"
         fi
-
-        if $bb [ -z "$doCfCmdCh" ]; then
-            $tb chown 2> /dev/null
-            doCfStatus=$?
-
-            # Busybox cannot always set owners based on names, so we use toolbox whenever we can.
-            # However not all toolbox versions has chmod and chown included.
-            if $bb [ "$doCfStatus" = "255" ]; then
-                export doCfCmdCh="$bb"
-            else
-                export doCfCmdCh="$tb"
-            fi
-        fi
-
-        doCfFolders="$doCfFolder $doCfFolderExt"
-
-        for doCfX in $doCfFolders; do
-            $bb mkdir $doCfX
-            $doCfCmdCh chown $doCfFolderOwner $doCfX
-            $doCfCmdCh chmod $doCfFolderMod $doCfX
-        done
     fi
+
+    for doSPi in $doSPFolder; do
+        $cmdCH chmod $doSPPerm $doSPi
+        $cmdCH chown $doSPOwner $doSPi 
+    done
 }
 
 doGetSize() {
@@ -1185,13 +1196,15 @@ for loopwrapper in true; do
 
                             doLog v log "Attaching $cacheLocation to /cache"
                             if $bb [ "$cacheLocation" = "tmpfs" ]; then
-                                 lastError=$($bb mount -t tmpfs -o rw,nosuid,nodev,noatime,nodiratime,relatime,mode=0770,uid=1000,gid=2001 tmpfs /cache 2>&1)
+                                 lastError=$($bb mount -t tmpfs -o rw,nosuid,nodev,noatime,nodiratime,relatime,mode=0771,uid=1000,gid=2001 tmpfs /cache 2>&1)
                             else
                                  lastError=$($bb mount --bind $cacheLocation /cache 2>&1)
                             fi
 
                             if $bb [ ! -z "`$bb grep ' /cache ' /proc/mounts`" ] || ( $bb [ "$cacheLocation" != "tmpfs" ] && $bb [ ! -z "`$bb grep " $cacheLocation " /proc/mounts`" ] ); then
                                 doProp set status.enable_cache 1
+
+                                doSetPerms /cache 1000.2001 0771
 
                                 if $bb [ "$cacheLocation" = "tmpfs" ]; then
                                     doLog v destination.cache "Cache has been mounted as tmpfs"
@@ -1227,8 +1240,7 @@ for loopwrapper in true; do
 
                                     else
                                         # Be very sure that these perms are as they should or you will end up with a lot of FC
-                                        $bb chmod 0771 /cache
-                                        $bb chmod 0771 /cache/dalvik-cache
+                                        doSetPerms /cache/dalvik-cache 1000.1000 0771
                                     fi
                                 fi
 
