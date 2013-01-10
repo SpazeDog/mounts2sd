@@ -21,6 +21,7 @@ public class SettingsHelper {
 		new Config("storage.cache.status", "enable_cache", "load", "switch", null, "script.status", 0, true, true, null, "2"),
 		new Config("storage.rmount.status", "enable_reversed_mount", "load", null, null, "script.status", 2, true, true, null, "0"),
 		new Config("memory.swap.status", "enable_swap", "load", null, null, "script.status", 3, true, true, null, "1"),
+		new Config("memory.swap.level", "set_swap_level", "configure", "swappiness", null, "memory.swap.status", 3, true, true, null, "0"),
 		new Config("partition.fschk.status", "run_sdext_fschk", "execute", null, null, "script.status", 2, true, true, null, "1"),
 		new Config("partition.fstype.value", "set_sdext_fstype", "configure", "filesystem", null, "script.status", 2, true, true, null, "ext4"),
 		new Config("device.readahead.value", "set_sdcard_readahead", "configure", "readahead", null, "script.status", 1, true, true, null, "512"),

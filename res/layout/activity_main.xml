@@ -563,7 +563,8 @@
 	        android:paddingLeft="14dp"
 	        android:paddingRight="10dp"
 	        android:paddingBottom="7dp"
-	        android:paddingTop="7dp" >
+	        android:paddingTop="7dp"
+	        android:background="@drawable/border_bottom_line" >
             
 	        <LinearLayout
 	            android:layout_width="match_parent"
@@ -589,6 +590,52 @@
 	            
 	        </LinearLayout>
 	        
+            <TextView
+                android:id="@+id/item_message_7975cd4b"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="7dp"
+                android:visibility="gone"
+                android:paddingRight="50dp"
+                android:textColor="@color/dark_gray"
+                android:textAppearance="?android:attr/textAppearanceSmall" />
+            
+        </LinearLayout>
+        
+        <LinearLayout
+            android:id="@+id/memory_swap_level_layout_7975cd4b"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+	        android:paddingLeft="14dp"
+	        android:paddingRight="14dp"
+	        android:paddingBottom="7dp"
+	        android:paddingTop="7dp" >
+            
+	        <LinearLayout
+	            android:layout_width="match_parent"
+	            android:layout_height="wrap_content"
+	            android:orientation="horizontal"
+	            android:gravity="center_vertical" >
+            
+	            <TextView
+	                android:id="@+id/item_header_7975cd4b"
+	                android:layout_width="0dp"
+	                android:layout_height="wrap_content"
+	                android:gravity="center_vertical"
+	                android:layout_weight="1"
+	                android:text="@string/memory_swappiness_header"
+	                android:textAppearance="?android:attr/textAppearanceMedium" />
+	            
+				<TextView
+				    android:id="@+id/item_value_7975cd4b"
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:textAppearance="?android:attr/textAppearanceSmall"
+	                android:paddingRight="7dp" />
+				
+		    </LinearLayout>
+		    
             <TextView
                 android:id="@+id/item_message_7975cd4b"
                 android:layout_width="match_parent"

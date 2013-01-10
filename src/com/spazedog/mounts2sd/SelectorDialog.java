@@ -120,7 +120,7 @@ public class SelectorDialog extends DialogFragment {
 				}
 			});
 			
-			((TextView) ITEMS[i].findViewById(R.id.item_text)).setText(OPTIONS.getName(i));
+			((TextView) ITEMS[i].findViewById(R.id.item_text)).setText(OPTIONS.getName(i) + (OPTIONS.getComment(i) != null ? " (" + OPTIONS.getComment(i) + ")" : ""));
 			((ImageView) ITEMS[i].findViewById(R.id.item_image)).setImageResource( ((String) OPTIONS.getValue(i)).equals(PROP_SELECTOR_VALUE) ? R.drawable.btn_radio_on : R.drawable.btn_radio_off );
 			
 			wrapper.addView( ITEMS[i] );

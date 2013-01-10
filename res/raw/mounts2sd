@@ -2,7 +2,7 @@
 
 scriptAction=$1
 scriptVersion="5.1.6"
-scriptProps="enabled=1 move_apps=1 move_dalvik=0 move_data=0 enable_reversed_mount=0 enable_cache=2 no_tmpfs_cache=0 enable_swap=1 enable_sdext_journal=0 enable_debug=0 set_sdext_fstype=ext4 set_sdcard_readahead=512 run_sdext_fschk=1 disable_safemode=0 disable_cache_folders=0"
+scriptProps="enabled=1 move_apps=1 move_dalvik=0 move_data=0 enable_reversed_mount=0 enable_cache=2 no_tmpfs_cache=0 enable_swap=1 set_swap_level=0 enable_sdext_journal=0 enable_debug=0 set_sdext_fstype=ext4 set_sdcard_readahead=512 run_sdext_fschk=1 disable_safemode=0 disable_cache_folders=0"
 bb=/system/xbin/busybox
 tb=/system/bin/toolbox
 
@@ -1062,15 +1062,24 @@ for loopwrapper in true; do
 
                         doLog d log "Checking SWAP partition and SWAP settings"
 
-                        if $bb [ ! -z "`doProp get status.device.sdcard.partition.swap`" ] && $bb [ $(doProp get config.enable_swap) -eq 1 ]; then
+                        if $bb [ -e /proc/sys/vm/swappiness ] && $bb [ ! -z "`doProp get status.device.sdcard.partition.swap`" ] && $bb [ $(doProp get config.enable_swap) -eq 1 ]; then
                                 doLog v log "Activating SWAP partition"
                                 lastError=$($bb swapon $(doProp get status.device.sdcard.partition.swap) 2>&1)
 
                                 if $bb [ "$?" = "0" ]; then
                                         doProp set status.enable_swap 1
 
+                                        doLog v log "Setting swappiness value to '$(doProp get config.set_swap_level 0)'"
+                                        echo $(doProp get config.set_swap_level 0) > /proc/sys/vm/swappiness
+
+                                        if $bb [ "$(doProp get config.set_swap_level 0)" != "`$bb cat /proc/sys/vm/swappiness`" ]; then
+                                            doLog w set_swap_level "The swappiness value could not be changed!"
+                                        fi
+
+                                        doProp set status.set_swap_level $($bb cat /proc/sys/vm/swappiness)
+
                                 else
-                                        doLog e enable_swap "Could not activate SWAP. Check kernel support!"
+                                        doLog e enable_swap "Could not activate the SWAP partition!"
                                         echo 0 > /data/property/m2ds.enable_swap
 
                                         if $bb [ ! -z "$lastError" ]; then
@@ -1078,9 +1087,12 @@ for loopwrapper in true; do
                                         fi
                                 fi
 
+                        elif $bb [ ! -e /proc/sys/vm/swappiness ] && $bb [ $(doProp get config.enable_swap) -eq 1 ]; then
+                            doLog w enable_swap "You kernel does not support SWAP partitions!"
+
                         elif $bb [ -z "`doProp get status.device.sdcard.partition.swap`" ] && $bb [ $(doProp get config.enable_swap) -eq 1 ]; then
-                                doLog w enable_swap "Did not find any SWAP partition!"
-                                echo 0 > /data/property/m2sd.enable_swap
+                            doLog w enable_swap "Did not find any SWAP partition!"
+                            echo 0 > /data/property/m2sd.enable_swap
                         fi
 
                         doLog d log "Handling the Cache partition and it's settings"

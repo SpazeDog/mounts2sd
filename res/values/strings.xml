@@ -25,6 +25,7 @@
     <string name="storage_usage_text">%1$s of %2$s</string>
     
     <string name="memory_swap_header">SWAP Partition</string>
+    <string name="memory_swappiness_header">Swappiness</string>
     
     <string name="device_readahead_header">Readahead</string>
     

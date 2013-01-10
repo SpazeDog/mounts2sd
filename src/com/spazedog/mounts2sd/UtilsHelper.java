@@ -407,19 +407,22 @@ public class UtilsHelper {
 	public static class SelectorOptions {
 		String VALUES[];
 		String NAMES[];
+		String COMMENTS[];
 		Boolean SUPPORTED[];
 		Integer SIZE;
 		
 		public SelectorOptions(String name) {
-			NAMES = BaseApplication.getContext().getResources().getStringArray(
-					name.equals("switch") ? R.array.selector_switch_names : 
-						name.equals("filesystem") ? R.array.selector_filesystem_names : R.array.selector_readahead_names
-			);
+			NAMES = BaseApplication.getContext().getResources().getStringArray( BaseApplication.getContext().getResources().getIdentifier("selector_" + name + "_names", "array", BaseApplication.getContext().getPackageName()) );
+			VALUES = BaseApplication.getContext().getResources().getStringArray( BaseApplication.getContext().getResources().getIdentifier("selector_" + name + "_values", "array", BaseApplication.getContext().getPackageName()) );
 			
-			VALUES = BaseApplication.getContext().getResources().getStringArray(
-					name.equals("switch") ? R.array.selector_switch_values : 
-						name.equals("filesystem") ? R.array.selector_filesystem_values : R.array.selector_readahead_values
-			);
+			Integer commentsId = BaseApplication.getContext().getResources().getIdentifier("selector_" + name + "_comments", "array", BaseApplication.getContext().getPackageName());
+			
+			if (commentsId != 0) {
+				COMMENTS = BaseApplication.getContext().getResources().getStringArray(commentsId);
+				
+			} else {
+				COMMENTS = new String[VALUES.length];
+			}
 			
 			SUPPORTED = new Boolean[VALUES.length];
 			SIZE = VALUES.length;
@@ -456,6 +459,10 @@ public class UtilsHelper {
 		
 		public String getValue(Integer index) {
 			return VALUES[index];
+		}
+		
+		public String getComment(Integer index) {
+			return COMMENTS[index];
 		}
 		
 		public Boolean isSupported(Integer index) {

@@ -70,4 +70,22 @@
         <item>6144</item>
         <item>8192</item>
     </string-array>
+    
+    <string-array name="selector_swappiness_names">
+        <item>Low</item>
+        <item>Medium</item>
+        <item>High</item>
+    </string-array>
+    
+    <string-array name="selector_swappiness_values">
+        <item>0</item>
+        <item>60</item>
+        <item>100</item>
+    </string-array>
+    
+    <string-array name="selector_swappiness_comments">
+        <item>Recommended</item>
+        <item>Linux Default</item>
+        <item>Aggressive</item>
+    </string-array>
 </resources>
