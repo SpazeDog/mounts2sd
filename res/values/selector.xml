@@ -20,6 +20,11 @@
         <item>Ext2</item>
         <item>Ext3</item>
         <item>Ext4</item>
+        <item>XFS</item>
+        <item>ReiserFS</item>
+        <item>Fat(16/32)</item>
+        <item>exFat</item>
+        <item>NTFS</item>
     </string-array>
    
     <string-array name="selector_filesystem_values">
@@ -27,6 +32,11 @@
         <item>ext2</item>
         <item>ext3</item>
         <item>ext4</item>
+        <item>xfs</item>
+        <item>reiserfs</item>
+        <item>vfat</item>
+        <item>exfat</item>
+        <item>ntfs</item>
     </string-array>
    
     <string-array name="selector_readahead_names">
