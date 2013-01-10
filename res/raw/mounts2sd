@@ -74,6 +74,7 @@ doCreateFolder() {
 
     for doCFx in $doCFFolder; do
         if $bb [ ! -d $doCFx ]; then
+            doLog d log "Function: Creating folder $doCFx!"
             $bb mkdir $doCFx
 
             doCFCh=1
@@ -119,6 +120,8 @@ doSetPerms() {
     fi
 
     for doSPi in $doSPFolder; do
+        doLog d log "Function: Changing permissions on $doSPi to $doSPOwner:$doSPPerm!"
+
         $cmdCH chmod $doSPPerm $doSPi
         $cmdCH chown $doSPOwner $doSPi 
     done
