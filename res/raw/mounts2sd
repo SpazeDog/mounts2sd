@@ -1,7 +1,7 @@
 #!/system/bin/sh
 
 scriptAction=$1
-scriptVersion="5.1.6"
+scriptVersion="5.2.0"
 scriptProps="enabled=1 move_apps=1 move_dalvik=0 move_data=0 enable_reversed_mount=0 enable_cache=2 no_tmpfs_cache=0 enable_swap=1 set_swap_level=0 enable_sdext_journal=0 enable_debug=0 set_sdext_fstype=ext4 set_sdcard_readahead=512 run_sdext_fschk=1 disable_safemode=0 disable_cache_folders=0"
 bb=/system/xbin/busybox
 tb=/system/bin/toolbox
