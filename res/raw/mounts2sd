@@ -537,6 +537,9 @@ for loopwrapper in true; do
                                                                 if $bb [ ! -z "$lastError" ]; then
                                                                     doLog d log "Shell Error Message: [$($bb echo $lastError | $bb awk '{print substr($0, 0, 150)}') ...]"
                                                                 fi
+
+                                                        elif $bb [ ! -z "`tune2fs -l $(doProp get status.device.sdcard.partition.sdext) | $bb grep features | $bb grep has_journal`" ]; then
+                                                            doLog w enable_sdext_journal "Could not turn off the sd-ext ext4 journal!"
                                                         fi
                                                     fi
 
@@ -553,6 +556,9 @@ for loopwrapper in true; do
                                                                 if $bb [ ! -z "$lastError" ]; then
                                                                     doLog d log "Shell Error Message: [$($bb echo $lastError | $bb awk '{print substr($0, 0, 150)}') ...]"
                                                                 fi
+
+                                                        elif $bb [ -z "`tune2fs -l $(doProp get status.device.sdcard.partition.sdext) | $bb grep features | $bb grep has_journal`" ]; then
+                                                            doLog w enable_sdext_journal "Could not turn on the sd-ext ext4 journal!"
                                                         fi
                                                     fi
                                                 fi
