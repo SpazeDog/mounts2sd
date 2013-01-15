@@ -801,7 +801,7 @@ for loopwrapper in true; do
 
                                                         doLog d log "Looking in /sd-ext/$x to see if something should be reverted back to /data/$x"
 
-                                                        if $bb [ -d /sd-ext/$x ] && $bb [ ! -L /sd-ext/$x ] && $bb [ ! -z "`$bb ls -v /sd-ext/$x`" ] && $bb [ ! -z "`$bb find /sd-ext/$x -type f`" ]; then
+                                                        if $bb [ -d /sd-ext/$x ] && $bb [ ! -L /sd-ext/$x ] && $bb [ ! -z "`$bb ls -v /sd-ext/$x | $bb tail -n1`" ] && $bb [ ! -z "`$bb find /sd-ext/$x -type f | $bb tail -n1`" ]; then
                                                             doLog v log "Reverting /sd-ext/$x back to /data/$x"
 
                                                             xSize="`$bb echo $($bb du -s -m /sd-ext/$x) | $bb awk '{print $1}'`"
@@ -827,7 +827,7 @@ for loopwrapper in true; do
 
                                                                     xSize=$($bb echo $($bb du -s -m /data/$x) | $bb awk '{print $1}')
 
-                                                                    ( $bb [ -d /sd-ext/$x ] && $bb [ ! -z "`$bb ls -v /sd-ext/$x`" ] && $bb [ ! -z "`$bb find /sd-ext/$x -type f`" ] ) && attention="$attention ${x}:revert:notempty" || $bb rm -rf /sd-ext/$x
+                                                                    ( $bb [ -d /sd-ext/$x ] && $bb [ ! -z "`$bb ls -v /sd-ext/$x | $bb tail -n1`" ] && $bb [ ! -z "`$bb find /sd-ext/$x -type f | $bb tail -n1`" ] ) && attention="$attention ${x}:revert:notempty" || $bb rm -rf /sd-ext/$x
 
                                                                 else
                                                                     $bb rm -rf /sd-ext/$x
@@ -863,7 +863,7 @@ for loopwrapper in true; do
 
                                                         doLog d log "Looking in /data/$x to see if something should be moved into /sd-ext/$x"
 
-                                                        if $bb [ -d /data/$x ] && $bb [ ! -z "`$bb ls -v /data/$x`" ] && $bb [ ! -z "`$bb find /data/$x -type f`" ]; then
+                                                        if $bb [ -d /data/$x ] && $bb [ ! -z "`$bb ls -v /data/$x | $bb tail -n1`" ] && $bb [ ! -z "`$bb find /data/$x -type f | $bb tail -n1`" ]; then
                                                             doLog v log "Moving content from /data/$x to /sd-ext/$x"
 
                                                             xSize="`$bb echo $($bb du -s -m /data/$x) | $bb awk '{print $1}'`"
@@ -891,7 +891,7 @@ for loopwrapper in true; do
 
                                                                     xSize=$($bb echo $($bb du -s -m /sd-ext/$x) | $bb awk '{print $1}')
 
-                                                                    ( $bb [ -d /data/$x ] && $bb [ ! -z "`$bb ls -v /data/$x`" ] && $bb [ ! -z "`$bb find /data/$x -type f`" ] ) && attention="$attention ${x}:move:notempty"
+                                                                    ( $bb [ -d /data/$x ] && $bb [ ! -z "`$bb ls -v /data/$x | $bb tail -n1`" ] && $bb [ ! -z "`$bb find /data/$x -type f | $bb tail -n1`" ] ) && attention="$attention ${x}:move:notempty"
 
                                                                 else
                                                                     $bb rm -rf /data/$x/*
