@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="selector_btn_cancel">Annuller</string>
+    <string name="selector_btn_okay">Gem</string>
+    
+    <string-array name="selector_switch_names">
+        <item>Automatisk</item>
+        <item>Slået til</item>
+        <item>Slået fra</item>
+    </string-array>
+   
+    <string-array name="selector_filesystem_names">
+        <item>Automatisk</item>
+        <item>Ext2</item>
+        <item>Ext3</item>
+        <item>Ext4</item>
+        <item>XFS</item>
+        <item>ReiserFS</item>
+        <item>Fat(16/32)</item>
+        <item>exFat</item>
+        <item>NTFS</item>
+    </string-array>
+    
+    <string-array name="selector_swappiness_names">
+        <item>Lav</item>
+        <item>Medium</item>
+        <item>Høj</item>
+    </string-array>
+    
+    <string-array name="selector_swappiness_comments">
+        <item>Anbefalet</item>
+        <item>Linux Standard</item>
+        <item>Aggressivt</item>
+    </string-array>
+</resources>

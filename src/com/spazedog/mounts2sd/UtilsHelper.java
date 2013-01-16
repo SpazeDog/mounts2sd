@@ -8,6 +8,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
@@ -27,6 +28,37 @@ import android.view.View;
 public class UtilsHelper {
 	public static final String TAG = "Mounts2SD";
 	private static final String SIZE_PRIFIX[] = {"b","Kb","Mb","Gb"};
+	
+	public static String[] splitScriptMessage(String msg, Boolean translate) {
+		String[] tmp = msg.split("883b21e9/");
+		String[] out = new String[3];
+		String[] parts = new String[0];
+		Integer translatedId;
+		
+		if (tmp.length > 3) {
+			parts = tmp[3].split("ad4ebc50/");
+		}
+		
+		for (int i=0; i < out.length; i++) {
+			out[i] = tmp.length >= (i+1) ? tmp[i] : null;
+			
+			if (i == 2) {
+				if (translate && out[i] != null) {
+					translatedId = BaseApplication.getContext().getResources().getIdentifier("script_msg_" + md5(out[i].trim()), "string", BaseApplication.getContext().getPackageName());
+					
+					if (translatedId > 0) {
+						out[i] = BaseApplication.getContext().getResources().getString(translatedId);
+					}
+				}
+				
+				for (int x=0; x < parts.length; x++) {
+					out[i] = out[i].replace("%arg" + (x+1), parts[x]);
+				}
+			}
+		}
+		
+		return out;
+	}
 	
     public static String getMB(double iNum) {
         String lPrifix = SIZE_PRIFIX[0];
@@ -71,20 +103,20 @@ public class UtilsHelper {
 	
 	public static final String md5(final String s) { 
 		try { // Create MD5 Hash 
-			MessageDigest digest = java.security.MessageDigest.getInstance("MD5"); 
-			digest.update(s.getBytes()); 
 			
-			byte messageDigest[] = digest.digest();
-	
-	        // Create Hex String
-	        StringBuffer hexString = new StringBuffer();
-	        for (int i = 0; i < messageDigest.length; i++) {
-	            String h = Integer.toHexString(0xFF & messageDigest[i]);
-	            while (h.length() < 2)
-	                h = "0" + h;
-	            hexString.append(h);
-	        }
-	        return hexString.toString();
+			MessageDigest digest = MessageDigest.getInstance("MD5");
+			digest.update(s.getBytes(), 0, s.length());
+			
+			char[] hex_digits = "0123456789abcdef".toCharArray();
+			byte[] data = digest.digest();
+		    char[] chars = new char[data.length * 2];
+		    
+		    for (int i = 0; i < data.length; i++) {
+		        chars[i * 2] = hex_digits[(data[i] >> 4) & 0xf];
+		        chars[i * 2 + 1] = hex_digits[data[i] & 0xf];
+		    }
+			
+			return new String(chars);
 
 	    } catch (NoSuchAlgorithmException e) {
 	        e.printStackTrace();
@@ -97,22 +129,22 @@ public class UtilsHelper {
 	    String sdcardStatus = Environment.getExternalStorageState();
 
 	    if (sdcardStatus.equals(Environment.MEDIA_MOUNTED_READ_ONLY)) {
-	    	return "The sdcard is mounted in read-only mode";
+	    	return BaseApplication.getContext().getResources().getString(R.string.sdcard_state_ro);
 
 	    } else if (sdcardStatus.equals(Environment.MEDIA_NOFS)) {
-	    	return "The sdcard is not formated in a correct format";
+	    	return BaseApplication.getContext().getResources().getString(R.string.sdcard_state_format);
 
 	    } else if (sdcardStatus.equals(Environment.MEDIA_REMOVED)) {
-	    	return "The sdcard is not present";
+	    	return BaseApplication.getContext().getResources().getString(R.string.sdcard_state_missing);
 
 	    } else if (sdcardStatus.equals(Environment.MEDIA_SHARED)) {
-	    	return "The sdcard is corrently being shared via the USB";
+	    	return BaseApplication.getContext().getResources().getString(R.string.sdcard_state_ums);
 
 	    } else if (sdcardStatus.equals(Environment.MEDIA_UNMOUNTABLE)) {
-	    	return "The sdcard is not mounted do to issues with the partition or the card it self";
+	    	return BaseApplication.getContext().getResources().getString(R.string.sdcard_state_mount_failure);
 
 	    } else if (sdcardStatus.equals(Environment.MEDIA_UNMOUNTED)) {
-	    	return "The sdcard is not mounted";
+	    	return BaseApplication.getContext().getResources().getString(R.string.sdcard_state_mount);
 
 	    }
 

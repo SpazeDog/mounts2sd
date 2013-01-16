@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    
+    <!-- ############################################
+     Menu strings for the Log layout
+    ############################################# -->
+    <string name="menu_save_log">Kopirer log til sd-kortet</string>
+
+    <!-- ############################################
+     Menu strings for the Status layout
+    ############################################# -->
+    <string name="menu_settings">Indstillinger</string>
+    <string name="options_configure">Konfigurer</string>
+    <string name="options_view_log">Vis Log</string>
+
+    <!-- ############################################
+     Headlines for the Settings layout
+    ############################################# -->
+    <string name="settings_script_headline">Installer Script</string>
+    <string name="settings_busybox_headline">Konfigurer Busybox</string>
+
+    <!-- ############################################
+     Headlines for the Status and Configure layout
+    ############################################# -->
+    <string name="global_status_headline">Status</string>
+    <string name="options_headline">Muligheder</string>
+    <string name="storage_headline">Lagre</string>
+    <string name="content_headline">Indhold</string>
+    <string name="memory_headline">Hukommelse</string>
+    <string name="device_headline">SD-Kort Enhed</string>
+    <string name="partition_headline">SD-Ext Partition</string>
+    <string name="misc_headline">Diverse</string>
+
+    <!-- ############################################
+     Headers for the Status and Configure layout
+    ############################################# -->
+    <string name="storage_internal_header">Intern Data</string>
+    <string name="storage_external_header">Ekstern Data</string>
+    <string name="storage_cache_header">Cache</string>
+    <string name="storage_rmount_header">R-Mount</string>
+    <string name="misc_safemode_header">Deaktiver Fejlsikrer Tilstand</string>
+    <string name="misc_tmpfs_header">Deaktiver tmpfs cache</string>
+    <string name="misc_cache_folders_header">Deaktiver cache mapper</string>
+    <string name="misc_debug_header">Aktiver Fejlsøgning</string>
+    <string name="storage_usage_text">%1$s af %2$s</string>
+    <string name="memory_swap_header">SWAP Partition</string>
+    <string name="memory_swappiness_header">Swappiness</string>
+    <string name="device_readahead_header">Readahead</string>
+    <string name="partition_fschk_header">FilSystem Tjek</string>
+    <string name="partition_journal_header">Ext(3/4) Journal</string>
+    <string name="partition_fstype_header">FilSystem Type</string>
+    <string name="content_apps_header">Programmer</string>
+    <string name="content_data_header">Data</string>
+    <string name="content_dalvik_header">Dalvik Cache</string>
+
+    <!-- ############################################
+     Text for the Status layout
+    ############################################# -->
+    <string name="not_available_text">Ikke tilgængelig</string>
+
+    <!-- ############################################
+     Text for the Configure layout
+    ############################################# -->
+    <string name="global_status_text">Aktiver/Deaktiver dette script. Advarsel, deaktivering vil ikke genoprette noget til de oprindelige plaseringer</string>
+    <string name="storage_rmount_text">Vender monterings punkterne så sd-ext bliver brugt som internt imens data bliver brugt som externt</string>
+    <string name="content_apps_text">Flytter alle programmer fra /data/app til /sd-ext/app</string>
+    <string name="content_data_text">Flytter alt program data fra /data/data til /sd-ext/data</string>
+    <string name="content_dalvik_text">Flytter dalvik cache fra /data/dalvik-cache til /sd-ext/dalvik-cache</string>
+    <string name="storage_cache_text">Flytter /cache til enten /data/cache eller /sd-ext/cache afhængig af hvilken der har mest tilgængelig plads</string>
+    <string name="memory_swap_text">Aktiver SWAP partition (3td sdcard partition) under boot</string>
+    <string name="memory_swappiness_text">Set SWAP/RAM balancen. Højere niveau betyder mere SWAP brug, hvilket kan sløve dit system</string>
+    <string name="partition_fschk_text">Udfør et fil systems tjek/reparation på sd-ext partitionen under boot</string>
+    <string name="partition_journal_text">Aktiver/Deaktiver ext(3/4) journal under boot (Set til auto for at benytte standard værdi)</string>
+    <string name="partition_fstype_text">Set fil systems type for sd-ext partitionen, der skal påtvinges under boot</string>
+    <string name="device_readahead_text">Set readahead værdien for SD-Kortet</string>
+    <string name="misc_safemode_text">Hvorvidt fejlsikret tilstand skal bruges når ukorrekt init.d support er opdaget</string>
+    <string name="misc_tmpfs_text">Brug kun /data eller /sd-ext som cache udskiftning, aldrig tmpfs</string>
+    <string name="misc_cache_folders_text">M2SD flytter automatisk cache mapper for Download Manager og Package Manager til det lager der har mest tilgængelig plads. Dette vil deaktivere denne funktion</string>
+    <string name="misc_debug_text">Ved at aktivere fejlsøgning, vil du opnå en større og mere detaljeret log</string>
+
+</resources>

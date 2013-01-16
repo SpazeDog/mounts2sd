@@ -190,7 +190,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="right"
-                android:text="0.00b of 0.00b"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:paddingRight="7dp" />
             
@@ -235,7 +234,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="right"
-                android:text="0.00b of 0.00b"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:paddingRight="7dp" />
             
@@ -280,7 +278,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="right"
-                android:text="0.00b of 0.00b"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:paddingRight="7dp" />
             
@@ -784,7 +781,7 @@
 				    android:id="@+id/item_value_7975cd4b"
 	                android:layout_width="wrap_content"
 	                android:layout_height="wrap_content"
-	                android:text="N/A"
+	                android:text="@string/not_available_text"
 	                android:textAppearance="?android:attr/textAppearanceSmall"
 	                android:paddingRight="7dp" />
 				
@@ -845,7 +842,7 @@
 				    android:id="@+id/item_value_7975cd4b"
 	                android:layout_width="wrap_content"
 	                android:layout_height="wrap_content"
-	                android:text="N/A"
+	                android:text="@string/not_available_text"
 	                android:textAppearance="?android:attr/textAppearanceSmall"
 	                android:paddingRight="7dp" />
 				

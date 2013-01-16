@@ -56,7 +56,7 @@
 	                android:layout_width="wrap_content"
 	                android:layout_height="wrap_content"
 	                android:paddingRight="50dp"
-	                android:text="Enable/Disable the script. Warning, disabling will NOT restore anything to the original locations"
+	                android:text="@string/global_status_text"
 	                android:textColor="@color/dark_gray"
 	                android:textAppearance="?android:attr/textAppearanceSmall" />
 	            
@@ -122,7 +122,7 @@
 	                android:layout_width="wrap_content"
 	                android:layout_height="wrap_content"
 	                android:paddingRight="50dp"
-	                android:text="Reverses the mount point so that sd-ext is used as internal data while data is used as external"
+	                android:text="@string/storage_rmount_text"
 	                android:textColor="@color/dark_gray"
 	                android:textAppearance="?android:attr/textAppearanceSmall" />
 	            
@@ -189,7 +189,7 @@
 	                android:layout_width="wrap_content"
 	                android:layout_height="wrap_content"
 	                android:paddingRight="50dp"
-	                android:text="Moves all applications from /data/app into /sd-ext/app"
+	                android:text="@string/content_apps_text"
 	                android:textColor="@color/dark_gray"
 	                android:textAppearance="?android:attr/textAppearanceSmall" />
 	            
@@ -243,7 +243,7 @@
 	                android:layout_width="wrap_content"
 	                android:layout_height="wrap_content"
 	                android:paddingRight="50dp"
-	                android:text="Moves all application data from /data/data into /sd-ext/data"
+	                android:text="@string/content_data_text"
 	                android:textColor="@color/dark_gray"
 	                android:textAppearance="?android:attr/textAppearanceSmall" />
 	            
@@ -297,7 +297,7 @@
 	                android:layout_width="wrap_content"
 	                android:layout_height="wrap_content"
 	                android:paddingRight="50dp"
-	                android:text="Moves dalvik cache from /data/dalvik-cache into /sd-ext/dalvik-cache"
+	                android:text="@string/content_dalvik_text"
 	                android:textColor="@color/dark_gray"
 	                android:textAppearance="?android:attr/textAppearanceSmall" />
 	            
@@ -350,7 +350,7 @@
 	                android:layout_width="wrap_content"
 	                android:layout_height="wrap_content"
 	                android:paddingRight="50dp"
-	                android:text="Moves /cache into /data/cache or /sd-ext/cache depending of which have most available space"
+	                android:text="@string/storage_cache_text"
 	                android:textColor="@color/dark_gray"
 	                android:textAppearance="?android:attr/textAppearanceSmall" />
 	            
@@ -417,7 +417,7 @@
 	                android:layout_width="wrap_content"
 	                android:layout_height="wrap_content"
 	                android:paddingRight="50dp"
-	                android:text="Enable SWAP partition (3td sdcard partition) during boot"
+	                android:text="@string/memory_swap_text"
 	                android:textColor="@color/dark_gray"
 	                android:textAppearance="?android:attr/textAppearanceSmall" />
 	            
@@ -469,7 +469,7 @@
 	                android:layout_width="wrap_content"
 	                android:layout_height="wrap_content"
 	                android:paddingRight="50dp"
-	                android:text="Set the SWAP/RAM balance. Higher level means more SWAP usage which could slow down your system."
+	                android:text="@string/memory_swappiness_text"
 	                android:textColor="@color/dark_gray"
 	                android:textAppearance="?android:attr/textAppearanceSmall" />
 	            
@@ -535,7 +535,7 @@
 	                android:layout_width="wrap_content"
 	                android:layout_height="wrap_content"
 	                android:paddingRight="50dp"
-	                android:text="Perform a file system check/repair on the sd-ext partition during boot"
+	                android:text="@string/partition_fschk_text"
 	                android:textColor="@color/dark_gray"
 	                android:textAppearance="?android:attr/textAppearanceSmall" />
 	            
@@ -588,7 +588,7 @@
 	                android:layout_width="wrap_content"
 	                android:layout_height="wrap_content"
 	                android:paddingRight="50dp"
-	                android:text="Enable/Disable ext(3/4) journal during boot (Set to auto for file system default)"
+	                android:text="@string/partition_journal_text"
 	                android:textColor="@color/dark_gray"
 	                android:textAppearance="?android:attr/textAppearanceSmall" />
 	            
@@ -640,7 +640,7 @@
 	                android:layout_width="wrap_content"
 	                android:layout_height="wrap_content"
 	                android:paddingRight="50dp"
-	                android:text="Set the file system type for the sd-ext partition that should be forced opon boot"
+	                android:text="@string/partition_fstype_text"
 	                android:textColor="@color/dark_gray"
 	                android:textAppearance="?android:attr/textAppearanceSmall" />
 	            
@@ -705,7 +705,7 @@
 	                android:layout_width="wrap_content"
 	                android:layout_height="wrap_content"
 	                android:paddingRight="50dp"
-	                android:text="Set the readahead for the sdcard"
+	                android:text="@string/device_readahead_text"
 	                android:textColor="@color/dark_gray"
 	                android:textAppearance="?android:attr/textAppearanceSmall" />
 	            
@@ -771,7 +771,7 @@
 	                android:layout_width="wrap_content"
 	                android:layout_height="wrap_content"
 	                android:paddingRight="50dp"
-	                android:text="Whether or not safe-mode should be used whenever un-proper init.d support is detected"
+	                android:text="@string/misc_safemode_text"
 	                android:textColor="@color/dark_gray"
 	                android:textAppearance="?android:attr/textAppearanceSmall" />
 	            
@@ -824,7 +824,7 @@
 	                android:layout_width="wrap_content"
 	                android:layout_height="wrap_content"
 	                android:paddingRight="50dp"
-	                android:text="Only use /data or /sd-ext as cache replacement, never tmpfs"
+	                android:text="@string/misc_tmpfs_text"
 	                android:textColor="@color/dark_gray"
 	                android:textAppearance="?android:attr/textAppearanceSmall" />
 	            
@@ -877,7 +877,7 @@
 	                android:layout_width="wrap_content"
 	                android:layout_height="wrap_content"
 	                android:paddingRight="50dp"
-	                android:text="M2SD automatically moves cache folders for the download manager and package manager into the storage with most available space. This will disable that function"
+	                android:text="@string/misc_cache_folders_text"
 	                android:textColor="@color/dark_gray"
 	                android:textAppearance="?android:attr/textAppearanceSmall" />
 	            
@@ -930,7 +930,7 @@
 	                android:layout_width="wrap_content"
 	                android:layout_height="wrap_content"
 	                android:paddingRight="50dp"
-	                android:text="By enabling debug, you will get a larger and more detailed log entry"
+	                android:text="@string/misc_debug_text"
 	                android:textColor="@color/dark_gray"
 	                android:textAppearance="?android:attr/textAppearanceSmall" />
 	            

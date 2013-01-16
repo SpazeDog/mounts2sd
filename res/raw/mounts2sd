@@ -2,7 +2,7 @@
 
 scriptAction=$1
 scriptVersion="5.2.0"
-scriptProps="enabled=1 move_apps=1 move_dalvik=0 move_data=0 enable_reversed_mount=0 enable_cache=2 no_tmpfs_cache=0 enable_swap=1 set_swap_level=0 enable_sdext_journal=0 enable_debug=0 set_sdext_fstype=ext4 set_sdcard_readahead=512 run_sdext_fschk=1 disable_safemode=0 disable_cache_folders=0"
+scriptProps="script=1 move_apps=1 move_dalvik=0 move_data=0 enable_reversed_mount=0 enable_cache=2 no_tmpfs_cache=0 enable_swap=1 set_swap_level=0 enable_sdext_journal=0 enable_debug=1 set_sdext_fstype=ext4 set_sdcard_readahead=512 run_sdext_fschk=1 disable_safemode=0 disable_cache_folders=0"
 bb=/system/xbin/busybox
 tb=/system/bin/toolbox
 
@@ -35,36 +35,36 @@ doProp() {
 }
 
 doLog() {
-    doLogLevel="$1"
-    doLogLogger="$2"
-    doLogMessage="$3"
+    if $bb [ "$1" != "d" ] || $bb [ $(doProp get config.enable_debug 0) -eq 1 ]; then
+        doLi=0
+        doLogParts=
 
-    [ "$doLogLogger" != "log" ] && doLogLogger="log $doLogLogger"
+        for doLx; do
+            doLi=$(($doLi + 1))
 
-    for doLogX in $doLogLogger; do
-        if $bb [ "$doLogLevel" = "w" ] && $bb [ $(doProp get attention.$doLogX 0) -lt 1 ]; then
-                doProp set attention.$doLogX 1
+            case "$doLi" in
+                "1") doLogLevel="$doLx" ;;
+                "2") doLogLogger="$doLx" ;;
+                "3") 
+                    doLogTemplate="$doLx"
+                    doLogMessage="$doLogTemplate" 
+                ;;
 
-                if $bb [ "$doLogX" != "log" ] || $bb [ "$doLogLogger" = "log" ]; then
-                    doProp set message.$doLogX "$doLogMessage"
-                fi
+                *)  
+                    doLogMessage="`$bb echo $doLogMessage | $bb sed "s/\%arg$(($doLi - 3))/$($bb echo $doLx | $bb sed 's/\//\\\\\//g')/g"`"
 
-        elif $bb [ "$doLogLevel" = "e" ] && $bb [ $(doProp get attention.$doLogX 0) -lt 2 ]; then
-                doProp set attention.$doLogX 2
+                    $bb [ -z "$doLogParts" ] && doLogParts="$doLx" || doLogParts="${doLogParts}ad4ebc50/$doLx"
+                ;;
+            esac
+        done
 
-                if $bb [ "$doLogX" != "log" ] || $bb [ "$doLogLogger" = "log" ]; then
-                    doProp set message.$doLogX "$doLogMessage"
-                fi
+        doLogEntry="${doLogLevel}883b21e9/${doLogLogger}883b21e9/${doLogTemplate}"
 
-        elif $bb [ "$doLogLevel" = "v" ] && $bb [ "$doLogX" != "log" ]; then
-            doProp set message.$doLogX "$doLogMessage"
-        fi
-    done
+        $bb [ ! -z "$doLogParts" ] && doLogEntry="${doLogEntry}883b21e9/$doLogParts"
 
-    if $bb [ "$doLogLevel" != "d" ] || $bb [ $(doProp get config.enable_debug 0) -eq 1 ]; then
         log -p $doLogLevel -t "Mounts2SD" "$doLogMessage"
 
-        $bb echo "$doLogLevel/$doLogMessage" >> /props/content.log
+        $bb echo "$doLogEntry" >> /props/log
     fi
 }
 
@@ -74,7 +74,7 @@ doCreateFolder() {
 
     for doCFx in $doCFFolder; do
         if $bb [ ! -d $doCFx ]; then
-            doLog d log "Function: Creating folder $doCFx!"
+            doLog d script "Function: Creating folder %arg1!" $doCFx
             $bb mkdir $doCFx
 
             doCFCh=1
@@ -96,8 +96,11 @@ doSetPerms() {
             doSPBuildIn="$($bb grep mkdir $doSPx | $bb grep -ve '^[ \t]*#' | $bb grep " $doSPi " | $bb tail -n1)"
 
             if $bb [ ! -z "$doSPBuildIn" ]; then
-                doSPOwner="$($bb echo $doSPBuildIn | $bb awk '{print $4,$5}' | $bb sed 's/ /\./')"
-                doSPPerm="$($bb echo $doSPBuildIn | $bb awk '{print $3}')"
+                doSPOwnerTmp="$($bb echo $doSPBuildIn | $bb awk '{print $4}').$($bb echo $doSPBuildIn | $bb awk '{print $5}')"
+                doSPPermTmp="$($bb echo $doSPBuildIn | $bb awk '{print $3}')"
+
+                $bb [ "$doSPOwnerTmp" != "." ] && doSPOwner="$doSPOwnerTmp"
+                $bb [ ! -z "$doSPPermTmp" ] && doSPPerm="$doSPPermTmp"
 
                 break
             fi
@@ -120,7 +123,7 @@ doSetPerms() {
     fi
 
     for doSPi in $doSPFolder; do
-        doLog d log "Function: Changing permissions on $doSPi to $doSPOwner:$doSPPerm!"
+        doLog d script "Function: Changing permissions on %arg1 to %arg2:%arg3!" $doSPi $doSPOwner $doSPPerm
 
         $cmdCH chmod $doSPPerm $doSPi
         $cmdCH chown $doSPOwner $doSPi 
@@ -190,7 +193,7 @@ for loopwrapper in true; do
 	# 
 
     if $bb [ "`$bb id | $bb sed -ne "s/^uid=\([0-9]*\)[^0-9].*$/\1/p"`" != "0" ]; then
-        doLog e enabled "M2SD has been invoked without superuser permissions!"; break
+        doLog e script "M2SD has been invoked without superuser permissions!"; break
     fi
 
 	# ===========================================================================================
@@ -211,31 +214,31 @@ for loopwrapper in true; do
 
             doCreateFolder /props
 
-            if $bb [ -e /data/property/m2sd.enabled ] && $bb [ "`$bb cat /data/property/m2sd.enabled`" = "0" ]; then
-                doLog v log "M2SD is disabled. Canceling!"; break
+            if $bb [ -e /data/property/m2sd.script ] && $bb [ "`$bb cat /data/property/m2sd.script`" = "0" ]; then
+                doLog v script "M2SD is disabled. Canceling!"; break
 
             else
                 case "$scriptAction" in
                     "finalize")
                         # Used by safe-mode in order to allow the first part to finish before the second part is executed
-                        if $bb [ $(doProp get status.enabled 0) -eq 2 ]; then
+                        if $bb [ $(doProp get status.script 0) -eq 2 ]; then
                             for countdown in `$bb seq 1 10`; do
                                 $bb sleep 1
 
-                                if $bb [ $(doProp get status.enabled 0) -lt 2 ]; then
+                                if $bb [ $(doProp get status.script 0) -lt 2 ]; then
                                     break
                                 fi
                             done
                         fi
 
-                        if $bb [ $(doProp get status.enabled 0) -eq 0 ]; then
-                            doLog e log "The script has not been fully executed during boot!"
+                        if $bb [ $(doProp get status.script 0) -eq 0 ]; then
+                            doLog e script "The script has not been fully executed during boot!"
 
                         else
                             # Do some final stuff to help with the Android app installation problems
-                            doLog v log "Executing the final steps of the script"
+                            doLog v script "Executing the final steps of the script"
 
-                            doLog d log "Examining how to handle /data/data/com.android.providers.downloads/cache"
+                            doLog d script "Examining how to handle %arg1" /data/data/com.android.providers.downloads/cache
                             if $bb [ -d /data/data/com.android.providers.downloads/cache ]; then
                                 $bb [ $(doProp get status.move_data 0) -eq 1 ] && dataLoc=/sd-ext || dataLoc=/data
                                 $bb [ $(doProp get status.move_data 0) -eq 1 ] && extLoc=/data || extLoc=/sd-ext
@@ -254,14 +257,14 @@ for loopwrapper in true; do
                                         $bb rm -rf $dataLoc/data@providers.downloads@cache
                                     fi
 
-                                    doLog v log "Attaching $dataLoc/data/com.android.providers.downloads/cache on $externalDestination/data@providers.downloads@cache"
+                                    doLog v script "Attaching %arg1 on %arg2" $dataLoc/data/com.android.providers.downloads/cache $externalDestination/data@providers.downloads@cache
                                     lastError=$($bb mount --bind $extLoc/data@providers.downloads@cache $dataLoc/data/com.android.providers.downloads/cache 2>&1)
 
                                     if $bb [ -z "`$bb busybox grep $dataLoc/data/com.android.providers.downloads/cache /proc/mounts`" ] && $bb [ -z "`$bb busybox grep $extLoc/data@providers.downloads@cache /proc/mounts`" ]; then
-                                        doLog w log "Could not attach Attaching $dataLoc/data/com.android.providers.downloads/cache on $extLoc/data@providers.downloads@cache"
+                                        doLog w script "Could not attach %arg1 on %arg2" $dataLoc/data/com.android.providers.downloads/cache $extLoc/data@providers.downloads@cache
 
                                         if $bb [ ! -z "$lastError" ]; then
-                                            doLog d log "Shell Error Message: [$($bb echo $lastError | $bb awk '{print substr($0, 0, 150)}') ...]"
+                                            doLog d script "Shell Error Message: [%arg1 ...]" "$($bb echo $lastError | $bb awk '{print substr($0, 0, 150)}')"
                                         fi
                                     fi
 
@@ -272,14 +275,14 @@ for loopwrapper in true; do
                                         fi
                                     done
 
-                                    doLog v log "Changing permissions on /data/data/com.android.providers.downloads/cache"
+                                    doLog v script "Changing permissions on %arg1" /data/data/com.android.providers.downloads/cache
                                     $bb chmod 0777 /data/data/com.android.providers.downloads/cache
                                 fi
                             else
-                                doLog d log "The cache folder /data/data/com.android.providers.downloads/cache is not available. Trying again on next boot"
+                                doLog d script "The cache folder %arg1 is not available. Trying again on next boot" /data/data/com.android.providers.downloads/cache
                             fi
 
-                            doLog v log "Changing permissions on /data/local/tmp"
+                            doLog v script "Changing permissions on %arg1" /data/local/tmp
                             if $bb [ ! -d /data/local/tmp ]; then
                                 $bb mkdir -p /data/local/tmp
                             fi
@@ -297,14 +300,14 @@ for loopwrapper in true; do
                                     $bb chown 2000.2000 /sd-ext/data@local@tmp
                                 fi
 
-                                doLog v log "Attaching /data/local/tmp on /sd-ext/data@local@tmp"
+                                doLog v script "Attaching %arg1 on %arg2" /data/local/tmp /sd-ext/data@local@tmp
                                 lastError=$($bb mount --bind /sd-ext/data@local@tmp /data/local/tmp 2>&1)
 
                                 if $bb [ -z "`$bb grep /data/local/tmp /proc/mounts`" ] && $bb [ -z "`$bb grep /sd-ext/data@local@tmp /proc/mounts`" ]; then
-                                    doLog w log "Could not attach /data/local/tmp on /sd-ext/data@local@tmp"
+                                    doLog w script "Could not attach %arg1 on %arg2" /data/local/tmp /sd-ext/data@local@tmp
 
                                     if $bb [ ! -z "$lastError" ]; then
-                                        doLog d log "Shell Error Message: [$($bb echo $lastError | $bb awk '{print substr($0, 0, 150)}') ...]"
+                                        doLog d script "Shell Error Message: [%arg1 ...]" "$($bb echo $lastError | $bb awk '{print substr($0, 0, 150)}')"
                                     fi
                                 fi
 
@@ -314,7 +317,7 @@ for loopwrapper in true; do
                                 fi
                             fi
 
-                            doLog d log "Looking for the sqlite3 binary to change the storage threshold"
+                            doLog d script "Looking for the sqlite3 binary to change the storage threshold"
 		                    if $bb [ -e /data/data/com.android.providers.settings/databases/settings.db ] && $bb [ ! -z "`$bb which sqlite3`" ]; then
                                 i=0;
 
@@ -324,7 +327,7 @@ for loopwrapper in true; do
                                     status=$?
 				
 				                    if $bb [ $status -eq 0 ]; then
-                                        doLog v log "Storage threshold is set to 1%"
+                                        doLog v script "Storage threshold is set to %arg1" 1%
 
 					                    if $bb [ -z "$value" ] || $bb [ "$value" != "1" ]; then
 						                    value=$(sqlite3 /data/data/com.android.providers.settings/databases/settings.db "insert into secure (name, value) VALUES('sys_storage_threshold_percentage','1')" 2>&1)
@@ -335,10 +338,10 @@ for loopwrapper in true; do
 				                    fi
 
                                     if $bb [ $i -gt 9 ]; then
-                                        doLog w log "Storage threshold not changed. The Sqlite3 binary returns result code '$status'!"
+                                        doLog w script "Storage threshold not changed. The Sqlite3 binary returns result code '%arg1'!" $status
 
                                         if $bb [ ! -z "$value" ]; then
-                                            doLog d log "Shell Error Message: [$($bb echo $value | $bb awk '{print substr($0, 0, 150)}') ...]"
+                                            doLog d script "Shell Error Message: [%arg1 ...]" "$($bb echo $lastError | $bb awk '{print substr($0, 0, 150)}')"
                                         fi
 
                                         break
@@ -350,13 +353,13 @@ for loopwrapper in true; do
 			                    done
 
                             elif $bb [ -z "`$bb which sqlite3`" ]; then
-                                doLog v log "Storage threshold not changed. Sqlite3 binary is missing!"
+                                doLog v script "Storage threshold not changed. Sqlite3 binary is missing!"
 		                    fi
                         fi
                     ;;
 
                     *)
-                        if $bb [ $(doProp get status.enabled 0) -eq 1 ]; then
+                        if $bb [ $(doProp get status.script 0) -gt 0 ]; then
                             break
                         fi
 
@@ -365,31 +368,31 @@ for loopwrapper in true; do
                         done
 
                         if $bb [ ! -d /props ]; then
-                            doLog e enabled "Could not write to the tmpfs ramdisk!"; break
+                            doLog e script "Could not write to the tmpfs ramdisk!"; break
                         fi
 
-                        doLog v log "Preparing configurations"
+                        doLog v script "Preparing configurations"
 
-                        doProp set status.enabled 2
+                        doProp set status.script 2
 
                         for i in $scriptProps; do
                             iName="`$bb echo $i | $bb cut -d '=' -f1`"
 
                             if $bb [ ! -e /data/property/m2sd.$iName ]; then
-                                doLog d log "Creating missing property /data/property/m2sd.$iName"
+                                doLog d script "Creating missing property %arg1" /data/property/m2sd.$iName
                                 $bb echo $($bb echo $i | $bb cut -d '=' -f2) > /data/property/m2sd.$iName
                             fi
                         done
 
                         # We use this for both r-mount protection and for later status review
                         for i in /data/property/m2sd.*; do
-                            doLog d log "Moving property $($bb basename $i)='$($bb cat $i)' into /props/"
+                            doLog d script "Moving property %arg1 into %arg2" "$($bb basename $i)='$($bb cat $i)'" /props/
                             doProp set config.$($bb echo $($bb basename $i) | $bb sed "s/^m2sd\.//") $($bb cat $i)
                         done
 
                         cmdPS=$($bb which ps || echo "$bb ps")
 
-                        if $bb [ $(doProp get config.disable_safemode) -eq 0 ] && $bb [ ! `$bb sleep 1` ] && $bb [ ! -z "`$cmdPS | $bb grep /system/bin/servicemanager`" ]; then
+                        if $bb [ $(doProp get config.disable_safemode 0) -eq 0 ] && $bb [ ! `$bb sleep 1` ] && $bb [ ! -z "`$cmdPS | $bb grep /system/bin/servicemanager`" ]; then
                             if $bb [ $(doProp get config.enable_reversed_mount 0) -eq 1 ]; then
                                 if $bb [ $(doProp get config.move_apps 0) -eq 1 ]; then
                                     $bb echo 0 > /data/property/m2sd.move_apps
@@ -401,36 +404,39 @@ for loopwrapper in true; do
                             fi
 
                             for i in move_dalvik move_data enable_reversed_mount; do
-                                doLog d log "/system/bin/servicemanager is running, disabling property /data/property/m2sd.$i to prepare safe-mode"
+                                doLog d script "/system/bin/servicemanager is running, disabling property %arg1 to prepare safe-mode" /data/property/m2sd.$i
                                 $bb echo 0 > /data/property/m2sd.$i
                                 $bb echo 0 > /props/config.$i
                             done
 
-                            doLog v enabled "The script is running in safe-mode!"
+                            doLog i script "The script is running in safe-mode!"
                             doProp set status.script_safe_mode 1
+
+                        elif $bb [ $(doProp get config.disable_safemode 0) -gt 0 ]; then
+                            doLog v script "Safe-mode has been disabled, skipping init.d test!"
                         fi
 
-                        doLog v log "Waiting for sdcard to initiate"
+                        doLog v script "Waiting for sdcard to initiate"
 
                         for mmcTries in `$bb seq 1 8`; do
-                            doLog d log "Preparing try number $mmcTries for locating the sdcard"
+                            doLog d script "Preparing try number %arg1 for locating the sdcard" $mmcTries
 
                             for mmcNum in `$bb seq 0 9`; do
                                 if $bb [ -e /sys/block/mmcblk$mmcNum/device/type ]; then
-                                    doLog d log "Checking device type on /sys/block/mmcblk$mmcNum"
+                                    doLog d script "Checking device type on %arg1" /sys/block/mmcblk$mmcNum
                                 fi
                         
                                 if $bb [ -e /sys/block/mmcblk$mmcNum/device/type ] && [ "`$bb cat /sys/block/mmcblk$mmcNum/device/type`" = "SD" ]; then
                                     mmcDevcie=/dev/block/mmcblk$mmcNum && doProp set status.device.sdcard $mmcDevcie
                                     mmcMM=$($bb ls -l $mmcDevcie | $bb tr -s " " | $bb sed -ne "s/^.*[ ]\([0-9]*\),[ ]\([0-9]*\)[ ].*$/\1:\2/p") && doProp set device.sdcard.mm $mmcMM
 
-                                    doLog v log "The sdcard device was located at $mmcDevcie"
-                                    doLog d log "The sdcard MM number was located at $mmcMM"
+                                    doLog v script "The sdcard device was located at %arg1" $mmcDevcie
+                                    doLog d script "The sdcard MM number was located at %arg1" $mmcMM
 
                                     if $bb [ -e /sys/devices/virtual/bdi/$mmcMM/read_ahead_kb ]; then
                                         rhValue=$(doProp get config.set_sdcard_readahead 512)
 
-                                        doLog v log "Setting sdcard readahead to ${rhValue}Kb"
+                                        doLog v script "Setting sdcard readahead to %arg1" ${rhValue}Kb
 
                                         $bb echo $rhValue > /sys/devices/virtual/bdi/$mmcMM/read_ahead_kb
 
@@ -441,29 +447,29 @@ for loopwrapper in true; do
                                         doProp set status.set_sdcard_readahead $($bb cat /sys/devices/virtual/bdi/$mmcMM/read_ahead_kb)
 
                                     else
-                                        doLog d log "Did not locate the sdcard readahead device file at /sys/devices/virtual/bdi/$mmcMM/read_ahead_kb"
+                                        doLog d script "Did not locate the sdcard readahead device file at %arg1" /sys/devices/virtual/bdi/$mmcMM/read_ahead_kb
                                     fi
 
-                                    doLog v log "Checking sdcard partitions"
+                                    doLog v script "Checking sdcard partitions"
 
                                     for i in `$bb seq 1 3`; do
-                                        doLog d log "Looking for device file ${mmcDevcie}p${i}"
+                                        doLog d script "Looking for device file %arg1" ${mmcDevcie}p${i}
 
                                         if $bb [ -e ${mmcDevcie}p${i} ]; then
                                             case "$i" in
                                                 "1")
-                                                    doLog v log "Using ${mmcDevcie}p${i} as fat32 (sdcard)"
+                                                    doLog v script "Using %arg1 as %arg2" ${mmcDevcie}p${i} "fat32 (sdcard)"
                                                     doProp set status.device.sdcard.partition.vfat "${mmcDevcie}p${i}"
                                                 ;;
 
                                                 "2")
                                                     mmcExternalFs=$(doProp get config.set_sdext_fstype ext4)
 
-                                                    doLog v log "Using ${mmcDevcie}p${i} as $mmcExternalFs (sd-ext)"
+                                                    doLog v script "Using %arg1 as %arg2" ${mmcDevcie}p${i} "$mmcExternalFs (sd-ext)"
                                                     doProp set status.device.sdcard.partition.sdext "${mmcDevcie}p${i}"
 
                                                     if $bb [ ! -z "$mmcExternalFs" ] && $bb [ "$mmcExternalFs" != "auto" ] && $bb [ -z "`$bb grep $mmcExternalFs /proc/filesystems | $bb grep -v 'nodev'`" ]; then
-                                                        doLog w set_sdext_fstype "The sd-ext filesystem type $mmcExternalFs is not supported. Switched to auto detection!"
+                                                        doLog w set_sdext_fstype "The sd-ext filesystem type %arg1 is not supported. Switched to auto detection!" $mmcExternalFs
                                                         mmcExternalFs="auto"
                                                     fi
 
@@ -471,26 +477,26 @@ for loopwrapper in true; do
                                                 ;;
 
                                                 "3")
-                                                    doLog v log "Using ${mmcDevcie}p${i} as SWAP"
+                                                    doLog v script "Using %arg1 as %arg2" ${mmcDevcie}p${i} SWAP
                                                     doProp set status.device.sdcard.partition.swap "${mmcDevcie}p${i}"
                                                 ;;
                                             esac
                                        
                                         else
-                                            doLog d log "Device file ${mmcDevcie}p${i} does not exist"
+                                            doLog d script "Device file %arg1 does not exist" ${mmcDevcie}p${i}
                                         fi
                                     done
 
                                     if $bb [ -z "$(doProp get status.device.sdcard.partition.sdext)" ]; then
-                                        doLog w log "The sd-ext partition could not be located!"; break 2
+                                        doLog w script "The sd-ext partition could not be located!"; break 2
 
                                     elif $bb [ ! -z "`$bb cat /proc/mounts | $bb grep -w $(doProp get status.device.sdcard.partition.sdext)`" ]; then
-                                        doLog w log "The sd-ext device $(doProp get status.device.sdcard.partition.sdext) is already in use by another script!"; break 2
+                                        doLog w script "The sd-ext device %arg1 is already in use by another script!" $(doProp get status.device.sdcard.partition.sdext); break 2
                                     fi
 
                                     if $bb [ $(doProp get config.run_sdext_fschk) -eq 1 ]; then
                                         if $bb [ ! -z "`$bb which e2fsck`" ]; then
-                                            doLog v log "Running file system check on sd-ext"
+                                            doLog v script "Running file system check on sd-ext"
                                             doProp set status.run_sdext_fschk 1
 
                                             lastError=$(e2fsck -y -D $(doProp get status.device.sdcard.partition.sdext) 2>&1)
@@ -498,13 +504,13 @@ for loopwrapper in true; do
                                             status=$?
 
                                             if $bb [ $status -gt 0 ] && $bb [ $status -lt 4 ]; then
-                                                    doLog w run_sdext_fschk "Error detected while checking sd-ext. Auto correction was performed!"
+                                                    doLog i run_sdext_fschk "Error detected while checking sd-ext. Auto correction was performed!"
 
                                             elif $bb [ $status -gt 0 ]; then
-                                                    doLog e run_sdext_fschk "Error detected while checking sd-ext. Everything was left uncorrected!"
+                                                    doLog w run_sdext_fschk "Error detected while checking sd-ext. Everything was left uncorrected!"
 
                                                     if $bb [ ! -z "$lastError" ]; then
-                                                        doLog d log "Shell Error Message: [$($bb echo $lastError | $bb awk '{print substr($0, 0, 150)}') ...]"
+                                                        doLog d script "Shell Error Message: [%arg1 ...]" "$($bb echo $lastError | $bb awk '{print substr($0, 0, 150)}')"
                                                     fi
                                             fi
 
@@ -514,81 +520,81 @@ for loopwrapper in true; do
                                         fi
 
                                     else
-                                        doLog d log "File system check is disabled, skipping"
+                                        doLog d script "File system check is disabled, skipping"
                                     fi
 
-                                    doLog v log "Setting optimized mount parameters on sd-ext"
+                                    doLog v script "Setting optimized mount parameters on sd-ext"
 
                                     if $bb [ "`doProp get status.set_sdext_fstype`" = "ext4" ]; then
-                                        doLog d log "Ext4 file system detected, checking journal settings"
+                                        doLog d script "%arg1 file system detected, checking journal settings" Ext4
 
                                         if $bb [ ! -z "`$bb which tune2fs`" ]; then
                                             if [ $(doProp get config.enable_sdext_journal) -lt 2 ]; then
                                                 if $bb [ $(doProp get config.enable_sdext_journal) -eq 0 ]; then
                                                     if $bb [ ! -z "`tune2fs -l $(doProp get status.device.sdcard.partition.sdext) | $bb grep features | $bb grep has_journal`" ]; then
-                                                        doLog v log "Disabling ext4 journal on sd-ext"
+                                                        doLog v script "Disabling %arg1 journal on sd-ext" ext4
                                                         lastError=$(tune2fs -O ^has_journal $(doProp get status.device.sdcard.partition.sdext) 2>&1)
 
                                                         status=$?
 
                                                         if $bb [ $status -gt 0 ]; then
-                                                                doLog e enable_sdext_journal "Error while trying to turn off sd-ext ext4 journal!"
+                                                                doLog e enable_sdext_journal "Error while trying to turn off sd-ext %arg1 journal!" ext4
 
                                                                 if $bb [ ! -z "$lastError" ]; then
-                                                                    doLog d log "Shell Error Message: [$($bb echo $lastError | $bb awk '{print substr($0, 0, 150)}') ...]"
+                                                                    doLog d script "Shell Error Message: [%arg1 ...]" "$($bb echo $lastError | $bb awk '{print substr($0, 0, 150)}')"
                                                                 fi
 
                                                         elif $bb [ ! -z "`tune2fs -l $(doProp get status.device.sdcard.partition.sdext) | $bb grep features | $bb grep has_journal`" ]; then
-                                                            doLog w enable_sdext_journal "Could not turn off the sd-ext ext4 journal!"
+                                                            doLog w enable_sdext_journal "Could not turn off the sd-ext %arg1 journal!" ext4
                                                         fi
                                                     fi
 
                                                 else
                                                     if $bb [ -z "`tune2fs -l $(doProp get status.device.sdcard.partition.sdext) | grep features | grep has_journal`" ]; then
-                                                        doLog v log "Enabling ext4 journal on sd-ext"
+                                                        doLog v script "Enabling %arg1 journal on sd-ext" ext4
                                                         tune2fs -O has_journal $(doProp get status.device.sdcard.partition.sdext)
 
                                                         status=$?
 
                                                         if $bb [ $status -gt 0 ]; then
-                                                                doLog e enable_sdext_journal "Error while trying to turn on sd-ext ext4 journal!"
+                                                                doLog e enable_sdext_journal "Error while trying to turn on sd-ext %arg1 journal!" ext4
 
                                                                 if $bb [ ! -z "$lastError" ]; then
-                                                                    doLog d log "Shell Error Message: [$($bb echo $lastError | $bb awk '{print substr($0, 0, 150)}') ...]"
+                                                                    doLog d script "Shell Error Message: [%arg1 ...]" "$($bb echo $lastError | $bb awk '{print substr($0, 0, 150)}')"
                                                                 fi
 
                                                         elif $bb [ -z "`tune2fs -l $(doProp get status.device.sdcard.partition.sdext) | $bb grep features | $bb grep has_journal`" ]; then
-                                                            doLog w enable_sdext_journal "Could not turn on the sd-ext ext4 journal!"
+                                                            doLog w enable_sdext_journal "Could not turn on the sd-ext %arg1 journal!" ext4
                                                         fi
                                                     fi
                                                 fi
 
                                             else
-                                                doLog d log "Journal settings is set to auto. Keeping default settings"
+                                                doLog d script "Journal settings is set to auto. Keeping default settings"
                                             fi
 
                                             $bb [ -z "`tune2fs -l $(doProp get status.device.sdcard.partition.sdext) | $bb grep features | $bb grep has_journal`" ] && doProp set status.enable_sdext_journal 0 || doProp set status.enable_sdext_journal 1
 
                                         else
                                             if $bb [ $(doProp get config.enable_sdext_journal) -lt 2 ]; then
-                                                doLog w enable_sdext_journal "Could not handle the ext4 journal. Missing tune2fs!"
+                                                doLog w enable_sdext_journal "Could not handle the %arg1 journal. Missing tune2fs!" ext4
                                                 echo 2 > /data/property/m2sd.enable_sdext_journal
 
                                             else
-                                                doLog v enable_sdext_journal "Could not handle the ext4 journal. Missing tune2fs!"
+                                                doLog i enable_sdext_journal "Could not handle the %arg1 journal. Missing tune2fs!" ext4
                                             fi
                                         fi
 
                                     elif $bb [ "`doProp get status.set_sdext_fstype`" = "ext3" ]; then
-                                        doLog d log "Ext3 file system detected, checking journal settings"
+                                        doLog d script "%arg1 file system detected, checking journal settings" Ext3
 
                                         if [ $(doProp get config.enable_sdext_journal) -eq 0 ]; then
-                                            doLog v log "Setting parameter to disable ext3 journal"
+                                            doLog v script "Setting parameter to disable %arg1 journal" ext3
                                             doProp set status.enable_sdext_journal 0
                                             mountParamsExtras="noload"
 
                                         else
-                                            doLog d log "Journal settings is not set to disable, keeping journal enabled"
+                                            doLog d script "Journal settings is not set to disable, keeping journal enabled"
                                             doProp set status.enable_sdext_journal 1
                                         fi
                                     fi
@@ -596,28 +602,28 @@ for loopwrapper in true; do
                                     doProp set status.destination.external /sd-ext
 
                                     if $bb [ $(doProp get config.enable_reversed_mount) -eq 1 ]; then 
-                                        doLog v log "R-mount is enabled, moving the internal data mount point to /sd-ext"
+                                        doLog v script "R-mount is enabled, moving the internal data mount point to /sd-ext"
 
                                         lastError=$($bb mount --move /data /sd-ext 2>&1)
 
                                         if $bb [ -z "`$bb grep ' /sd-ext ' /proc/mounts`" ]; then
-                                            doLog d log "Moving Internal data mount point failed. Trying manual umount/remount"
+                                            doLog d script "Moving Internal data mount point failed. Trying manual umount/remount"
                                             mtdDevice="`$bb grep '/dev/' /proc/mounts | $bb grep ' /data ' | $bb awk '{print $1}'`"
 
                                             if $bb [ ! -z "$mtdDevice" ]; then
-                                                doLog d log "Unmounting Internal data from /data"
+                                                doLog d script "Unmounting Internal data from /data"
                                                 $bb umount /data || $bb umount -f /data || $bb umount -l /data
 
                                                 if $bb [ -z "`$bb grep ' /data ' /proc/mounts`" ]; then
-                                                    doLog d log "Trying to mount Internal data on /sd-ext"
+                                                    doLog d script "Trying to mount Internal data on /sd-ext"
                                                     $bb mount -o rw,nosuid,nodev,noatime,nodiratime $mtdDevice /sd-ext
 
                                                     if $bb [ -z "`$bb grep ' /sd-ext ' /proc/mounts`" ]; then
-                                                        doLog d log "Failed to mount Internal data on /sd-ext, mounting it back on /data"
+                                                        doLog d script "Failed to mount Internal data on /sd-ext, mounting it back on /data"
                                                         $bb mount -o $mtdDevice /data
 
                                                         if $bb [ ! -z "$lastError" ]; then
-                                                            doLog d log "Shell Error Message: [$($bb echo $lastError | $bb awk '{print substr($0, 0, 150)}') ...]"
+                                                            doLog d script "Shell Error Message: [%arg1 ...]" "$($bb echo $lastError | $bb awk '{print substr($0, 0, 150)}')"
                                                         fi
                                                     fi
                                                 fi
@@ -625,7 +631,7 @@ for loopwrapper in true; do
                                         fi
 
                                         if $bb [ ! -z "`$bb grep ' /sd-ext ' /proc/mounts`" ]; then
-                                            doLog d log "Internal data was successfully moved from /data into /sd-ext"
+                                            doLog d script "Internal data was successfully moved from /data into /sd-ext"
 
                                             doProp set status.destination.internal /sd-ext
                                             doProp set status.destination.external /data
@@ -634,7 +640,7 @@ for loopwrapper in true; do
 
                                         else
                                             doLog e enable_reversed_mount "It was not possible to move the internal data mount point!"
-                                            doLog v log "Reversing content options due to r-mount failure in order to keep content in the same locations"
+                                            doLog v script "Reversing content options due to r-mount failure in order to keep content in the same locations"
 
                                             for i in move_apps move_data move_dalvik; do
                                                 $bb [ $(doProp get config.$i 0) -eq 0 ] && $(doProp set config.$i 1) || $(doProp set config.$i 0)
@@ -645,14 +651,14 @@ for loopwrapper in true; do
                                     mountParamsFull="noatime,nodiratime,relatime,noauto_da_alloc,data=ordered,commit=15,barrier=1,nouser_xattr,errors=continue,nosuid,nodev"
                                     mountParamsLimited="noatime,nodiratime,relatime,nosuid,nodev"
 
-                                    doLog d log "Starting mount operating on sd-ext"
+                                    doLog d script "Starting mount operating on sd-ext"
 
                                     for i in $(doProp get status.set_sdext_fstype) auto; do
                                         $bb [ -z "$mountParamsExtras" ] && mp="$mountParamsFull,$mountParamsExtras" || mp="$mountParamsFull,$mountParamsExtras"
 
                                         while :; do
                                             if $bb [ ! -z "$mp" ]; then
-                                                doLog d log "Trying to mount sd-ext as $i on $(doProp get status.destination.external) with options '$mp'"
+                                                doLog d script "Trying to mount sd-ext as %arg1 on %arg2 with options '%arg3'" $i $(doProp get status.destination.external) "$mp"
                                                 lastError=$($bb mount -o $mp -t $i $(doProp get status.device.sdcard.partition.sdext) $(doProp get status.destination.external) 2>&1); sync
 
                                             else
@@ -665,18 +671,18 @@ for loopwrapper in true; do
                                             fi
 
                                             if $bb [ ! -z "`$bb cat /proc/mounts | $bb grep -w $(doProp get status.device.sdcard.partition.sdext)`" ]; then
-                                                doLog d log "The sd-ext partition was mounted, now testing writeable state"
+                                                doLog d script "The sd-ext partition was mounted, now testing writeable state"
                                                 $bb echo 1 > $(doProp get status.destination.external)/writeTest
                                                 $bb df /sd-ext 2> /dev/null; status=$?
 
                                                 if  $bb [ $status -gt 0 ] || $bb [ ! -f $(doProp get status.destination.external)/writeTest ]; then
-                                                    doLog e log "The sd-ext file system type cannot be used as an data partition. Please switch to something like Ext(2/3/4)!"
+                                                    doLog e script "The sd-ext file system type cannot be used as an data partition. Please switch to something like Ext(2/3/4)!"
                                                     mountAction="skip"
 
                                                     $bb umount $(doProp get status.destination.external)
                                                 fi
 
-                                                doLog v log "The sd-ext partition was mounted successfully at $(doProp get status.destination.external)"
+                                                doLog v script "The sd-ext partition was mounted successfully at %arg1" $(doProp get status.destination.external)
 
                                                 $bb rm -rf $(doProp get status.destination.external)/writeTest
 
@@ -687,19 +693,19 @@ for loopwrapper in true; do
                                                 break 2
 
                                             elif $bb [ ! -z "$lastError" ]; then
-                                                doLog d log "Shell Error Message: [$($bb echo $lastError | $bb awk '{print substr($0, 0, 150)}') ...]"
+                                                doLog d script "Shell Error Message: [%arg1 ...]" "$($bb echo $lastError | $bb awk '{print substr($0, 0, 150)}')"
                                             fi
 
                                             if $bb [ ! -z "$mountParamsExtras" ] && [ "$mp" = "$mountParamsFull,$mountParamsExtras" ]; then
-                                                doLog d log "The sd-ext partition could not be mounted. Trying again with different mount options"
+                                                doLog d script "The sd-ext partition could not be mounted. Trying again with different mount options"
                                                 mp="$mountParamsLimited,$mountParamsExtras"
 
                                             elif $bb [ "$mp" = "$mountParamsFull" ] || $bb [ "$mp" = "$mountParamsLimited,$mountParamsExtras" ]; then
-                                                doLog d log "The sd-ext partition could not be mounted. Trying again with different mount options"
+                                                doLog d script "The sd-ext partition could not be mounted. Trying again with different mount options"
                                                 mp="$mountParamsLimited"
 
                                             elif $bb [ ! -z "$mp" ]; then
-                                                doLog d log "The sd-ext partition could not be mounted. Trying again without additional mount options"
+                                                doLog d script "The sd-ext partition could not be mounted. Trying again without additional mount options"
                                                 mp=
                             
                                             else
@@ -711,12 +717,12 @@ for loopwrapper in true; do
                                             break
 
                                         else
-                                            doLog w set_sdext_fstype "Could not mount sd-ext as $i. Switching to auto detection!"
+                                            doLog w set_sdext_fstype "Could not mount sd-ext as %arg1. Switching to auto detection!" $i
                                         fi
                                     done
 
                                     if $bb [ -z "`$bb cat /proc/mounts | $bb grep -w $(doProp get status.device.sdcard.partition.sdext)`" ]; then
-                                        doLog e enabled "The sd-ext partition could not be mounted!"
+                                        doLog e script "The sd-ext partition could not be mounted!"
 
                                         if $bb [ $(doProp get status.enable_reversed_mount 0) -eq 1 ]; then
                                             doLog w enable_reversed_mount "Moving internal nand data mount point back to /data!"
@@ -725,22 +731,22 @@ for loopwrapper in true; do
                                             lastError=$($bb mount --move /sd-ext /data 2>&1)
 
                                             if $bb [ -z "`$bb grep ' /data ' /proc/mounts`" ]; then
-                                                doLog d log "Moving Internal data mount point failed. Trying manual umount/remount"
+                                                doLog d script "Moving Internal data mount point failed. Trying manual umount/remount"
                                                 mtdDevice="`$bb grep '/dev/' /proc/mounts | $bb grep ' /sd-ext ' | $bb awk '{print $1}'`"
 
                                                 if $bb [ ! -z "$mtdDevice" ]; then
-                                                    doLog d log "Unmounting Internal data from /sd-ext"
+                                                    doLog d script "Unmounting Internal data from /sd-ext"
                                                     $bb umount /sd-ext || $bb umount -f /sd-ext || $bb umount -l /sd-ext
 
                                                     if $bb [ -z "`$bb grep ' /sd-ext ' /proc/mounts`" ]; then
-                                                        doLog d log "Trying to mount Internal data on /data"
+                                                        doLog d script "Trying to mount Internal data on /data"
                                                         $bb mount -o rw,nosuid,nodev,noatime,nodiratime $mtdDevice /data
 
                                                         if $bb [ -z "`$bb grep ' /data ' /proc/mounts`" ]; then
-                                                            doLog e log "Could not move Internal data from /sd-ext back to /data"
+                                                            doLog e script "Could not move Internal data from /sd-ext back to /data"
 
                                                             if $bb [ ! -z "$lastError" ]; then
-                                                                doLog d log "Shell Error Message: [$($bb echo $lastError | $bb awk '{print substr($0, 0, 150)}') ...]"
+                                                                doLog d script "Shell Error Message: [%arg1 ...]" "$($bb echo $lastError | $bb awk '{print substr($0, 0, 150)}')"
                                                             fi
                                                         fi
                                                     fi
@@ -751,14 +757,14 @@ for loopwrapper in true; do
                                         break 2
 
                                     elif $bb [ $(doProp get status.script_safe_mode 0) -eq 1 ]; then
-                                        doLog d log "Safe-mode detected, creating temp symlinks between /sd-ext/app(-*) and /data/app(-*)"
+                                        doLog d script "Safe-mode detected, creating temp symlinks between /sd-ext/app(-*) and /data/app(-*)"
 
                                         for i in /sd-ext/app/* /sd-ext/app-*/*; do
                                             $bb ln -s $i $($bb echo $i | $bb sed -e 's/^\/sd-ext\//\/data\//') 2> /dev/null
                                         done
                                     fi
 
-                                    doLog v log "Preparing to move content between /data and /sd-ext"
+                                    doLog v script "Preparing to move content between /data and /sd-ext"
 
                                     appFolders="app app-private app-system"
 
@@ -781,8 +787,8 @@ for loopwrapper in true; do
                                     $bb [ $externalSize -lt $internalSize ] && doMoveOrder="revert move revert-retry move-force link" || doMoveOrder="move revert move revert-retry move-force link"
 
                                     # Failsafe in case r-mount fails, content will stay on the same selected devices
-                                    $bb [ $(doProp get attention.enable_reversed_mount 0) -eq 1 ] && doRevertContent="$doMove" || doRevertContent="$doRevert"
-                                    $bb [ $(doProp get attention.enable_reversed_mount 0) -eq 1 ] && doMoveContent="$doRevert" || doMoveContent="$doMove"
+                                    $bb [ $(doProp get status.enable_reversed_mount 0) -eq $(doProp get config.enable_reversed_mount 0) ] && doRevertContent="$doRevert" || doRevertContent="$doMove"
+                                    $bb [ $(doProp get status.enable_reversed_mount 0) -eq $(doProp get config.enable_reversed_mount 0) ] && doMoveContent="$doMove" || doMoveContent="$doRevert"
                                     $bb [ $(doProp get status.enable_reversed_mount 0) -eq 1 ] && doMoveContent="$doMoveContent $sysFolders" || doRevertContent="$doRevertContent $sysFolders"
 
                                     # Remove dupplicates
@@ -799,14 +805,14 @@ for loopwrapper in true; do
                                                     for x in $doHandleContent; do
                                                         doCreateFolder /data/$x
 
-                                                        doLog d log "Looking in /sd-ext/$x to see if something should be reverted back to /data/$x"
+                                                        doLog d script "Looking in %arg1 to see if something should be reverted back to %arg2" /sd-ext/$x /data/$x
 
                                                         if $bb [ -d /sd-ext/$x ] && $bb [ ! -L /sd-ext/$x ] && $bb [ ! -z "`$bb ls -v /sd-ext/$x | $bb tail -n1`" ] && $bb [ ! -z "`$bb find /sd-ext/$x -type f | $bb tail -n1`" ]; then
-                                                            doLog v log "Reverting /sd-ext/$x back to /data/$x"
+                                                            doLog v script "Reverting %arg1 back to %arg2" /sd-ext/$x /data/$x
 
                                                             xSize="`$bb echo $($bb du -s -m /sd-ext/$x) | $bb awk '{print $1}'`"
 
-                                                            doLog d log "The size of /sd-ext/$x is ${xSize}Mb. Comparing it to the remaining spaze on /data which is ${internalSize}Mb"
+                                                            doLog d script "The size of %arg1 is %arg3. Comparing it to the remaining spaze on %arg2 which is %arg4" /sd-ext/$x /data ${xSize}Mb ${internalSize}Mb
 
                                                             if $bb [ $internalSize -gt $xSize ]; then
                                                                 if $bb [ "$x" != "dalvik-cache" ]; then
@@ -837,12 +843,12 @@ for loopwrapper in true; do
                                                                 externalSize=$(($externalSize + $xSize))
 
                                                             elif $bb [ "$action" = "revert-retry" ]; then
-                                                                doLog d log "Could not revert /sd-ext/$x do to low storage on /data. Giving up"
+                                                                doLog d script "Could not revert %arg1 do to low storage on %arg2. Giving up" /sd-ext/$x /data
                                                                 doMoveContent="$doMoveContent $x"
                                                                 attention="$attention ${x}:revert:size"
 
                                                             else
-                                                                doLog d log "Could not revert /sd-ext/$x do to low storage on /data. Trying again later"
+                                                                doLog d script "Could not revert %arg1 do to low storage on %arg2. Trying again later" /sd-ext/$x /data
                                                                 doRevertContent="$doRevertContent $x"
                                                             fi
 
@@ -861,14 +867,14 @@ for loopwrapper in true; do
                                                     for x in $doHandleContent; do
                                                         doCreateFolder /data/$x 1
 
-                                                        doLog d log "Looking in /data/$x to see if something should be moved into /sd-ext/$x"
+                                                        doLog d script "Looking in %arg1 to see if something should be moved into %arg2" /data/$x /sd-ext/$x
 
                                                         if $bb [ -d /data/$x ] && $bb [ ! -z "`$bb ls -v /data/$x | $bb tail -n1`" ] && $bb [ ! -z "`$bb find /data/$x -type f | $bb tail -n1`" ]; then
-                                                            doLog v log "Moving content from /data/$x to /sd-ext/$x"
+                                                            doLog v script "Moving content from %arg1 to %arg2" /data/$x /sd-ext/$x
 
                                                             xSize="`$bb echo $($bb du -s -m /data/$x) | $bb awk '{print $1}'`"
 
-                                                            doLog d log "The size of /data/$x is ${xSize}Mb. Comparing it to the remaining spaze on /sd-ext which is ${externalSize}Mb"
+                                                            doLog d script "The size of %arg1 is %arg3. Comparing it to the remaining spaze on %arg2 which is %arg4" /data/$x /sd-ext ${xSize}Mb ${externalSize}Mb
 
                                                             if $bb [ $externalSize -gt $xSize ]; then
                                                                 if $bb [ "$x" != "dalvik-cache" ]; then
@@ -903,11 +909,11 @@ for loopwrapper in true; do
                                                                 doLinkContent="$doLinkContent $x"
 
                                                             elif $bb [ "$action" = "move-force" ]; then
-                                                                doLog d log "Could not move /data/$x do to low storage on /sd-ext. Giving up"
+                                                                doLog d script "Could not move %arg1 do to low storage on %arg2. Giving up" /data/$x /sd-ext
                                                                 attention="$attention ${x}:move:size"
 
                                                             else
-                                                                doLog d log "Could not move /data/$x do to low storage on /sd-ext. Trying again later"
+                                                                doLog d script "Could not move %arg1 do to low storage on %arg2. Trying again later" /data/$x /sd-ext
                                                                 doMoveContent="$doMoveContent $x"
                                                             fi
 
@@ -929,10 +935,10 @@ for loopwrapper in true; do
                                                         esac
 
                                                         if $bb [ "`$bb echo $x | $bb cut -d ':' -f2`" = "move" ]; then
-                                                            $bb [ "`$bb echo $x | $bb cut -d ':' -f3`" = "size" ] && doLog e $reporter "The content of /data/$($bb echo $x | $bb cut -d ':' -f1) is to big to be moved to sd-ext!" || doLog e $reporter "Not everything from /data/$($bb echo $x | $bb cut -d ':' -f1) could be moved to /sd-ext/$($bb echo $x | $bb cut -d ':' -f1). Check available disk space!"
+                                                            $bb [ "`$bb echo $x | $bb cut -d ':' -f3`" = "size" ] && doLog e $reporter "The content of %arg1 is to big to be moved to %arg2!" /data/$($bb echo $x | $bb cut -d ':' -f1) sd-ext || doLog e $reporter "Not everything from %arg1 could be moved to %arg2. Check available disk space!" /data/$($bb echo $x | $bb cut -d ':' -f1) /sd-ext/$($bb echo $x | $bb cut -d ':' -f1)
 
                                                         else
-                                                            $bb [ "`$bb echo $x | $bb cut -d ':' -f3`" = "size" ] && doLog e $reporter "The content of /sd-ext/$($bb echo $x | $bb cut -d ':' -f1) is to big to be reverted back to data!" || doLog e $reporter "Not everything from /sd-ext/$($bb echo $x | $bb cut -d ':' -f1) could be reverted back to /data/$($bb echo $x | $bb cut -d ':' -f1). Check available disk space!"
+                                                            $bb [ "`$bb echo $x | $bb cut -d ':' -f3`" = "size" ] && doLog e $reporter "The content of %arg1 is to big to be reverted back to %arg2!" /sd-ext/$($bb echo $x | $bb cut -d ':' -f1) data || doLog e $reporter "Not everything from %arg1 could be reverted back to %arg2. Check available disk space!" /sd-ext/$($bb echo $x | $bb cut -d ':' -f1) /data/$($bb echo $x | $bb cut -d ':' -f1)
                                                         fi
                                                     done
                                                 fi
@@ -943,7 +949,7 @@ for loopwrapper in true; do
 
                                                         # Do some cleanup
                                                         if $bb [ $(doProp get status.script_safe_mode 0) -eq 1 ] && $bb [ "$($bb echo $x | $bb cut -d '-' -f1)" = "app" ]; then
-                                                            doLog d log "Safe-mode detected, cleaning up some unused symlinks"
+                                                            doLog d script "Safe-mode detected, cleaning up some unused symlinks"
 
                                                             for i in /data/$x/*; do
                                                                 if $bb [ -L $i ] && $bb [ ! -e $($bb readlink -f $i) ]; then
@@ -952,7 +958,7 @@ for loopwrapper in true; do
                                                             done
                                                         fi
 
-                                                        doLog v log "Attaching /sd-ext/$x to /data/$x"
+                                                        doLog v script "Attaching %arg1 to %arg2" /sd-ext/$x /data/$x
                                                         lastError=$($bb mount --bind /sd-ext/$x /data/$x 2>&1)
 
                                                         if $bb [ ! -z "`$bb grep " /data/$x " /proc/mounts`" ] || $bb [ ! -z "`$bb grep " /sd-ext/$x " /proc/mounts`" ]; then
@@ -970,10 +976,10 @@ for loopwrapper in true; do
                                                                 *) reporter="log" ;;
                                                             esac
 
-                                                            doLog e $reporter "It was not possible to link /sd-ext/$x to /data/$x!"
+                                                            doLog e $reporter "It was not possible to link %arg1 to %arg2!" /sd-ext/$x /data/$x
 
                                                             if $bb [ ! -z "$lastError" ]; then
-                                                                doLog d log "Shell Error Message: [$($bb echo $lastError | $bb awk '{print substr($0, 0, 150)}') ...]"
+                                                                doLog d script "Shell Error Message: [%arg1 ...]" "$($bb echo $lastError | $bb awk '{print substr($0, 0, 150)}')"
                                                             fi
                                                         fi
                                                     done
@@ -991,7 +997,7 @@ for loopwrapper in true; do
                                         doCreate="`echo $doCreate | sed 's/ /\n/g' | awk '!a[$0]++'`"
 
                                         for i in $doCreate; do
-                                            doLog d log "Making sure that the init.rc defined folder $i exists"
+                                            doLog d script "Making sure that the init.rc defined folder %arg1 exists" $i
                                             doCreateFolder $i
                                         done
                                     fi
@@ -999,7 +1005,7 @@ for loopwrapper in true; do
                                     # Android 4.2 has some hidden dependencies that it will not re-create of it's own. This is of cause for r-mount
                                     doRevert="`$bb ls -av /sd-ext | $bb grep -e '^\.' | $bb grep -ve '^[\.]*$'`"
                                     for i in $doRevert; do
-                                        doLog d log "Reverting $i back to /data/"
+                                        doLog d script "Reverting %arg1 back to %arg2" $i /data/
                                         $bb mv -f $i /data/
                                     done
 
@@ -1008,44 +1014,44 @@ for loopwrapper in true; do
                             done
 
                             if $bb [ $mmcTries -gt 7 ]; then
-                                    doLog e log "Timedout while searching for the sd-ext partition!"; break
+                                    doLog e script "Timedout while searching for the sd-ext partition!"; break
 
                             else
                                     $bb sleep 1
                             fi
                         done
 
-                        doLog v log "Optimizing the internal nand partitions"
+                        doLog v script "Optimizing the internal nand partitions"
 
                         for i in system data cache; do
                                 mtdDevice="`$bb grep '/dev/' /proc/mounts | $bb grep " /$i " | $bb awk '{print $1}'`"
 
-                                doLog d log "Located the device $mtdDevice belonging to /$i"
+                                doLog d script "Located the device %arg1 belonging to %arg2" $mtdDevice /$i
 
                                 if $bb [ -b $mtdDevice ]; then
                                         mtdMM="`$bb ls -l $mtdDevice | $bb tr -s ' ' | $bb sed -ne 's/^.*[ ]\([0-9]*\),[ ]\([0-9]*\)[ ].*$/\1:\2/p'`"
 
-                                        doLog d log "Located the device MM number $mtdMM belonging to /$i"
+                                        doLog d script "Located the device MM number %arg1 belonging to %arg2" $mtdMM /$i
 
                                         if $bb [ -e /sys/devices/virtual/bdi/$mtdMM/read_ahead_kb ]; then
-                                                doLog v log "Setting $i nand readahead to 4kb"
+                                                doLog v script "Setting %arg1 nand readahead to 4kb" $i
                                                 $bb echo 4 > /sys/devices/virtual/bdi/$mtdMM/read_ahead_kb
                                         fi
 
-                                        doLog v log "Setting optimized mount parameters on $i"
+                                        doLog v script "Setting optimized mount parameters on %arg1" $i
                                         $bb mount -o remount,noatime,nodiratime,relatime /$i
 
                                 else
-                                        doLog w log "Could not locate the device file for /$i"
+                                        doLog w script "Could not locate the device file for %arg1" /$i
                                 fi
                         done
 
                         $bb sync
 
-                        doLog v log "Looking for new system apps in /data/app-system to link to /system/app"
+                        doLog v script "Looking for new system apps in %arg1 to link to %arg2" /data/app-system /system/app
 
                         # Do an S-Off test
-                        doLog d log "Running S-On test on /system"
+                        doLog d script "Running S-On test on /system"
                         $bb touch /system/s-off 2> /dev/null
 
                         if $bb [ -e /system/s-off ]; then
@@ -1059,37 +1065,37 @@ for loopwrapper in true; do
 
                             if $bb [ -d /data/app-system ] && $bb [ ! -z "`$bb ls -v /data/app-system`" ]; then
                                 for x in /data/app-system/*; do
-                                    doLog d log "Checking system link on $x"
+                                    doLog d script "Checking system link on %arg1" $x
 
                                     y="`$bb basename $x`"
 
                                     if $bb [ ! -e /system/app/$y ] || $bb [ ! -L /system/app/$y ]; then
                                         $bb [ -e /system/app/$y ] && $bb rm -rf /system/app/$y
 
-                                        doLog v log "Creating link for $($bb basename $x) in /system/app/"
+                                        doLog v script "Creating link for %arg1 in %arg2" $($bb basename $x) /system/app/
                                         $bb ln -s $x /system/app/
                                     fi
                                 done
                             fi
 
                         else
-                            doLog d log "The /system partition is S-On protected"
+                            doLog d script "The /system partition is S-On protected"
 
                             if $bb [ -d /data/app-system ] && $bb [ ! -z "`$bb ls -v /data/app-system`" ]; then
-                                doLog w log "Cannot handle app links from /data/app-system to /system/app on S-On devices!"
+                                doLog w script "Cannot handle app links from %arg1 to %arg2 on S-On devices!" /data/app-system /system/app
                             fi
                         fi
 
-                        doLog d log "Checking SWAP partition and SWAP settings"
+                        doLog d script "Checking SWAP partition and SWAP settings"
 
                         if $bb [ -e /proc/sys/vm/swappiness ] && $bb [ ! -z "`doProp get status.device.sdcard.partition.swap`" ] && $bb [ $(doProp get config.enable_swap) -eq 1 ]; then
-                                doLog v log "Activating SWAP partition"
+                                doLog v script "Activating SWAP partition"
                                 lastError=$($bb swapon $(doProp get status.device.sdcard.partition.swap) 2>&1)
 
                                 if $bb [ "$?" = "0" ]; then
                                         doProp set status.enable_swap 1
 
-                                        doLog v log "Setting swappiness value to '$(doProp get config.set_swap_level 0)'"
+                                        doLog v script "Setting swappiness value to '%arg1'" $(doProp get config.set_swap_level 0)
                                         echo $(doProp get config.set_swap_level 0) > /proc/sys/vm/swappiness
 
                                         if $bb [ "$(doProp get config.set_swap_level 0)" != "`$bb cat /proc/sys/vm/swappiness`" ]; then
@@ -1103,7 +1109,7 @@ for loopwrapper in true; do
                                         echo 0 > /data/property/m2ds.enable_swap
 
                                         if $bb [ ! -z "$lastError" ]; then
-                                            doLog d log "Shell Error Message: [$($bb echo $lastError | $bb awk '{print substr($0, 0, 150)}') ...]"
+                                            doLog d script "Shell Error Message: [%arg1 ...]" "$($bb echo $lastError | $bb awk '{print substr($0, 0, 150)}')"
                                         fi
                                 fi
 
@@ -1115,10 +1121,10 @@ for loopwrapper in true; do
                             echo 0 > /data/property/m2sd.enable_swap
                         fi
 
-                        doLog d log "Handling the Cache partition and it's settings"
+                        doLog d script "Handling the Cache partition and it's settings"
 
                         if $bb [ $(doProp get config.enable_cache) -eq 1 ] || ( $bb [ $(doProp get config.enable_cache) -eq 2 ] && $bb [ $(doGetSize /cache) -lt 40 ] ); then
-                            doLog v log "Preparing to replace the cache partition"
+                            doLog v script "Preparing to replace the cache partition"
 
                             externalDestination=$(doProp get status.destination.external /sd-ext)
                             internalDestination=$(doProp get status.destination.internal /data)
@@ -1127,15 +1133,15 @@ for loopwrapper in true; do
                             internalSize=$(doGetSize $internalDestination)
 
                             if $bb [ ! -z "`$bb grep ' /sd-ext ' /proc/mounts`" ] && ( $bb [ $externalSize -ge 128 ] || $bb [ $(doProp get config.no_tmpfs_cache) -eq 1 ] ) && $bb [ $externalSize -gt $internalSize ]; then
-                                    doLog d log "Setting cache location for $externalDestination/cache"
+                                    doLog d script "Setting cache location to %arg1" $externalDestination/cache
                                     cacheLocation="$externalDestination/cache"
 
                             elif $bb [ $internalSize -ge 128 ] || $bb [ $(doProp get config.no_tmpfs_cache) -eq 1 ]; then
-                                    doLog d log "Setting cache location for $internalDestination/cache"
+                                    doLog d script "Setting cache location to %arg1" $internalDestination/cache
                                     cacheLocation="$internalDestination/cache"
 
                             else
-                                    doLog d log "Setting cache location for /cache (tmpfs)"
+                                    doLog d script "Setting cache location to %arg1" "/cache (tmpfs)"
                                     cacheLocation="tmpfs"
                             fi
 
@@ -1153,57 +1159,57 @@ for loopwrapper in true; do
                             if $bb [ -z "`grep dalvik.vm.dexopt-data-only=1 /system/build.prop`" ] && $bb [ $(doCheckFolder /cache/dalvik-cache) -eq 1 ]; then
                                 if $bb [ $(doProp get status.script_safe_mode) -eq 1 ]; then
                                     if $bb [ $(doProp config.enable_cache) -eq 1 ]; then
-                                        doLog w enable_cache "Cannot handle cache with CM's /cache/dalvik-cache on systems running in safe-mode!"
+                                        doLog w enable_cache "Cannot handle cache with CM's %arg1 on systems running in safe-mode!" /cache/dalvik-cache
                                     fi
 
-                                    doLog d log "Safe-mode detected with CM /cache/dalvik-cache, skipping cache configurations"
+                                    doLog d script "Safe-mode detected with CM %arg1, skipping cache configurations" /cache/dalvik-cache
 
-                                    doProp set status.enabled 1; break
+                                    doProp set status.script 1; break
                                 fi
 
                                 doCreateFolder /internal-cache
 
-                                doLog d log "Moving Internal cache mount point from /cache to /internal-cache"
+                                doLog d script "Moving Internal cache mount point from %arg1 to %arg2" /cache /internal-cache
                                 lastError=$($bb mount --move /cache /internal-cache 2>&1)
 
                                 if $bb [ -z "`$bb grep ' /internal-cache ' /proc/mounts`" ]; then
-                                    doLog d log "Moving Internal cache mount point failed. Trying manual umount/remount"
+                                    doLog d script "Moving Internal cache mount point failed. Trying manual umount/remount"
                                     mtdDevice="`$bb grep '/dev/' /proc/mounts | $bb grep ' /cache ' | $bb awk '{print $1}'`"
 
-                                    doLog d log "Unmounting Internal cache from /cache"
+                                    doLog d script "Unmounting Internal cache from %arg1" /cache
                                     $bb umount /cache || $bb umount -f /cache || $bb umount -l /cache
 
                                     if $bb [ -z "`$bb grep ' /cache ' /proc/mounts`" ]; then
-                                        doLog d log "Trying to mount Internal cache on /internal-cache"
+                                        doLog d script "Trying to mount Internal cache on %arg1" /internal-cache
                                         $bb mount $mtdDevice /internal-cache
 
                                         if $bb [ -z "`$bb grep ' /internal-cache ' /proc/mounts`" ]; then
-                                            doLog e enable_cache "Could not move Internal cache from /cache to /internal-cache"
+                                            doLog e enable_cache "Could not move Internal cache from %arg1 to %arg2" /cache /internal-cache
 
                                             if $bb [ ! -z "$lastError" ]; then
-                                                doLog d log "Shell Error Message: [$($bb echo $lastError | $bb awk '{print substr($0, 0, 150)}') ...]"
+                                                doLog d script "Shell Error Message: [%arg1 ...]" "$($bb echo $lastError | $bb awk '{print substr($0, 0, 150)}')"
                                             fi
 
-                                            doProp set status.enabled 1; break
+                                            doProp set status.script 1; break
                                         fi
 
                                     else
-                                        doLog e enable_cache "Could not move Internal cache from /cache to /internal-cache"
+                                        doLog e enable_cache "Could not move Internal cache from %arg1 to %arg2" /cache /internal-cache
 
-                                        doProp set status.enabled 1; break
+                                        doProp set status.script 1; break
                                     fi
                                 fi
 
                                 if $bb [ ! -z "`$bb grep ' /internal-cache ' /proc/mounts`" ]; then
-                                    doLog v log "The internal cache was successfully moved to /internal-cache"
+                                    doLog v script "The internal cache was successfully moved to %arg1" /internal-cache
                                 fi
 
                             else
-                                doLog v log "Unmounting internal cache partition"
+                                doLog v script "Unmounting internal cache partition"
                                 $bb umount /cache
                             fi
 
-                            doLog v log "Attaching $cacheLocation to /cache"
+                            doLog v script "Attaching %arg1 to %arg2" $cacheLocation /cache
                             if $bb [ "$cacheLocation" = "tmpfs" ]; then
                                  lastError=$($bb mount -t tmpfs -o rw,nosuid,nodev,noatime,nodiratime,relatime,mode=0771,uid=1000,gid=2001 tmpfs /cache 2>&1)
                             else
@@ -1230,21 +1236,21 @@ for loopwrapper in true; do
                                 doCreate="`echo $doCreate | sed 's/ /\n/g' | awk '!a[$0]++'`"
 
                                 for i in $doCreate; do
-                                    doLog d log "Making sure that the init.rc defined folder $i exists"
+                                    doLog d script "Making sure that the init.rc defined folder %arg1 exists" $i
                                     doCreateFolder $i
                                 done
 
                                 if $bb [ -z "`grep dalvik.vm.dexopt-data-only=1 /system/build.prop`" ] && $bb [ $(doCheckFolder /cache/dalvik-cache) -eq 1 ]; then
-                                    doLog v log "Attaching /internal-cache/dalvik-cache to $(doProp get status.destination.cache /cache)/dalvik-cache"
+                                    doLog v script "Attaching %arg1 to %arg2" /internal-cache/dalvik-cache $(doProp get status.destination.cache /cache)/dalvik-cache
                                     $bb rm -rf $(doProp get status.destination.cache /cache)/dalvik-cache/*
                                     lastError=$($bb mount --bind /internal-cache/dalvik-cache $(doProp get status.destination.cache /cache)/dalvik-cache 2>&1)
 
                                     if $bb [ -z "`$bb grep ' /cache/dalvik-cache ' /proc/mounts`" ] && $bb [ -z "`$bb grep ' /internal-cache/dalvik-cache ' /proc/mounts`" ] && $bb [ -z "`$bb grep " $(doProp get status.destination.cache /cache)/dalvik-cache " /proc/mounts`" ]; then
-                                        doLog w enable_cache "Could not attach CM's cache dalvik to $(doProp get status.destination.cache /cache)/dalvik-cache"
+                                        doLog w enable_cache "Could not attach CM's %arg1 to %arg2" /cache/dalvik-cache $(doProp get status.destination.cache /cache)/dalvik-cache
                                         $bb rm -rf /internal-cache/dalvik-cache/*
 
                                         if $bb [ ! -z "$lastError" ]; then
-                                            doLog d log "Shell Error Message: [$($bb echo $lastError | $bb awk '{print substr($0, 0, 150)}') ...]"
+                                            doLog d script "Shell Error Message: [%arg1 ...]" "$($bb echo $lastError | $bb awk '{print substr($0, 0, 150)}')"
                                         fi
 
                                     else
@@ -1254,7 +1260,7 @@ for loopwrapper in true; do
                                 fi
 
                              else
-                                doLog e enable_cache "It was not possible to attach $cacheLocation to /cache!"
+                                doLog e enable_cache "It was not possible to attach %arg1 to %arg2!" $cacheLocation /cache
             
                                 if $bb [ -z "`grep dalvik.vm.dexopt-data-only=1 /system/build.prop`" ] && $bb [ $(doCheckFolder /cache/dalvik-cache) -eq 1 ]; then
                                     $bb umount /internal-cache && $bb mount /cache
@@ -1264,18 +1270,18 @@ for loopwrapper in true; do
                                 fi
 
                                 if $bb [ ! -z "$lastError" ]; then
-                                    doLog d log "Shell Error Message: [$($bb echo $lastError | $bb awk '{print substr($0, 0, 150)}') ...]"
+                                    doLog d script "Shell Error Message: [%arg1 ...]" "$($bb echo $lastError | $bb awk '{print substr($0, 0, 150)}')"
                                 fi
                              fi
 
                         elif $bb [ $(doProp get config.enable_cache) -eq 2 ]; then
-                            doLog d log "The cache stettings are set to auto and internal cache storage is $(doGetSize /cache)Mb, leaving cache untouched"
+                            doLog d script "The cache stettings are set to auto and internal cache storage is %arg1, leaving cache untouched" $(doGetSize /cache)Mb
 
                         else
-                            doLog d log "The cache stettings are disabled, leaving cache untouched"
+                            doLog d script "The cache stettings are disabled, leaving cache untouched"
                         fi
 
-                        doProp set status.enabled 1
+                        doProp set status.script 1
                     ;;
                 esac
             fi

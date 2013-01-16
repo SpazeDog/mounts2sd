@@ -96,7 +96,7 @@ public class StatusActivity extends FragmentActivity implements MessageDialogLis
 		
 		@Override
 		protected void onPreExecute() {
-			StatusActivity.this.progressDialog = ProgressDialog.show(StatusActivity.this, "", "Loading Configurations...");
+			StatusActivity.this.progressDialog = ProgressDialog.show(StatusActivity.this, "", getResources().getString(R.string.load_status_configuration_text) + "...");
 		}
 	}
 	
@@ -183,10 +183,10 @@ public class StatusActivity extends FragmentActivity implements MessageDialogLis
     public void handleDisplay() {
 		if (!SettingsHelper.isLoaded()) {
 			if (!SettingsHelper.hasSU()) {
-				((MessageDialog) new MessageDialog()).addMessage("No SuperUser account", "Your device does not have the abillity to switch to the superuser account. This is needed in order for the startup script to do it's work, and needed by the application it self in order to write configurations to the property folder. Please enable this account (Root your device). You can find posts on how to do this for your specific device on XDA-Developer.com").show(getSupportFragmentManager(), "MessageDialog");
+				((MessageDialog) new MessageDialog()).addMessage(getResources().getString(R.string.dialog_message_superuser_title), getResources().getString(R.string.dialog_message_superuser_description)).show(getSupportFragmentManager(), "MessageDialog");
 					
 			}else if (!SettingsHelper.hasBusybox()) {
-				((MessageDialog) new MessageDialog()).addMessage("Busybox is missig", "Your device do not have busybox available. Busybox is an all-in-one binary that contains many standard linux tools, some of which is needed by both the Mounts2SD startup script as well as the application it self. Please install busybox from one of the many XDA-Developer.com threads. DO NOT install it from the android market. Those available are both outdated and does not work properly.").show(getSupportFragmentManager(), "MessageDialog");
+				((MessageDialog) new MessageDialog()).addMessage(getResources().getString(R.string.dialog_message_busybox_title), getResources().getString(R.string.dialog_message_busybox_description)).show(getSupportFragmentManager(), "MessageDialog");
 				
 			} else {
 				Intent intent = new Intent(this, SettingsActivity.class);
@@ -199,7 +199,7 @@ public class StatusActivity extends FragmentActivity implements MessageDialogLis
 			
 		} else {
 			String propState, propAttention, propMessage, propDependency, dependValue, location;
-			String[] props = SettingsHelper.getPropsCollection(), selectorNames, selectorValues;
+			String[] props = SettingsHelper.getPropsCollection();
 			View view;
 			TextView text;
 			ImageView bullet;
@@ -209,8 +209,11 @@ public class StatusActivity extends FragmentActivity implements MessageDialogLis
 				
 				if(view != null) {
 					propMessage = SettingsHelper.getPropMessage(props[i]);
-		        	if (propMessage != null) {
+					
+		        	if ((propMessage != null && propMessage.length() > 0) || (propMessage == null && SettingsHelper.getPropAttention(props[i]) != null && !"0".equals(SettingsHelper.getPropAttention(props[i])))) {
 	        			if ((text = (TextView) view.findViewById(R.id.item_message_7975cd4b)) != null) {
+	        				propMessage = propMessage != null ? UtilsHelper.splitScriptMessage(propMessage, true)[2] : getResources().getString(R.string.script_msg_empty_with_warning);
+	        				
 	        				text.setText(propMessage);
 	        				text.setVisibility(View.VISIBLE);
 	        			}
@@ -248,8 +251,10 @@ public class StatusActivity extends FragmentActivity implements MessageDialogLis
 					        			text.setText(propState);
 					        		}
 					        	}
+					        	
 							}
 						}
+						
 		        	}
 				}
 			}

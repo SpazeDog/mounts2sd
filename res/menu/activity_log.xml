@@ -4,6 +4,6 @@
         android:id="@+id/log_menu_save"
         android:orderInCategory="100"
         android:showAsAction="never"
-        android:title="Copy log to sdcard"/>
+        android:title="@string/menu_save_log"/>
 
 </menu>

@@ -3,6 +3,7 @@ package com.spazedog.mounts2sd;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.util.Locale;
 
 import android.app.Activity;
 import android.content.Context;
@@ -23,37 +24,36 @@ public class LogActivity extends Activity {
 		
 		setContentView(R.layout.activity_log);
 		
-		String content = SettingsHelper.getPropContent("log.status");
-		
-		if (content == null) {
-			content = "v/The log is empty!";
-		}
-		
-		String lines[] = content.split("\n");
-		String level;
+		String content = SettingsHelper.getLog();
 		
 		LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		LinearLayout wrapper = (LinearLayout) findViewById(R.id.log_viewer_layout_36135fbd);
 		View item;
 		
-		for (int i=0; i < lines.length; i++) {
-			if (!"".equals(lines[i]) && (item = inflater.inflate(R.layout.activity_log_item, null)) != null) {
-				if (lines[i].matches("^w/.*$")) level = "W";
-				else if (lines[i].matches("^e/.*$")) level = "E";
-				else if (lines[i].matches("^d/.*$")) level = "D";
-				else level = "V";
-				
-				((TextView) item.findViewById(R.id.item_status_36135fbd)).setText( level );
-				((TextView) item.findViewById(R.id.item_text_36135fbd)).setText( lines[i].substring(2, lines[i].length()) );
-				
-				((TextView) item.findViewById(R.id.item_status_36135fbd)).setTextColor( getResources().getColor(
-						level == "E" ? R.color.status_error : 
-							level == "E" ? R.color.status_warning : 
-								level == "D" ? R.color.status_debug : R.color.status_ok
-				) );
-				
-				wrapper.addView( item );
+		if (content != null) {
+			String lines[] = content.split("\n");
+			String level;
+			String[] parts;
+			
+			for (int i=0; i < lines.length; i++) {
+				if (!"".equals(lines[i]) && (item = inflater.inflate(R.layout.activity_log_item, null)) != null && (parts = UtilsHelper.splitScriptMessage(lines[i], true)).length == 3) {
+					level = parts[0].toUpperCase(Locale.US);
+					
+					((TextView) item.findViewById(R.id.item_status_36135fbd)).setText( level );
+					((TextView) item.findViewById(R.id.item_text_36135fbd)).setText( parts[2] );
+					
+					((TextView) item.findViewById(R.id.item_status_36135fbd)).setTextColor( getResources().getColor(
+							level.equals("E") ? R.color.status_error : 
+								level.equals("W") ? R.color.status_warning : 
+									level.equals("D") ? R.color.status_debug : R.color.status_ok
+					) );
+					
+					wrapper.addView( item );
+				}
 			}
+			
+		} else if ((item = inflater.inflate(R.layout.activity_log_item, null)) != null) {
+			((TextView) item.findViewById(R.id.item_text_36135fbd)).setText(getResources().getString(R.string.log_is_empty));
 		}
 	}
 	
@@ -69,25 +69,42 @@ public class LogActivity extends Activity {
         switch(item.getItemId()) {
             case R.id.log_menu_save:
             	Boolean status = false;
+            	String content = SettingsHelper.getLog();
             	
             	try {
-	            	File sdcard = Environment.getExternalStorageDirectory();
-	            	File dir = new File (sdcard.getAbsolutePath() + "/Mounts2SD");
+            		if (content != null) {
+            			String lines[] = content.split("\n");
+            			String[] parts;
+            			String log="";
+            			
+            			for (int i=0; i < lines.length; i++) {
+            				parts = UtilsHelper.splitScriptMessage(lines[i], false);
+            				log += parts[0] + "/" + parts[1] + " - " + parts[2] + "\n";
+            			}
+            			
+		            	File sdcard = Environment.getExternalStorageDirectory();
+		            	File dir = new File (sdcard.getAbsolutePath() + "/Mounts2SD");
+		            	
+		            	dir.mkdirs();
+		            	
+		            	File file = new File(dir, "log.txt");
 	            	
-	            	dir.mkdirs();
-	            	
-	            	File file = new File(dir, "log.txt");
-            	
-            		BufferedWriter out = new BufferedWriter(new FileWriter(file.getAbsolutePath(), false));
-                    out.write("" + SettingsHelper.getPropContent("log.status"));
-                    out.close();
+	            		BufferedWriter out = new BufferedWriter(new FileWriter(file.getAbsolutePath(), false));
+	                    out.write(log);
+	                    out.close();
+            		}
                     
                     status = true;
                     
-                } catch (Throwable e) {  }
+                } catch (Throwable e) { e.printStackTrace(); }
             	
             	if (status) {
-            		Toast.makeText(this, "Log file was copied to sdcard/Mounts2SD/log.txt", Toast.LENGTH_LONG).show();
+            		if (content == null) {
+            			Toast.makeText(this, getResources().getString(R.string.toast_log_empty_file), Toast.LENGTH_LONG).show();
+            			
+            		} else {
+            			Toast.makeText(this, getResources().getString(R.string.toast_log_copied), Toast.LENGTH_LONG).show();
+            		}
             		
             	} else {
             		String message = UtilsHelper.sdcardState();
@@ -96,7 +113,7 @@ public class LogActivity extends Activity {
             			Toast.makeText(this, message, Toast.LENGTH_LONG).show();
             			
             		} else {
-            			Toast.makeText(this, "Could not copy the log file to the sdcard", Toast.LENGTH_LONG).show();
+            			Toast.makeText(this, getResources().getString(R.string.toast_log_unsuccessful), Toast.LENGTH_LONG).show();
             		}
             	}
     			

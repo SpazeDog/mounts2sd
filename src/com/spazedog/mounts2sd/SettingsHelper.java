@@ -2,6 +2,7 @@ package com.spazedog.mounts2sd;
 
 import java.io.File;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,7 +15,7 @@ import com.spazedog.mounts2sd.UtilsHelper.RootAccount;
 
 public class SettingsHelper {
 	protected static Config VALUES[] = {
-		new Config("script.status", "enabled", "load", null, null, null, 0, true, true, null, "0"),
+		new Config("script.status", "script", "load", null, null, null, 0, true, true, null, "1"),
 		new Config("content.apps.status", "move_apps", "load", null, "storage.rmount.status", "script.status", 2, true, true, null, "1"),
 		new Config("content.dalvik.status", "move_dalvik", "load", null, "storage.rmount.status", "script.status", 2, true, true, null, "0"),
 		new Config("content.data.status", "move_data", "load", null, "storage.rmount.status", "script.status", 2, true, true, null, "0"),
@@ -32,8 +33,7 @@ public class SettingsHelper {
 		new Config("misc.debug.status", "enable_debug", "setting", null, null, "script.status", 0, true, false, null, "0"),
 		new Config("path.internal.storage", "destination.internal", "path", null, null, null, 0, false, true, "/data", null),
 		new Config("path.external.storage", "destination.external", "path", null, null, null, 2, false, true, null, null),
-		new Config("path.cache.storage", "destination.cache", "path", null, null, null, 0, false, true, "/cache", null),
-		new Config("log.status", "log", "log", null, null, null, 0, false, true, null, null)
+		new Config("path.cache.storage", "destination.cache", "path", null, null, null, 0, false, true, "/cache", null)
 	};
 	
 	protected static Map<String, Integer> KEYS = new HashMap<String, Integer>();
@@ -46,6 +46,7 @@ public class SettingsHelper {
         if (KEYS.size() == 0) {
             for (int i=0; i < VALUES.length; i++) {
                 KEYS.put(VALUES[i].getString("name"), i);
+                KEYS.put(VALUES[i].getString("prop"), i);
             }
         }
 
@@ -60,6 +61,10 @@ public class SettingsHelper {
 		}
 		
 		return elements;
+	}
+	
+	public static String propName(String pPropName) {
+		return VALUES[ getKey(pPropName) ].getString("name");
 	}
 	
 	public static String propFileName(String pName) {
@@ -115,23 +120,6 @@ public class SettingsHelper {
 		}
 	}
 	
-	public static String getPropContent(String pName) {
-		SharedPreferences settings = BaseApplication.getContext().getSharedPreferences("prop_configuration", 0x00000000);
-		
-		String content = settings.getString("prop.content." + pName, null);
-		
-		if (content != null) {
-			try {
-				return new String(Base64.decode(content, Base64.URL_SAFE), "UTF-8");
-				
-			} catch (UnsupportedEncodingException e) {
-				return null;
-			}
-		}
-		
-		return null;
-	}
-	
 	public static String getPropMessage(String pName) {
 		SharedPreferences settings = BaseApplication.getContext().getSharedPreferences("prop_configuration", 0x00000000);
 		
@@ -183,6 +171,23 @@ public class SettingsHelper {
 		}
 		
 		return false;
+	}
+	
+	public static String getLog() {
+		SharedPreferences settings = BaseApplication.getContext().getSharedPreferences("prop_configuration", 0x00000000);
+		
+		String content = settings.getString("log", null);
+		
+		if (content != null) {
+			try {
+				return new String(Base64.decode(content, Base64.URL_SAFE), "UTF-8");
+				
+			} catch (UnsupportedEncodingException e) {
+				return null;
+			}
+		}
+		
+		return null;
 	}
 	
 	public static Boolean loadConfigs() {
@@ -245,56 +250,62 @@ public class SettingsHelper {
 						
 						editor.putInt("check.sdcard.partitions", sdLevel);
 
-						String propConfig, propState, propMessage, propAttention, lastAttentionLevel=null;
-                        Integer propMessageId;
+						Integer level, lastLevel=0;
+						String logLines[], logParts[];
+						String log = root.fileReadAll("/props/log");
+						HashMap<String, Integer> levels = new HashMap<String, Integer>();
+						HashMap<String, String> messages = new HashMap<String, String>();
+						
+						if (log != null && !"".equals(log)) {
+							editor.putString("log", Base64.encodeToString(log.getBytes(), Base64.URL_SAFE));
+							
+							logLines = log.split("\n");
+							for (int x=0; x < logLines.length; x++) {
+								logParts = UtilsHelper.splitScriptMessage(logLines[x], false);
+								
+								if (!"v".equals(logParts[0]) && !"d".equals(logParts[0])) {
+									level = "e".equals(logParts[0]) ? 2 : "w".equals(logParts[0]) ? 1 : 0;
+									
+									if (level >= lastLevel) {
+										messages.put(propName(logParts[1]), logLines[x]);
+										levels.put(propName(logParts[1]), level);
+										
+										lastLevel = level; 
+									}
+								}
+							}
+						}
+						
+						String propConfig, propState;
+						Integer propAttention, lastAttention=0;
 						
 						for (int i=0; i < VALUES.length; i++) {
 							if (VALUES[i].getString("prop") != null) {
-								propMessage = root.fileReadLine("/props/message." + VALUES[i].getString("prop"));
-	                            
-	                            if (propMessage != null) {
-	                                propMessageId = BaseApplication.getContext().getResources().getIdentifier( ("script_msg_" + UtilsHelper.md5(propMessage)), "string", "com.spazedog.mounts2sd");
-	
-	                                editor.putString("prop.message." + VALUES[i].getString("name"),
-	                                    propMessageId != null && propMessageId != 0 ? (propMessage = BaseApplication.getContext().getResources().getString(propMessageId)) : propMessage
-	                                );
-	                            }
-	
-	                            propConfig = VALUES[i].getBool("hasConfig") ? root.fileReadLine("/props/config." + VALUES[i].getString("prop")) : null;
-	                            propState = VALUES[i].getBool("hasState") ? root.fileReadLine("/props/status." + VALUES[i].getString("prop")) : null;
-	                            propAttention = VALUES[i].getBool("hasState") ? root.fileReadLine("/props/attention." + VALUES[i].getString("prop")) : null;
-	
-	                            if (VALUES[i].getBool("hasConfig") && VALUES[i].getBool("hasState")) {
-	 					        	propAttention = propAttention != null && !propAttention.equals("0") ? propAttention : 
-						        		(propState == null && propConfig == null) || (propConfig != null && (propConfig.equals(propState) || (propState == null && propConfig.equals("0")) || (propConfig.equals("2") && VALUES[i].getString("type") == "load"))) ? "0" : "1";
-	                            }
-	
-	                            if (propConfig != null) 
-	                                editor.putString("prop.config." + VALUES[i].getString("name"), propConfig);
-	
-	                            if (propState != null) 
-	                                editor.putString("prop.state." + VALUES[i].getString("name"), propState);
-	
-	                            if (propAttention != null) 
-	                                editor.putString("prop.attention." + VALUES[i].getString("name"), propAttention);
-	                            
-								if ((lastAttentionLevel == null && propAttention != null && propAttention.matches("^[0-9]$")) || ((lastAttentionLevel != null && lastAttentionLevel.matches("^[0-9]$") && propAttention != null && propAttention.matches("^[0-9]$")) && Integer.parseInt(propAttention) >= Integer.parseInt(lastAttentionLevel))) {
-									editor.putString("prop.attention.script.status", (lastAttentionLevel = propAttention));
-	
-	                                if (VALUES[i].getString("type") == "log" && propMessage != null) {
-	                                	editor.putString("prop.message.script.status", propMessage);
-	                                }
-								}
+								propConfig = VALUES[i].getBool("hasConfig") ? root.fileReadLine("/props/config." + VALUES[i].getString("prop")) : null;
+								propState = VALUES[i].getBool("hasState") ? root.fileReadLine("/props/status." + VALUES[i].getString("prop")) : null;
 								
-								if (VALUES[i].getString("type") == "log") {
-									String propContent = root.fileReadAll("/props/content." + VALUES[i].getString("prop"));
+								if (VALUES[i].getBool("hasConfig") && VALUES[i].getBool("hasState")) {
+									propAttention = levels.get(VALUES[i].getString("name")) != null && levels.get(VALUES[i].getString("name")) != 0 ? levels.get(VALUES[i].getString("name")) : 
+									(propState == null && propConfig == null) || (propConfig != null && (propConfig.equals(propState) || (propState == null && propConfig.equals("0")) || (propConfig.equals("2") && (VALUES[i].getString("type") == "load" || VALUES[i].getString("type") == "enable")))) ? 0 : 1;
 									
-									if (propContent != null && !"".equals(propContent)) {
-										editor.putString("prop.content." + VALUES[i].getString("name"), Base64.encodeToString(propContent.getBytes(), Base64.URL_SAFE));
+									editor.putString("prop.attention." + VALUES[i].getString("name"), ""+propAttention);
+									editor.putString("prop.message." + VALUES[i].getString("name"), messages.get(VALUES[i].getString("name")));
+									
+									if (lastAttention < propAttention) {
+										lastAttention = propAttention;
+										
+										if (VALUES[i].getString("name") != "script.status") {
+											editor.putString("prop.attention.script.status", ""+lastAttention);
+											editor.putString("prop.message.script.status", "");
+										}
 									}
 								}
 								
-								lastAttentionLevel = propAttention;
+	                            if (VALUES[i].getBool("hasConfig")) 
+	                                editor.putString("prop.config." + VALUES[i].getString("name"), propConfig);
+	
+	                            if (VALUES[i].getBool("hasState")) 
+	                                editor.putString("prop.state." + VALUES[i].getString("name"), propState);
 							}
                         }
 

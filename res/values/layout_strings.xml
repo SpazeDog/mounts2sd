@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    
+    <!-- ############################################
+     Menu strings for the Log layout
+    ############################################# -->
+    <string name="menu_save_log">Copy log to the sdcard</string>
+
+    <!-- ############################################
+     Menu strings for the Status layout
+    ############################################# -->
+    <string name="menu_settings">Settings</string>
+    <string name="options_configure">Configure</string>
+    <string name="options_view_log">View Log</string>
+
+    <!-- ############################################
+     Headlines for the Settings layout
+    ############################################# -->
+    <string name="settings_script_headline">Install Script</string>
+    <string name="settings_busybox_headline">Configure Busybox</string>
+
+    <!-- ############################################
+     Headlines for the Status and Configure layout
+    ############################################# -->
+    <string name="global_status_headline">Status</string>
+    <string name="options_headline">Options</string>
+    <string name="storage_headline">Storage</string>
+    <string name="content_headline">Content</string>
+    <string name="memory_headline">Memory</string>
+    <string name="device_headline">SDCard Device</string>
+    <string name="partition_headline">SD-Ext Partition</string>
+    <string name="misc_headline">Misc</string>
+
+    <!-- ############################################
+     Headers for the Status and Configure layout
+    ############################################# -->
+    <string name="storage_internal_header">Internal Data</string>
+    <string name="storage_external_header">External Data</string>
+    <string name="storage_cache_header">Cache</string>
+    <string name="storage_rmount_header">Reversed Mount</string>
+    <string name="misc_safemode_header">Disable Safe-mode</string>
+    <string name="misc_tmpfs_header">Disable tmpfs cache</string>
+    <string name="misc_cache_folders_header">Disable cache folders</string>
+    <string name="misc_debug_header">Enable Debug mode</string>
+    <string name="storage_usage_text">%1$s of %2$s</string>
+    <string name="memory_swap_header">SWAP Partition</string>
+    <string name="memory_swappiness_header">Swappiness</string>
+    <string name="device_readahead_header">Readahead</string>
+    <string name="partition_fschk_header">File System Check</string>
+    <string name="partition_journal_header">Ext(3/4) Journal</string>
+    <string name="partition_fstype_header">File System Type</string>
+    <string name="content_apps_header">Applications</string>
+    <string name="content_data_header">Data</string>
+    <string name="content_dalvik_header">Dalvik Cache</string>
+
+    <!-- ############################################
+     Text for the Status layout
+    ############################################# -->
+    <string name="not_available_text">N/A</string>
+
+    <!-- ############################################
+     Text for the Configure layout
+    ############################################# -->
+    <string name="global_status_text">Enable/Disable the script. Warning, disabling will NOT restore anything to the original locations</string>
+    <string name="storage_rmount_text">Reverses the mount point so that sd-ext is used as internal data while data is used as external</string>
+    <string name="content_apps_text">Moves all applications from /data/app into /sd-ext/app</string>
+    <string name="content_data_text">Moves all application data from /data/data into /sd-ext/data</string>
+    <string name="content_dalvik_text">Moves dalvik cache from /data/dalvik-cache into /sd-ext/dalvik-cache</string>
+    <string name="storage_cache_text">Moves /cache into /data/cache or /sd-ext/cache depending of which have most available space</string>
+    <string name="memory_swap_text">Enable SWAP partition (3td sdcard partition) during boot</string>
+    <string name="memory_swappiness_text">Set the SWAP/RAM balance. Higher level means more SWAP usage which could slow down your system</string>
+    <string name="partition_fschk_text">Perform a file system check/repair on the sd-ext partition during boot</string>
+    <string name="partition_journal_text">Enable/Disable ext(3/4) journal during boot (Set to auto for file system default)</string>
+    <string name="partition_fstype_text">Set the file system type for the sd-ext partition that should be forced opon boot</string>
+    <string name="device_readahead_text">Set the readahead for the sdcard</string>
+    <string name="misc_safemode_text">Whether or not safe-mode should be used whenever un-proper init.d support is detected</string>
+    <string name="misc_tmpfs_text">Only use /data or /sd-ext as cache replacement, never tmpfs</string>
+    <string name="misc_cache_folders_text">M2SD automatically moves cache folders for the download manager and package manager into the storage with most available space. This will disable that function</string>
+    <string name="misc_debug_text">By enabling debug, you will get a larger and more detailed log entry</string>
+
+</resources>

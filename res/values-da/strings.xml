@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- ############################################
+     The app name
+    ############################################# -->
+    <string name="app_name">Mounts2SD</string>
+    
+    <!-- ############################################
+     Notify text for the Boot Reciever
+    ############################################# -->
+    <string name="notify_title">Mounts2SD</string>
+    <string name="notify_busybox_message">Busybox mangler!</string>
+    <string name="notify_busybox_compatibility_message">Busybox skal opdateres!</string>
+    <string name="notify_superuser_message">Kunne ikke få superbruger tilladelser!</string>
+    <string name="notify_script_message">Opstart script mangler eller er forældet!</string>
+    <string name="notify_alert_message">En Fejl/Advarsel blev opdaget!</string>
+    
+    <!-- ############################################
+     Message Dialog text for the Status Activity
+    ############################################# -->
+    <string name="dialog_message_superuser_title">Ingen SuperUser Konto</string>
+    <string name="dialog_message_superuser_description">Din enhed har ikke mulighed for at skifte til superbruger-kontoen. Dette er nødvendigt for at upstart scriptet kan gøre sit arbejde, of nødvendigt for programmet for at kunne skrive konfigurerings filer til property mappen. Aktiver denne konto (Root enheden). Du kan finde indlæg om dette for din specifikke enhed på XDA-Developer.com</string>
+    <string name="dialog_message_busybox_title">Busybox is missig</string>
+    <string name="dialog_message_busybox_description">Din enhed har ikke busybox tilgængelig. Busybox er en alt-i-en binær som indeholder mange standard linux værktøjer, hvoraf nogle er nødvendige for både startup scripted og selve programmet. Installer vendligst busybox fra en af de mange XDA-Developer.com tråde. Installer IKKE dette fra Androids marked. Dem der er tilgængelige der er både forældet og fungere ikke ordenligt</string>
+    <string name="dialog_message_btn_close">Luk</string>
+
+    <!-- ############################################
+     Loading text for the Status activity
+    ############################################# -->
+    <string name="load_status_configuration_text">Loader konfigurering</string>
+    
+    <!-- ############################################
+     Toast messages for the Log Activity
+    ############################################# -->
+    <string name="toast_log_empty_file">Kan ikke kopirer en tom log fil til sd-kortet</string>
+    <string name="toast_log_copied">Log filen blev kopireret til sdcard/Mounts2SD/log.txt</string>
+    <string name="toast_log_unsuccessful">Kunne ikke kopirer log filen til sd-kortet</string>
+    
+    <!-- ############################################
+     Text for the Log Activity
+    ############################################# -->
+    <string name="log_is_empty">Log filen er tom!</string>
+    
+    <!-- ############################################
+     Text for UtilsHelper sdcardState() method
+    ############################################# -->
+    <string name="sdcard_state_ro">Sd-kortet er kun monteret med læse rettigheder</string>
+    <string name="sdcard_state_format">Sd-kortet er formatteret i et ukorrekt format</string>
+    <string name="sdcard_state_missing">Sd-kortet er ikke tilgængeligt</string>
+    <string name="sdcard_state_ums">Sd-kortet er i øjeblikket delt via USB</string>
+    <string name="sdcard_state_mount_failure">Sd-kortet er ikke monteret på grund af fejl på kort eller partition</string>
+    <string name="sdcard_state_mount">Sd-kortet er ikke monteret</string>
+
+</resources>

@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="script_msg_empty_with_warning">The current status does not match your settings for this option</string>
+
+	<string name="script_msg_1715dbf8f537f7d198e3155fe50d05db" formatted="false">Function: Creating folder %arg1!</string>
+	<string name="script_msg_2a54263e38f6d25b0ce2cded869561d9" formatted="false">Function: Changing permissions on %arg1 to %arg2:%arg3</string>
+	<string name="script_msg_c28a16bba6ac91ef7756cfaa63b146e9" formatted="false">M2SD has been invoked without superuser permissions!</string>
+	<string name="script_msg_6f8527b0b990c9ea36fb14c614a7df22" formatted="false">M2SD is disabled. Canceling!</string>
+	<string name="script_msg_901278c4319a7a3ab330d08973373154" formatted="false">The script has not been fully executed during boot!</string>
+	<string name="script_msg_03d437c7dd73aad35bd39b9d0f9c3c2a" formatted="false">Executing the final steps of the script</string>
+	<string name="script_msg_b3c92ea8b66bed5f443aa7f0bf29f16a" formatted="false">Examining how to handle %arg1</string>
+	<string name="script_msg_59dea4441a5000bee6c72046ded2d28f" formatted="false">Attaching %arg1 on %arg2</string>
+	<string name="script_msg_6d0b0762179345cdc4ab43445467ad24" formatted="false">Could not attach %arg1 on %arg2</string>
+	<string name="script_msg_6e3f6fb8a1bcf42f6c65424f817ecb2e" formatted="false">Changing permissions on %arg1</string>
+	<string name="script_msg_7623ffaf25206fe4f65bd2bd9432a5e8" formatted="false">The cache folder %arg1 is not available. Trying again on next boot</string>
+	<string name="script_msg_cc1e1112ba2190e65d0358baed47fe23" formatted="false">Looking for the sqlite3 binary to change the storage threshold</string>
+	<string name="script_msg_a15b0e9814e4071ab1e16e70b3090381" formatted="false">Storage threshold is set to %arg1</string>
+	<string name="script_msg_126960891443f9b7e3e90bdabacee43b" formatted="false">Storage threshold not changed. The Sqlite3 binary returns result code \'%arg1\'!</string>
+	<string name="script_msg_6d9e39f9a858d010ffc0d241ced1ba2a" formatted="false">Storage threshold not changed. Sqlite3 binary is missing!</string>
+	<string name="script_msg_930a5803a4688583f4c92d9c3f1a6314" formatted="false">Could not write to the tmpfs ramdisk!</string>
+	<string name="script_msg_b55aecbdffd4b12b1a49f2c09808e1d3" formatted="false">Preparing configurations</string>
+	<string name="script_msg_d318c722868ae845e120a91e4834ef94" formatted="false">Creating missing property %arg1</string>
+	<string name="script_msg_08e9fc8921bd2eda2f07964039fa9057" formatted="false">Moving property %arg1 into %arg2</string>
+	<string name="script_msg_060f72c9e7709c754ea30887d5604f6f" formatted="false">/system/bin/servicemanager is running, disabling property %arg1 to prepare safe-mode</string>
+	<string name="script_msg_20f78ea1e1596ae6773e96286b88ca94" formatted="false">The script is running in safe-mode!</string>
+	<string name="script_msg_83d101c7f010b65d7ba6a2bfd98107d0" formatted="false">Safe-mode has been disabled, skipping init.d test!</string>
+	<string name="script_msg_c501452f639c87df8410394588eee1fc" formatted="false">Waiting for sdcard to initiate</string>
+	<string name="script_msg_6df8f97bc7e3bf368c34436a2f2b4b9a" formatted="false">Preparing try number %arg1 for locating the sdcard</string>
+	<string name="script_msg_6cde647f5e4bfc48014eefa634fefb3f" formatted="false">Checking device type on %arg1</string>
+	<string name="script_msg_deb6405567663d632d02caf72c6fccdd" formatted="false">The sdcard device was located at %arg1</string>
+	<string name="script_msg_2aab77b557c75af0670583bf18a87c0d" formatted="false">The sdcard MM number was located at %arg1</string>
+	<string name="script_msg_b1dc1a9f2a66ce96d1dc5e162ea53b52" formatted="false">Setting sdcard readahead to %arg1</string>
+	<string name="script_msg_2548af45980e9e593d204699beb3a8c1" formatted="false">Could not set the sdcard readahead!</string>
+	<string name="script_msg_321879b8bcb4ec6caece021f0b11afe5" formatted="false">Did not locate the sdcard readahead device file at %arg1</string>
+	<string name="script_msg_490719fa7b8d0139ac1ce1bd9e53b79d" formatted="false">Checking sdcard partitions</string>
+	<string name="script_msg_c5654961a3c28ca41ee9b3005c6691cd" formatted="false">Looking for device file %arg1</string>
+	<string name="script_msg_1d4939e598e9de2ce3703484f23b569a" formatted="false">Using %arg1 as %arg2</string>
+	<string name="script_msg_3e17883712011a8d49536761e4a9c48f" formatted="false">The sd-ext filesystem type %arg1 is not supported. Switched to auto detection!</string>
+	<string name="script_msg_aa4d663412567bb461154d4d256011f8" formatted="false">Device file %arg1 does not exist</string>
+	<string name="script_msg_dc52c9b94808b637752296597d1461ee" formatted="false">The sd-ext partition could not be located!</string>
+	<string name="script_msg_bbde9118eda8ca44e51a1bb42d93cf51" formatted="false">The sd-ext device %arg1 is already in use by another script!</string>
+	<string name="script_msg_2df3ae3fef9a6d8ad5f020820fb247de" formatted="false">Running file system check on sd-ext</string>
+	<string name="script_msg_b0d8b516bb53e6ef1adc8680eb296294" formatted="false">Error detected while checking sd-ext. Auto correction was performed!</string>
+	<string name="script_msg_23203bf23aa948acb39c49a33e450e36" formatted="false">Error detected while checking sd-ext. Everything was left uncorrected!</string>
+	<string name="script_msg_32aae2b4400e08d62f59686affc2dd6d" formatted="false">Could not do a file system check on sd-ext. Missing e2fsck!</string>
+	<string name="script_msg_ef032340c057d628e5164c03e5f5bebc" formatted="false">File system check is disabled, skipping</string>
+	<string name="script_msg_f57523c9d8a11d1790204fa1ea7d5b41" formatted="false">Setting optimized mount parameters on sd-ext</string>
+	<string name="script_msg_a5cd6f5ec0381073da57bce93728d3a0" formatted="false">%arg1 file system detected, checking journal settings</string>
+	<string name="script_msg_87e5f8901ae27afd595dcd8c57a70ee1" formatted="false">Disabling %arg1 journal on sd-ext</string>
+	<string name="script_msg_7661eb58f0d2c801a4ee6b1e3eb420a0" formatted="false">Error while trying to turn off sd-ext %arg1 journal!</string>
+	<string name="script_msg_6d0b6deb930cd4d7556d8851b7f9b147" formatted="false">Could not turn off the sd-ext %arg1 journal!</string>
+	<string name="script_msg_e9decbac62e281464e129d3be10d7a93" formatted="false">Enabling %arg1 journal on sd-ext</string>
+	<string name="script_msg_f9a54740a61b4f4ad1a711a0a2016fbf" formatted="false">Error while trying to turn on sd-ext %arg1 journal!</string>
+	<string name="script_msg_90a86634b06508bba59afbd053382e09" formatted="false">Could not turn on the sd-ext %arg1 journal!</string>
+	<string name="script_msg_29be0e551cbdfbe158412cea7ff4dc4f" formatted="false">Journal settings is set to auto. Keeping default settings</string>
+	<string name="script_msg_51f9fb95f022b639a22b17c17d39aec2" formatted="false">Could not handle the %arg1 journal. Missing tune2fs!</string>
+	<string name="script_msg_1b8816b363fa382b22892cb2e4c02e93" formatted="false">Setting parameter to disable %arg1 journal</string>
+	<string name="script_msg_3b5b5fa246e544d04a711185593eefa3" formatted="false">Journal settings is not set to disable, keeping journal enabled</string>
+	<string name="script_msg_d50be3c3202c491758691334885d160e" formatted="false">R-mount is enabled, moving the internal data mount point to /sd-ext</string>
+	<string name="script_msg_70db4b2de9e960a52e65710e8b870997" formatted="false">Moving Internal data mount point failed. Trying manual umount/remount</string>
+	<string name="script_msg_7f03b43d43f56b35480bb56b478571df" formatted="false">Unmounting Internal data from /data</string>
+	<string name="script_msg_5b320fcca9029a94ef5b3074bbe8cdc0" formatted="false">Trying to mount Internal data on /sd-ext</string>
+	<string name="script_msg_33202e6eabf0485aa804302a18b0f67c" formatted="false">Failed to mount Internal data on /sd-ext, mounting it back on /data</string>
+	<string name="script_msg_05e65db5578f5a2745e072d47840d8d4" formatted="false">Internal data was successfully moved from /data into /sd-ext</string>
+	<string name="script_msg_798e4fc61a2ea64d48cc373c3c3d567c" formatted="false">It was not possible to move the internal data mount point!</string>
+	<string name="script_msg_ff2d94ea3459266bd7bb626a24cb48ee" formatted="false">Reversing content options due to r-mount failure in order to keep content in the same locations</string>
+	<string name="script_msg_546d70a2e7d5e6053f450d233c0fe9ed" formatted="false">Starting mount operating on sd-ext</string>
+	<string name="script_msg_b67649ca1696cdb8582a7acd906dfca7" formatted="false">Trying to mount sd-ext as %arg1 on %arg2 with options \'%arg3\'</string>
+	<string name="script_msg_56c395702303573fff9ce380c7ae1834" formatted="false">The sd-ext partition was mounted, now testing writeable state</string>
+	<string name="script_msg_4d18d1911256545121a8911ae4a273cc" formatted="false">The sd-ext file system type cannot be used as an data partition. Please switch to something like Ext(2/3/4)!</string>
+	<string name="script_msg_f21e05202f08856697975c11b421ff44" formatted="false">The sd-ext partition was mounted successfully at %arg1</string>
+	<string name="script_msg_1db059ab2a19886c27a479713da6c90b" formatted="false">It was not possible to mount the sd-ext partition without journal!</string>
+	<string name="script_msg_c8346e7e65f96a08b75ec8804ab913c3" formatted="false">The sd-ext partition could not be mounted. Trying again with different mount options</string>
+	<string name="script_msg_d771a3f89cb9e0a698fd1c07f159da10" formatted="false">The sd-ext partition could not be mounted. Trying again without additional mount options</string>
+	<string name="script_msg_8c9877b2315fe2146766c7676c984f91" formatted="false">Could not mount sd-ext as %arg1. Switching to auto detection!</string>
+	<string name="script_msg_9b5715aa27cc77ad200bbead91f33fb1" formatted="false">The sd-ext partition could not be mounted!</string>
+	<string name="script_msg_1a1b78ef061492156cdb63b378febd71" formatted="false">Moving internal nand data mount point back to /data!</string>
+	<string name="script_msg_ee613452b31657ec2d8ae51dcd12d3cd" formatted="false">Unmounting Internal data from /sd-ext</string>
+	<string name="script_msg_e130b17c319a83cd802abaa47339869f" formatted="false">Trying to mount Internal data on /data</string>
+	<string name="script_msg_ee1911fd2d61072b860ab94d01df0cb8" formatted="false">Could not move Internal data from /sd-ext back to /data</string>
+	<string name="script_msg_765e81d26305e0d9a080c336e888d78c" formatted="false">Safe-mode detected, creating temp symlinks between /sd-ext/app(-*) and /data/app(-*)</string>
+	<string name="script_msg_978b7b14d58cde52d1719ab40aa88a3c" formatted="false">Preparing to move content between /data and /sd-ext</string>
+	<string name="script_msg_93300e0c442f713f4f626b9d9245e8bb" formatted="false">Looking in %arg1 to see if something should be reverted back to %arg2</string>
+	<string name="script_msg_8466f0f057c5b2fff60a30f5b9e1b504" formatted="false">Reverting %arg1 back to %arg2</string>
+	<string name="script_msg_c4fc76139df4db30325ae1e374c4758f" formatted="false">The size of %arg1 is %arg3. Comparing it to the remaining spaze on %arg2 which is %arg4</string>
+	<string name="script_msg_3aba7793aa9fa721eb3b2b14daa22fb0" formatted="false">Could not revert %arg1 do to low storage on %arg2. Giving up</string>
+	<string name="script_msg_9b609973454e8d53b5db38a53cfba187" formatted="false">Could not revert %arg1 do to low storage on %arg2. Trying again later</string>
+	<string name="script_msg_05cb598180252c2417d745ea0ae41b81" formatted="false">Looking in %arg1 to see if something should be moved into %arg2</string>
+	<string name="script_msg_d3b1ea7529aebdf6f95c332bfd17cc13" formatted="false">Moving content from %arg1 to %arg2</string>
+	<string name="script_msg_8da44010bc7cc610a58afde63356caa8" formatted="false">Could not move %arg1 do to low storage on %arg2. Giving up</string>
+	<string name="script_msg_9b17fa5f0840b712d062e4d279229df5" formatted="false">Could not move %arg1 do to low storage on %arg2. Trying again later</string>
+	<string name="script_msg_40d60a5488a85c045488f00842e4c68e" formatted="false">The content of %arg1 is to big to be moved to %arg2!</string>
+	<string name="script_msg_9939466b0a55d4cb57b1e58b8fad6bf9" formatted="false">Not everything from %arg1 could be moved to %arg2. Check available disk space!</string>
+	<string name="script_msg_33c3c2b83a70554c236456ce4d63f548" formatted="false">The content of %arg1 is to big to be reverted back to %arg2!</string>
+	<string name="script_msg_dbde540107e7303780ab1bf16c7dfa4c" formatted="false">Not everything from %arg1 could be reverted back to %arg2. Check available disk space!</string>
+	<string name="script_msg_ee70149b5ec633dd5e3fab5902391d7e" formatted="false">Safe-mode detected, cleaning up some unused symlinks</string>
+	<string name="script_msg_7f0b9953ca57f8d34d35c1e366cfb11d" formatted="false">It was not possible to link %arg1 to %arg2!</string>
+	<string name="script_msg_ac37b902dc8734789996da6c963eff9d" formatted="false">Making sure that the init.rc defined folder %arg1 exists</string>
+	<string name="script_msg_88a2c972c0acc1075b2c31fa3ed591ea" formatted="false">Timedout while searching for the sd-ext partition!</string>
+	<string name="script_msg_24de1b7128ac7ead360b5af0c28b60d6" formatted="false">Optimizing the internal nand partitions</string>
+	<string name="script_msg_8e6df5db692ba56be582cd7758ef7fa1" formatted="false">Located the device %arg1 belonging to %arg2</string>
+	<string name="script_msg_e1e9407759706b55893d037bab8cb861" formatted="false">Located the device MM number %arg1 belonging to %arg2</string>
+	<string name="script_msg_410acc3ded985b816d932d3811db5f2e" formatted="false">Setting %arg1 nand readahead to 4kb</string>
+	<string name="script_msg_b32e34f4282ff7f9298eda924b75b1cc" formatted="false">Setting optimized mount parameters on %arg1</string>
+	<string name="script_msg_b38673ad5d4218f01e357843d11448da" formatted="false">Could not locate the device file for %arg1</string>
+	<string name="script_msg_e269e545e7d74ed736adf95a9cc21086" formatted="false">Looking for new system apps in %arg1 to link to %arg2</string>
+	<string name="script_msg_e4a0eb50fe15409391d25fcac0c39059" formatted="false">Running S-On test on /system</string>
+	<string name="script_msg_5b0dfffc24350d27f2a63d17ce021956" formatted="false">Checking system link on %arg1</string>
+	<string name="script_msg_5c4b095cfdd6fada873b0cae4b20ac02" formatted="false">Creating link for %arg1 in %arg2</string>
+	<string name="script_msg_280810e7018042d72822bf2665728653" formatted="false">The /system partition is S-On protected</string>
+	<string name="script_msg_97f789ed2155ab0d311d8274911fa838" formatted="false">Cannot handle app links from %arg1 to %arg2 on S-On devices!</string>
+	<string name="script_msg_a27b6db417b0c7df2b68d6879ed044b0" formatted="false">Checking SWAP partition and SWAP settings</string>
+	<string name="script_msg_661bfa1074687f9b0fd3248fa6976588" formatted="false">Activating SWAP partition</string>
+	<string name="script_msg_b6aafe6d377c023ecb5e8404af794bb6" formatted="false">Setting swappiness value to \'%arg1\'</string>
+	<string name="script_msg_d98b0123fd235acfc4027865eb7e60e2" formatted="false">The swappiness value could not be changed!</string>
+	<string name="script_msg_3db6367bf7394a4790efd31a21c03ef5" formatted="false">Could not activate the SWAP partition!</string>
+	<string name="script_msg_4a4729e8c930e3eb355f1bf56fcfedad" formatted="false">You kernel does not support SWAP partitions!</string>
+	<string name="script_msg_3293c299a6efa1f99544f0b1922be8d5" formatted="false">Did not find any SWAP partition!</string>
+	<string name="script_msg_d1e887009d7d055e322104a5956e3345" formatted="false">Handling the Cache partition and it\'s settings</string>
+	<string name="script_msg_f17a0056db467b4e3d08bf43d66eec3f" formatted="false">Preparing to replace the cache partition</string>
+	<string name="script_msg_14af132031e2fdcbc83ff0e850109095" formatted="false">Setting cache location to %arg1</string>
+	<string name="script_msg_07610bf006b2c326439728f15c32bfce" formatted="false">Cannot handle cache with CM\'s %arg1 on systems running in safe-mode!</string>
+	<string name="script_msg_93ad7d6799eba1361b2b7d713dabe716" formatted="false">Safe-mode detected with CM %arg1, skipping cache configurations</string>
+	<string name="script_msg_5deaeb376bb667b8bb21f73589652617" formatted="false">Moving Internal cache mount point from %arg1 to %arg2</string>
+	<string name="script_msg_d5dd6044c564b2798019318444cad23e" formatted="false">Moving Internal cache mount point failed. Trying manual umount/remount</string>
+	<string name="script_msg_23989fe1e069437f248400921033f029" formatted="false">Unmounting Internal cache from %arg1</string>
+	<string name="script_msg_144be83a342d1d581f65aabfeefcc148" formatted="false">Trying to mount Internal cache on %arg1</string>
+	<string name="script_msg_71d0f6c79b1794284871703b4d5bad06" formatted="false">Could not move Internal cache from %arg1 to %arg2</string>
+	<string name="script_msg_27a847d9c81fb9547de309dc47996c89" formatted="false">The internal cache was successfully moved to %arg1</string>
+	<string name="script_msg_cc45a28a70455e735a3fe49d9004cc00" formatted="false">Unmounting internal cache partition</string>
+	<string name="script_msg_13d5306fe893255a9fb40b4ef7e5d5d5" formatted="false">Attaching %arg1 to %arg2</string>
+	<string name="script_msg_d24fd3f4ce1097a7bd8d7fe8c1d0c957" formatted="false">Cache has been mounted as tmpfs</string>
+	<string name="script_msg_87c60806982c0caea60c92a00cd8691b" formatted="false">Could not attach CM\'s %arg1 to %arg2</string>
+	<string name="script_msg_ab82df4a2b20a1298ba6dc141739d34c" formatted="false">It was not possible to attach %arg1 to %arg2!</string>
+	<string name="script_msg_fef2acda076938600fa89f8dcf563933" formatted="false">The cache stettings are set to auto and internal cache storage is %arg1, leaving cache untouched</string>
+	<string name="script_msg_51954f3eca937f31a8e48104bddb6ff0" formatted="false">The cache stettings are disabled, leaving cache untouched</string>
+    <string name="script_msg_8f5c7c8715071d499598e59e75fd0ba5" formatted="false">Shell Error Message: [%arg1 ...]</string>
+
+</resources>
