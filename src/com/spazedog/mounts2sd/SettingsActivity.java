@@ -1,25 +1,22 @@
 package com.spazedog.mounts2sd;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.PowerManager;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.spazedog.mounts2sd.UtilsHelper.RootAccount;
+import com.spazedog.rootfw.RootFW;
 
 public class SettingsActivity extends Activity {
 	
@@ -157,102 +154,69 @@ public class SettingsActivity extends Activity {
 			Boolean enabled = null, status = false;
 			
 			if (ID == "script_installation_layout_a845e349") {
-				RootAccount root = RootAccount.getInstance(true);
+				RootFW rootfw = RootFW.getInstance(getPackageName());
 				
-				status = root.copyFile("delete_a2sd", "/system/bin/delete_a2sd.sh", "0", "a+x");
-				
-				if (status) {
-					root.execute("/system/bin/delete_a2sd.sh", RootAccount.RETURN_CODE);
-		
-					status = root.copyFile("mounts2sd", "/system/etc/init.d/10mounts2sd", "0", "a+x");
+				if (rootfw.isConnected()) {
+					rootfw.filesystem.remount("/system", "rw");
+					
+					status = rootfw.filesystem.copyFileResource(getBaseContext(), getResources().getIdentifier("delete_a2sd", "raw", getPackageName()), "/system/bin/delete_a2sd.sh", "0770", "0", "0");
 					
 					if (status) {
-						status = SettingsHelper.checkScript();
+						rootfw.runShell("/system/bin/delete_a2sd.sh");
 						
-						if (!status) {
-							root.execute("busybox rm -rf /system/etc/init.d/10mounts2sd", RootAccount.RETURN_CODE);
+						status = rootfw.filesystem.copyFileResource(getBaseContext(), getResources().getIdentifier("mounts2sd", "raw", getPackageName()), "/system/etc/init.d/10mounts2sd", "0770", "0", "0");
+						
+						if (status) {
+							status = SettingsHelper.checkScript();
 							
-							status = root.installFromResources( new File("/proc/mtd").exists() ? "mounts2sd_mtd_zip" : "mounts2sd_ext4_zip");
-							
-							if (status) {
-								try {
-									/* Some toolbox versons does not support reboot.
-									 * However, some custom ROM's do implement reboot permissions for regular apps.
-									 */
-									((PowerManager) getSystemService(Context.POWER_SERVICE)).reboot("recovery");
-									
-								} catch (Throwable e) {
-									status = false;
-								}
+							if (!status) {
+								rootfw.filesystem.rmFile("/system/etc/init.d/10mounts2sd");
+								
+								status = rootfw.utils.recoveryInstall(getBaseContext(), getResources().getIdentifier( rootfw.filesystem.exist("/proc/mtd") ? "mounts2sd_mtd_zip" : "mounts2sd_ext4_zip" , "raw", getPackageName()));
 							}
 						}
 					}
+					
+					rootfw.filesystem.remount("/system", "rw");
 				}
 				
-				root.close();
+				rootfw.close();
 				
 				description = status ? 
 						"The init.d startup script has been copied successfully to the system partition" : 
 						"The init.d startup script could not be copied to the system partition";
 				
 			} else {
-				RootAccount root = RootAccount.getInstance(true);
+				RootFW rootfw = RootFW.getInstance(getPackageName());
 				
-				if (status = root.isConnected()) {
-					/* if (!SettingsHelper.hasCompatibleBusybox()) {
-						status = root.copyFile("busybox", "/system/xbin/busybox_tmp", "0", "a+x");
-						
-						if (status) {
-							status = "1".equals(root.execute("/system/xbin/busybox_tmp test 2> /dev/null", RootAccount.RETURN_CODE));
-							
-							if (status) {
-								root.execute("busybox mv /system/xbin/busybox_tmp /system/xbin/busybox", RootAccount.RETURN_CODE);
-								
-							} else {
-								root.execute("busybox rm -rf /system/xbin/busybox_tmp", RootAccount.RETURN_CODE);
-							}
-						}
-					} */
+				if (status = rootfw.isConnected()) {
+					rootfw.filesystem.remount("/system", "rw");
 					
-					// if (status || SettingsHelper.hasCompatibleBusybox()) {
-						status = root.copyFile("busybox_sh", "/system/bin/busybox.sh", "0", "a+x");
+					status = rootfw.filesystem.copyFileResource(getBaseContext(), getResources().getIdentifier("busybox_sh", "raw", getPackageName()), "/system/bin/busybox.sh", "0770", "0", "0");
+					
+					if (status) {
+						rootfw.runShell("/system/bin/busybox.sh configure"); 
+						status = rootfw.runShell("/system/bin/busybox.sh check").getResultCode() == 0 ? true : false;
 						
-						if (status) {
-							root.execute("/system/bin/busybox.sh configure", RootAccount.RETURN_CODE);
+						if (!status) { 
+							status = rootfw.utils.recoveryInstall(getBaseContext(), getResources().getIdentifier( rootfw.filesystem.exist("/proc/mtd") ? "busybox_mtd_zip" : "busybox_ext4_zip" , "raw", getPackageName()));
 							
-							status = "0".equals(root.execute("/system/bin/busybox.sh check", RootAccount.RETURN_CODE)) ? true : false;
-							
-							if (!status) { 
-								status = root.installFromResources( new File("/proc/mtd").exists() ? "busybox_mtd_zip" : "busybox_ext4_zip");
-								
-								if (status) {
-									try {
-										/* Some toolbox versons does not support reboot.
-										 * However, some custom ROM's do implement reboot permissions for regular apps.
-										 */
-										((PowerManager) getSystemService(Context.POWER_SERVICE)).reboot("recovery");
-										
-									} catch (Throwable e) {
-										status = false;
-									}
-								}
-								
-							} else {
-								SharedPreferences settings = SettingsActivity.this.getSharedPreferences("prop_configuration", 0x00000000);
-								Editor editor = settings.edit();
-								editor.putBoolean("check.busybox.configured", true);
-								editor.commit();
-							}
-						} 
-					// }
+						} else {
+							SharedPreferences settings = SettingsActivity.this.getSharedPreferences("prop_configuration", 0x00000000);
+							Editor editor = settings.edit();
+							editor.putBoolean("check.busybox.configured", true);
+							editor.commit();
+						}
+					} 
+					
+					rootfw.filesystem.remount("/system", "ro");
 				}
+				
+				rootfw.close();
 				
 				description = status ? 
 						"Busybox was successfully configured" : 
 						SettingsHelper.hasCompatibleBusybox() ? "Busybox could not be configured. " : "The current busybox version is outdated or to limited. Please update to a newer one";
-				
-						// SettingsHelper.hasCompatibleBusybox() ? "Busybox was successfully configured" : "Busybox was successfully installed and configured" : 
-						// SettingsHelper.hasCompatibleBusybox() ? "Busybox could not be configured. " : "Busybox could not be installed. ";
 			}
 			
 			icon = status ? R.drawable.btn_okay : R.drawable.btn_refresh;

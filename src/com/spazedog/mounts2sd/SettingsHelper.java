@@ -2,7 +2,6 @@ package com.spazedog.mounts2sd;
 
 import java.io.File;
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,7 +10,9 @@ import android.content.SharedPreferences.Editor;
 import android.util.Base64;
 
 import com.spazedog.mounts2sd.UtilsHelper.ElementContainer;
-import com.spazedog.mounts2sd.UtilsHelper.RootAccount;
+import com.spazedog.rootfw.RootFW;
+import com.spazedog.rootfw.containers.FileData;
+import com.spazedog.rootfw.containers.ShellResult;
 
 public class SettingsHelper {
 	protected static Config VALUES[] = {
@@ -146,15 +147,15 @@ public class SettingsHelper {
 	
 	public static Boolean commitPropConfigs() {
 		if (COMMIT) {
-			RootAccount root = RootAccount.getInstance(false);
+			RootFW rootfw = RootFW.getInstance(BaseApplication.getContext().getPackageName());
 			
-			if (root.isConnected()) {
+			if (rootfw.isConnected()) {
 				SharedPreferences settings = BaseApplication.getContext().getSharedPreferences("prop_configuration", 0x00000000);
 				
 				for (int i=0; i < VALUES.length; i++) {
 					if (VALUES[i].getBool("hasConfig")) {
 						if (VALUES[i].getBool("update")) {
-							root.filePutLine("/data/property/m2sd." + VALUES[i].getString("prop"), settings.getString("prop.config." + VALUES[i].getString("name"), ""));
+							rootfw.filesystem.putFileLine("/data/property/m2sd." + VALUES[i].getString("prop"), settings.getString("prop.config." + VALUES[i].getString("name"), ""));
 							
 							VALUES[i].putBool("update", false);
 						}
@@ -164,7 +165,7 @@ public class SettingsHelper {
 				COMMIT = false;
 			}
 			
-			root.close();
+			rootfw.close();
 			
 		} else {
 			return true;
@@ -196,47 +197,53 @@ public class SettingsHelper {
 		String appid = BaseApplication.getContext().getResources().getString(R.string.config_app_id);
 		String scriptpath = BaseApplication.getContext().getResources().getString(R.string.config_script_path);
 		
-		RootAccount root = null;
+		RootFW rootfw = null;
 		SharedPreferences settings = BaseApplication.getContext().getSharedPreferences("prop_configuration", 0x00000000);
 		Editor editor = null;
 		Boolean status = false;
+		ShellResult result;
+		String tmp;
 		
 		if ((!LOADED && !(LOADED = new File("/props/app.config.loaded").isFile())) || !appid.equals( settings.getString("app.id", null) )) {
-			root = RootAccount.getInstance(true);
+			rootfw = RootFW.getInstance( BaseApplication.getContext().getPackageName() );
 			editor = settings.edit();
 			
 			editor.clear();
 			
-			if (!root.isConnected()) {
+			if (!rootfw.isConnected()) {
 				editor.putBoolean("check.superuser", false);
 				
-			} else if(!root.checkBusybox()) {
+			} else if(!rootfw.busybox.exist()) {
 				editor.putBoolean("check.busybox", false);
 				
 			} else {
-				String bbCheck = root.execute("( busybox [ 1 -eq 0 ] || busybox [ 0 -eq 1 ] ) && busybox echo no || busybox echo '$(sed -n '1p' /dev/null)remove this part okay:bla=no-4' | busybox grep -e '.*bla=no-[1-9]*' | busybox sed -e 's/^remove //' | busybox awk '{print $3}' | busybox cut -d ':' -f1 | md5sum | busybox awk '{print $1}'", RootAccount.RETURN_LINE);
-				
-				if (bbCheck != null && bbCheck.contains("46a313b06d28557b0ed1e03fb3d92a40")) {
+				result = rootfw.runShell("( busybox [ 1 -eq 0 ] || busybox [ 0 -eq 1 ] ) && busybox echo no || busybox echo '$(sed -n '1p' /dev/null)remove this part okay:bla=no-4' | busybox grep -e '.*bla=no-[1-9]*' | busybox sed -e 's/^remove //' | busybox awk '{print $3}' | busybox cut -d ':' -f1 | md5sum | busybox awk '{print $1}'");
+
+				if (result.getResultCode() == 0 && result.getResult().getAssembled().contains("46a313b06d28557b0ed1e03fb3d92a40")) {
 					editor.putBoolean("check.busybox.compatibility", true);
 					
-					if ("0".equals(root.execute("/system/bin/busybox.sh check", RootAccount.RETURN_CODE))) {
+					result = rootfw.runShell("/system/bin/busybox.sh check");
+					
+					if (result.getResultCode() == 0) {
 						editor.putBoolean("check.busybox.configured", true);
 					}
 					
 					if (checkScript()) {
 						editor.putBoolean("check.script", true);
 						
-						if (!new File("/props/app.finalized.script").isFile()) {
+						rootfw.filesystem.remount("/", "rw");
+						
+						if (!rootfw.filesystem.isFile("/props/app.finalized.script")) {
 							// Execute whatever needs to be done after boot
-							root.execute(scriptpath + " finalize", RootAccount.RETURN_CODE);
-							root.execute("busybox [ ! -d /props ] && busybox mkdir /props\nbusybox echo 1 > /props/app.finalized.script", RootAccount.RETURN_CODE);
+							rootfw.runShell(scriptpath + " finalize");
+							rootfw.filesystem.putFileLine("/props/app.finalized.script", "1");
 						}
 						
 						Integer sdLevel = 0;
 						for (int i=0; i < 10; i++) {
-							if ("SD".equals( root.execute("busybox [ -e /sys/block/mmcblk" + i + "/device/type ] && busybox cat /sys/block/mmcblk" + i + "/device/type || busybox echo none", RootAccount.RETURN_LINE) )) {
+							if ((tmp = rootfw.filesystem.readFileLine("/sys/block/mmcblk" + i + "/device/type")) != null && "SD".equals(tmp)) {
 								for (int x=1; x < 4; x++) {
-									if ("1".equals( root.execute("busybox [ -e /dev/block/mmcblk" + i + "p" + x + " ] && busybox echo 1 || busybox echo 0", RootAccount.RETURN_LINE) )) {
+									if (rootfw.filesystem.exist("/dev/block/mmcblk" + i + "p" + x)) {
 										sdLevel = x;
 										
 									} else {
@@ -251,23 +258,23 @@ public class SettingsHelper {
 						editor.putInt("check.sdcard.partitions", sdLevel);
 
 						Integer level, lastLevel=0;
-						String logLines[], logParts[];
-						String log = root.fileReadAll("/props/log");
+						String[] logParts, log;
+						FileData filedata = rootfw.filesystem.readFile("/props/log");
 						HashMap<String, Integer> levels = new HashMap<String, Integer>();
 						HashMap<String, String> messages = new HashMap<String, String>();
 						
-						if (log != null && !"".equals(log)) {
-							editor.putString("log", Base64.encodeToString(log.getBytes(), Base64.URL_SAFE));
+						if (filedata != null && filedata.getLength() > 0) {
+							editor.putString("log", Base64.encodeToString(filedata.getAssembled().getBytes(), Base64.URL_SAFE));
 							
-							logLines = log.split("\n");
-							for (int x=0; x < logLines.length; x++) {
-								logParts = UtilsHelper.splitScriptMessage(logLines[x], false);
+							log = filedata.getData();
+							for (int x=0; x < log.length; x++) {
+								logParts = UtilsHelper.splitScriptMessage(log[x], false);
 								
 								if (!"v".equals(logParts[0]) && !"d".equals(logParts[0])) {
 									level = "e".equals(logParts[0]) ? 2 : "w".equals(logParts[0]) ? 1 : 0;
 									
 									if (level >= lastLevel) {
-										messages.put(propName(logParts[1]), logLines[x]);
+										messages.put(propName(logParts[1]), log[x]);
 										levels.put(propName(logParts[1]), level);
 										
 										lastLevel = level; 
@@ -281,8 +288,8 @@ public class SettingsHelper {
 						
 						for (int i=0; i < VALUES.length; i++) {
 							if (VALUES[i].getString("prop") != null) {
-								propConfig = VALUES[i].getBool("hasConfig") ? root.fileReadLine("/props/config." + VALUES[i].getString("prop")) : null;
-								propState = VALUES[i].getBool("hasState") ? root.fileReadLine("/props/status." + VALUES[i].getString("prop")) : null;
+								propConfig = VALUES[i].getBool("hasConfig") ? rootfw.filesystem.readFileLine("/props/config." + VALUES[i].getString("prop")) : null;
+								propState = VALUES[i].getBool("hasState") ? rootfw.filesystem.readFileLine("/props/status." + VALUES[i].getString("prop")) : null;
 								
 								if (VALUES[i].getBool("hasConfig") && VALUES[i].getBool("hasState")) {
 									propAttention = levels.get(VALUES[i].getString("name")) != null && levels.get(VALUES[i].getString("name")) != 0 ? levels.get(VALUES[i].getString("name")) : 
@@ -309,7 +316,8 @@ public class SettingsHelper {
 							}
                         }
 
-						root.execute("busybox [ ! -d /props ] && busybox mkdir /props\nbusybox echo 1 > /props/app.config.loaded", RootAccount.RETURN_CODE);
+						rootfw.filesystem.putFileLine("/props/app.config.loaded", "1");
+						rootfw.filesystem.remount("/", "ro");
 
 						editor.putString("app.id", appid);
 						
@@ -329,8 +337,8 @@ public class SettingsHelper {
 			editor.commit();
 		}
 		
-		if (root != null) {
-			root.close();
+		if (rootfw != null) {
+			rootfw.close();
 		}
 		
 		// Re-create this prop info when the app has been closed and re-opened
@@ -344,15 +352,13 @@ public class SettingsHelper {
 	}
 	
 	public static Boolean checkScript() {
-		RootAccount root = RootAccount.getInstance(false);
-		String scriptId = root.execute("busybox md5sum " + BaseApplication.getContext().getResources().getString(R.string.config_script_path), RootAccount.RETURN_LINE);
-		root.close();
+		RootFW rootfw = RootFW.getInstance( BaseApplication.getContext().getPackageName() );
+
+		Boolean match = rootfw.utils.matchMd5(BaseApplication.getContext().getResources().getString(R.string.config_script_path), BaseApplication.getContext().getResources().getString(R.string.config_script_id));
 		
-		if (scriptId != null) {
-			return scriptId.contains( BaseApplication.getContext().getResources().getString(R.string.config_script_id) );
-		}
+		rootfw.close();
 		
-		return false;
+		return match;
 	}
 	
 	public static Boolean hasBusybox() {
