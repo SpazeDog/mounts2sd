@@ -35,6 +35,8 @@ public class UtilsHelper {
 		String[] parts = new String[0];
 		Integer translatedId;
 		
+		Boolean translateScript = !translate ? translate : BaseApplication.getContext().getResources().getBoolean(BaseApplication.getContext().getResources().getIdentifier("config_translate_script", "bool", BaseApplication.getContext().getPackageName()));
+		
 		if (tmp.length > 3) {
 			parts = tmp[3].split("ad4ebc50/");
 		}
@@ -43,7 +45,7 @@ public class UtilsHelper {
 			out[i] = tmp.length >= (i+1) ? tmp[i] : null;
 			
 			if (i == 2) {
-				if (translate && out[i] != null) {
+				if (translateScript && out[i] != null) {
 					translatedId = BaseApplication.getContext().getResources().getIdentifier("script_msg_" + md5(out[i].trim()), "string", BaseApplication.getContext().getPackageName());
 					
 					if (translatedId > 0) {
