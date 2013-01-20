@@ -338,7 +338,7 @@ for loopwrapper in true; do
                                     if $bb [ $i -gt 9 ]; then
                                         doLog w script "Storage threshold not changed. The Sqlite3 binary returns result code '%arg1'!" $status
 
-                                        if $bb [ ! -z "$value" ]; then
+                                        if $bb [ ! -z "$lastError" ]; then
                                             doLog d script "Shell Error Message: [%arg1 ...]" "$($bb echo $lastError | $bb awk '{print substr($0, 0, 150)}')"
                                         fi
 
