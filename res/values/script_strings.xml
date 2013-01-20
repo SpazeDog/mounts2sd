@@ -3,7 +3,7 @@
 
     <string name="script_msg_empty_with_warning">The current status does not match your settings for this option</string>
 
-	<string name="script_msg_1715dbf8f537f7d198e3155fe50d05db" formatted="false">Function: Creating folder %arg1!</string>
+	<!-- <string name="script_msg_1715dbf8f537f7d198e3155fe50d05db" formatted="false">Function: Creating folder %arg1!</string>
 	<string name="script_msg_2a54263e38f6d25b0ce2cded869561d9" formatted="false">Function: Changing permissions on %arg1 to %arg2:%arg3</string>
 	<string name="script_msg_c28a16bba6ac91ef7756cfaa63b146e9" formatted="false">M2SD has been invoked without superuser permissions!</string>
 	<string name="script_msg_6f8527b0b990c9ea36fb14c614a7df22" formatted="false">M2SD is disabled. Canceling!</string>
@@ -135,6 +135,6 @@
 	<string name="script_msg_ab82df4a2b20a1298ba6dc141739d34c" formatted="false">It was not possible to attach %arg1 to %arg2!</string>
 	<string name="script_msg_fef2acda076938600fa89f8dcf563933" formatted="false">The cache stettings are set to auto and internal cache storage is %arg1, leaving cache untouched</string>
 	<string name="script_msg_51954f3eca937f31a8e48104bddb6ff0" formatted="false">The cache stettings are disabled, leaving cache untouched</string>
-    <string name="script_msg_8f5c7c8715071d499598e59e75fd0ba5" formatted="false">Shell Error Message: [%arg1 ...]</string>
+    <string name="script_msg_9260156ff702a9585a118ed51a99a1f7" formatted="false">Shell Error Message: [%arg1 ...]</string> -->
 
 </resources>
