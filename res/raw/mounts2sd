@@ -680,6 +680,8 @@ for loopwrapper in true; do
                                                     mountAction="skip"
 
                                                     $bb umount $(doProp get status.destination.external)
+
+                                                    break 2
                                                 fi
 
                                                 doLog v script "The sd-ext partition was mounted successfully at %arg1" $(doProp get status.destination.external)
