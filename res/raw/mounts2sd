@@ -58,9 +58,7 @@ doLog() {
             esac
         done
 
-        doLogEntry="${doLogLevel}883b21e9/${doLogLogger}883b21e9/${doLogTemplate}"
-
-        $bb [ ! -z "$doLogParts" ] && doLogEntry="${doLogEntry}883b21e9/$doLogParts"
+        doLogEntry="${doLogLevel}883b21e9/${doLogLogger}883b21e9/${doLogTemplate}883b21e9/$doLogParts"
 
         log -p $doLogLevel -t "Mounts2SD" "$doLogMessage"
 
