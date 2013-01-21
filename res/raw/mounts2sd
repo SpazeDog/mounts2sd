@@ -652,7 +652,7 @@ for loopwrapper in true; do
                                     doLog d script "Starting mount operating on sd-ext"
 
                                     for i in $(doProp get status.set_sdext_fstype) auto; do
-                                        $bb [ -z "$mountParamsExtras" ] && mp="$mountParamsFull,$mountParamsExtras" || mp="$mountParamsFull,$mountParamsExtras"
+                                        $bb [ -z "$mountParamsExtras" ] && mp="$mountParamsFull" || mp="$mountParamsFull,$mountParamsExtras"
 
                                         while :; do
                                             if $bb [ ! -z "$mp" ]; then
