@@ -65,47 +65,91 @@ public class SettingsHelper {
 	}
 	
 	public static String propName(String pPropName) {
-		return VALUES[ getKey(pPropName) ].getString("name");
+		if (getKey(pPropName) != null) {
+			return VALUES[ getKey(pPropName) ].getString("name");
+		}
+		
+		return null;
 	}
 	
 	public static String propFileName(String pName) {
-		return VALUES[ getKey(pName) ].getString("prop");
+		if (getKey(pName) != null) {
+			return VALUES[ getKey(pName) ].getString("prop");
+		}
+		
+		return null;
 	}
 	
 	public static String propType(String pName) {
-		return VALUES[ getKey(pName) ].getString("type");
+		if (getKey(pName) != null) {
+			return VALUES[ getKey(pName) ].getString("type");
+		}
+		
+		return null;
 	}
 	
 	public static Boolean propHasState(String pName) {
-		return VALUES[ getKey(pName) ].getBool("hasState");
+		if (getKey(pName) != null) {
+			return VALUES[ getKey(pName) ].getBool("hasState");
+		}
+		
+		return false;
 	}
 	
 	public static Boolean propHasConfig(String pName) {
-		return VALUES[ getKey(pName) ].getBool("hasConfig");
+		if (getKey(pName) != null) {
+			return VALUES[ getKey(pName) ].getBool("hasConfig");
+		}
+		
+		return false;
 	}
 	
 	public static Boolean propIsActive(String pName) {
-		return VALUES[ getKey(pName) ].getBool("active");
+		if (getKey(pName) != null) {
+			return VALUES[ getKey(pName) ].getBool("active");
+		}
+		
+		return false;
 	}
 	
 	public static String propSelector(String pName) {
-		return VALUES[ getKey(pName) ].getString("selector");
+		if (getKey(pName) != null) {
+			return VALUES[ getKey(pName) ].getString("selector");
+		}
+		
+		return null;
 	}
 	
 	public static String propReverseOn(String pName) {
-		return VALUES[ getKey(pName) ].getString("reverseOn");
+		if (getKey(pName) != null) {
+			return VALUES[ getKey(pName) ].getString("reverseOn");
+		}
+		
+		return null;
 	}
 	
 	public static String propDependedOn(String pName) {
-		return VALUES[ getKey(pName) ].getString("dependedOn");
+		if (getKey(pName) != null) {
+			return VALUES[ getKey(pName) ].getString("dependedOn");
+		}
+		
+		return null;
 	}
 	
 	public static String propDefaultConfig(String pName) {
-		return VALUES[ getKey(pName) ].getString("defConfig");
+		if (getKey(pName) != null) {
+			return VALUES[ getKey(pName) ].getString("defConfig");
+		}
+		
+		return null;
 	}
 
 	public static String propDefaultState(String pName) {
-		return VALUES[ getKey(pName) ].getString("defState");
+		if (getKey(pName) != null) {
+			return VALUES[ getKey(pName) ].getString("defState");
+		}
+		
+		return null;
 	}
 	
 	public static void setPropConfig(String pName, String pValue) {
@@ -274,8 +318,10 @@ public class SettingsHelper {
 									level = "e".equals(logParts[0]) ? 2 : "w".equals(logParts[0]) ? 1 : 0;
 									
 									if (level >= lastLevel) {
-										messages.put(propName(logParts[1]), log[x]);
-										levels.put(propName(logParts[1]), level);
+										if (propName(logParts[1]) != null) {
+											messages.put(propName(logParts[1]), log[x]);
+											levels.put(propName(logParts[1]), level);
+										}
 										
 										lastLevel = level; 
 									}
