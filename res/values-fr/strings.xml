@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- ############################################
+     The app name
+    ############################################# -->
+    <string name="app_name">Mounts2SD</string>
+
+    <!-- ############################################
+     Notify text for the Boot Reciever
+    ############################################# -->
+    <string name="notify_title">Mounts2SD</string>
+    <string name="notify_busybox_message">Busybox est absent !</string>
+    <string name="notify_busybox_compatibility_message">Busybox a besoin d\'être mis à jour !</string>
+    <string name="notify_superuser_message">Impossible d\'obtenir les droits SuperUtilisateur !</string>
+    <string name="notify_script_message">Le script d\'initialisation est absent ou dépassé !</string>
+    <string name="notify_alert_message">Une erreur/alerte a été détectée !</string>
+
+    <!-- ############################################
+     Message Dialog text for the Status Activity
+    ############################################# -->
+    <string name="dialog_message_superuser_title">Pas de compte SuperUtilisateur</string>
+    <string name="dialog_message_superuser_description">Votre matériel n\'a pas la capacité à basculer sur le compte SuperUtilisateur. Elle est requise pour le script d\'initialisation afin de s\'exécuter et requise par l\'application elle-même afin d\'écrire la configuration dans le dossier proprety. Merci d\'activer ce compte (Rooter votre matériel). Vous pourrez trouver des messages sur XDA-Developer.com pour savoir comment faire sur votre propre matériel.</string>
+    <string name="dialog_message_busybox_title">Busybox est absent</string>
+    <string name="dialog_message_busybox_description">Votre matériel ne dispose pas de busybox. Busybox est un binaire tout en un qui contient nombre d\'outils standards linux, dont certains sont requis par le script de démarrage Mounts2SD ainsi que par l\'application elle-même. Merci d\'installer busybox depuis l\'un des nombreux fils de discussions de XDA-Developer.com. NE L\'INSTALLEZ PAS depuis l\'Androit market. Ils y sont soit dépassés, soit ne marcheront pas correctement.</string>
+    <string name="dialog_message_btn_close">Fermer</string>
+
+    <!-- ############################################
+     Loading text for the Status activity
+    ############################################# -->
+    <string name="load_status_configuration_text">Chargement des configurations</string>
+
+    <!-- ############################################
+     Toast messages for the Log Activity
+    ############################################# -->
+    <string name="toast_log_empty_file">Impossible de copier un journal vide sur la carte SD</string>
+    <string name="toast_log_copied">Le journal a été copié vers sdcard/Mounts2SD/log.txt</string>
+    <string name="toast_log_unsuccessful">Impossible de copier le journal vers la carte SD</string>
+
+    <!-- ############################################
+     Text for the Log Activity
+    ############################################# -->
+    <string name="log_is_empty">Le fichier du journal est vide !</string>
+
+    <!-- ############################################
+     Text for UtilsHelper sdcardState() method
+    ############################################# -->
+    <string name="sdcard_state_ro">La carte SD est montée en lecture seule</string>
+    <string name="sdcard_state_format">La carte SD n\'est pas formattée dans un format correct</string>
+    <string name="sdcard_state_missing">La carte SD n\'est pas présente</string>
+    <string name="sdcard_state_ums">La carte SD est correctement partagée via l\'USB</string>
+    <string name="sdcard_state_mount_failure">La carte SD n\'est pas montée à cause de problèmes de partition ou de la carte elle-même</string>
+    <string name="sdcard_state_mount">La care SD n\'est pas montée</string>
+    
+</resources>
