@@ -254,86 +254,6 @@ for loopwrapper in true; do
                         else
                             # Do some final stuff to help with the Android app installation problems
                             doLog v script "Executing the final steps of the script"
-
-                            doLog d script "Examining how to handle %arg1" /data/data/com.android.providers.downloads/cache
-                            if $bb [ -d /data/data/com.android.providers.downloads/cache ]; then
-                                $bb [ $(doProp get status.move_data 0) -eq 1 ] && dataLoc=/sd-ext || dataLoc=/data
-                                $bb [ $(doProp get status.move_data 0) -eq 1 ] && extLoc=/data || extLoc=/sd-ext
-
-                                $bb [ ! -z "`$bb cat /proc/mounts | $bb grep "$extLoc "`" ] && extSize=$(doGetSize $extLoc) || extSize=0
-                                dataSize=$(doGetSize $dataLoc)
-
-                                if $bb [ $(doProp get config.disable_cache_folders) -eq 0 ] && $bb [ $extSize -gt $dataSize ]; then
-                                    if $bb [ ! -d $extLoc/data@providers.downloads@cache ]; then
-                                        $bb mkdir $extLoc/data@providers.downloads@cache
-                                        $bb chmod 0777 $extLoc/data@providers.downloads@cache
-                                        $bb chown 2000.2000 $extLoc/data@providers.downloads@cache
-                                    fi
-
-                                    if $bb [ -d $dataLoc/data@providers.downloads@cache ]; then
-                                        $bb rm -rf $dataLoc/data@providers.downloads@cache
-                                    fi
-
-                                    doLog v script "Attaching %arg1 on %arg2" $dataLoc/data/com.android.providers.downloads/cache $externalDestination/data@providers.downloads@cache
-                                    lastError=$($bb mount --bind $extLoc/data@providers.downloads@cache $dataLoc/data/com.android.providers.downloads/cache 2>&1)
-
-                                    if $bb [ -z "`$bb busybox grep $dataLoc/data/com.android.providers.downloads/cache /proc/mounts`" ] && $bb [ -z "`$bb busybox grep $extLoc/data@providers.downloads@cache /proc/mounts`" ]; then
-                                        doLog w script "Could not attach %arg1 on %arg2" $dataLoc/data/com.android.providers.downloads/cache $extLoc/data@providers.downloads@cache
-
-                                        if $bb [ ! -z "$lastError" ]; then
-                                            doLog d script "Shell Error Message: [%arg1 ...]" "$($bb echo $lastError | $bb awk '{print substr($0, 0, 150)}')"
-                                        fi
-                                    fi
-
-                                else
-                                    for i in /data/data@providers.downloads@cache /sd-ext/data@providers.downloads@cache; do
-                                        if $bb [ -d $i ]; then
-                                            $bb rm -rf $i
-                                        fi
-                                    done
-
-                                    doLog v script "Changing permissions on %arg1" /data/data/com.android.providers.downloads/cache
-                                    $bb chmod 0777 /data/data/com.android.providers.downloads/cache
-                                fi
-                            else
-                                doLog d script "The cache folder %arg1 is not available. Trying again on next boot" /data/data/com.android.providers.downloads/cache
-                            fi
-
-                            doLog v script "Changing permissions on %arg1" /data/local/tmp
-                            if $bb [ ! -d /data/local/tmp ]; then
-                                $bb mkdir -p /data/local/tmp
-                            fi
-
-                            $bb chmod 0777 /data/local/tmp
-                            $bb chown 2000.2000 /data/local/tmp
-
-                            $bb [ ! -z "`$bb cat /proc/mounts | $bb grep "/sd-ext "`" ] && extSize=$(doGetSize /sd-ext) || extSize=0
-                            dataSize=$(doGetSize /data)
-
-                            if $bb [ $(doProp get config.disable_cache_folders) -eq 0 ] && $bb [ $extSize -gt $dataSize ]; then
-                                if $bb [ ! -d /sd-ext/data@local@tmp ]; then
-                                    $bb mkdir /sd-ext/data@local@tmp
-                                    $bb chmod 0777 /sd-ext/data@local@tmp
-                                    $bb chown 2000.2000 /sd-ext/data@local@tmp
-                                fi
-
-                                doLog v script "Attaching %arg1 on %arg2" /data/local/tmp /sd-ext/data@local@tmp
-                                lastError=$($bb mount --bind /sd-ext/data@local@tmp /data/local/tmp 2>&1)
-
-                                if $bb [ -z "`$bb grep /data/local/tmp /proc/mounts`" ] && $bb [ -z "`$bb grep /sd-ext/data@local@tmp /proc/mounts`" ]; then
-                                    doLog w script "Could not attach %arg1 on %arg2" /data/local/tmp /sd-ext/data@local@tmp
-
-                                    if $bb [ ! -z "$lastError" ]; then
-                                        doLog d script "Shell Error Message: [%arg1 ...]" "$($bb echo $lastError | $bb awk '{print substr($0, 0, 150)}')"
-                                    fi
-                                fi
-
-                            else
-                                if $bb [ -d /sd-ext/data@local@tmp ]; then
-                                    $bb rm -rf /sd-ext/data@local@tmp
-                                fi
-                            fi
-
                             doLog d script "Looking for the sqlite3 binary to change the storage threshold"
 		                    if $bb [ -e /data/data/com.android.providers.settings/databases/settings.db ] && $bb [ ! -z "`$bb which sqlite3`" ]; then
                                 i=0;
@@ -1140,164 +1060,247 @@ for loopwrapper in true; do
                             echo 0 > /data/property/m2sd.enable_swap
                         fi
 
-                        doLog d script "Handling the Cache partition and it's settings"
+                        for loopCachewrapper in true; do
+                            doLog d script "Handling the Cache partition and it's settings"
 
-                        if $bb [ $(doProp get config.enable_cache) -eq 1 ] || ( $bb [ $(doProp get config.enable_cache) -eq 2 ] && $bb [ $(doGetSize /cache) -lt 40 ] ); then
-                            doLog v script "Preparing to replace the cache partition"
+                            if $bb [ $(doProp get config.enable_cache) -eq 1 ] || ( $bb [ $(doProp get config.enable_cache) -eq 2 ] && $bb [ $(doGetSize /cache) -lt 40 ] ); then
+                                doLog v script "Preparing to replace the cache partition"
 
-                            externalDestination=$(doProp get status.destination.external /sd-ext)
-                            internalDestination=$(doProp get status.destination.internal /data)
+                                externalDestination=$(doProp get status.destination.external /sd-ext)
+                                internalDestination=$(doProp get status.destination.internal /data)
 
-                            $bb [ ! -z "`$bb cat /proc/mounts | $bb grep -w $(doProp get status.device.sdcard.partition.sdext /sd-ext)`" ] && externalSize=$(doGetSize $externalDestination) || externalSize=0
-                            internalSize=$(doGetSize $internalDestination)
+                                $bb [ ! -z "`$bb cat /proc/mounts | $bb grep -w $(doProp get status.device.sdcard.partition.sdext /sd-ext)`" ] && externalSize=$(doGetSize $externalDestination) || externalSize=0
+                                internalSize=$(doGetSize $internalDestination)
 
-                            if $bb [ ! -z "`$bb grep ' /sd-ext ' /proc/mounts`" ] && ( $bb [ $externalSize -ge 128 ] || $bb [ $(doProp get config.no_tmpfs_cache) -eq 1 ] ) && $bb [ $externalSize -gt $internalSize ]; then
-                                    doLog d script "Setting cache location to %arg1" $externalDestination/cache
-                                    cacheLocation="$externalDestination/cache"
+                                if $bb [ ! -z "`$bb grep ' /sd-ext ' /proc/mounts`" ] && ( $bb [ $externalSize -ge 128 ] || $bb [ $(doProp get config.no_tmpfs_cache) -eq 1 ] ) && $bb [ $externalSize -gt $internalSize ]; then
+                                        doLog d script "Setting cache location to %arg1" $externalDestination/cache
+                                        cacheLocation="$externalDestination/cache"
 
-                            elif $bb [ $internalSize -ge 128 ] || $bb [ $(doProp get config.no_tmpfs_cache) -eq 1 ]; then
-                                    doLog d script "Setting cache location to %arg1" $internalDestination/cache
-                                    cacheLocation="$internalDestination/cache"
+                                elif $bb [ $internalSize -ge 128 ] || $bb [ $(doProp get config.no_tmpfs_cache) -eq 1 ]; then
+                                        doLog d script "Setting cache location to %arg1" $internalDestination/cache
+                                        cacheLocation="$internalDestination/cache"
 
-                            else
-                                    doLog d script "Setting cache location to %arg1" "/cache (tmpfs)"
-                                    cacheLocation="tmpfs"
-                            fi
-
-                            for i in $externalDestination/cache $internalDestination/cache; do
-                                if $bb [ "$i" != "$cacheLocation" ] && $bb [ -d $i ]; then
-                                        $bb rm -rf $i
-
-                                elif $bb [ ! -d $i ]; then
-                                        $bb mkdir $i
-                                        $bb chown 1000.2001 $i
-                                        $bb chmod 0771 $i
+                                else
+                                        doLog d script "Setting cache location to %arg1" "/cache (tmpfs)"
+                                        cacheLocation="tmpfs"
                                 fi
-                            done
 
-                            if $bb [ -z "`grep dalvik.vm.dexopt-data-only=1 /system/build.prop`" ] && $bb [ $(doCheckFolder /cache/dalvik-cache) -eq 1 ]; then
-                                if $bb [ $(doProp get status.script_safe_mode) -eq 1 ]; then
-                                    if $bb [ $(doProp config.enable_cache) -eq 1 ]; then
-                                        doLog w enable_cache "Cannot handle cache with CM's %arg1 on systems running in safe-mode!" /cache/dalvik-cache
+                                for i in $externalDestination/cache $internalDestination/cache; do
+                                    if $bb [ "$i" != "$cacheLocation" ] && $bb [ -d $i ]; then
+                                            $bb rm -rf $i
+
+                                    elif $bb [ ! -d $i ]; then
+                                            $bb mkdir $i
+                                            $bb chown 1000.2001 $i
+                                            $bb chmod 0771 $i
+                                    fi
+                                done
+
+                                if $bb [ -z "`grep dalvik.vm.dexopt-data-only=1 /system/build.prop`" ] && $bb [ $(doCheckFolder /cache/dalvik-cache) -eq 1 ]; then
+                                    if $bb [ $(doProp get status.script_safe_mode) -eq 1 ]; then
+                                        if $bb [ $(doProp config.enable_cache) -eq 1 ]; then
+                                            doLog w enable_cache "Cannot handle cache with CM's %arg1 on systems running in safe-mode!" /cache/dalvik-cache
+                                        fi
+
+                                        doLog d script "Safe-mode detected with CM %arg1, skipping cache configurations" /cache/dalvik-cache
+
+                                        break
                                     fi
 
-                                    doLog d script "Safe-mode detected with CM %arg1, skipping cache configurations" /cache/dalvik-cache
+                                    doCreateFolder /internal-cache
 
-                                    doProp set status.script 1; break
+                                    doLog d script "Moving Internal cache mount point from %arg1 to %arg2" /cache /internal-cache
+                                    lastError=$($bb mount --move /cache /internal-cache 2>&1)
+
+                                    if $bb [ -z "`$bb grep ' /internal-cache ' /proc/mounts`" ]; then
+                                        doLog d script "Moving Internal cache mount point failed. Trying manual umount/remount"
+                                        mtdDevice="`$bb grep '/dev/' /proc/mounts | $bb grep ' /cache ' | $bb awk '{print $1}'`"
+
+                                        doLog d script "Unmounting Internal cache from %arg1" /cache
+                                        $bb umount /cache || $bb umount -f /cache || $bb umount -l /cache
+
+                                        if $bb [ -z "`$bb grep ' /cache ' /proc/mounts`" ]; then
+                                            doLog d script "Trying to mount Internal cache on %arg1" /internal-cache
+                                            $bb mount $mtdDevice /internal-cache
+
+                                            if $bb [ -z "`$bb grep ' /internal-cache ' /proc/mounts`" ]; then
+                                                doLog e enable_cache "Could not move Internal cache from %arg1 to %arg2" /cache /internal-cache
+
+                                                if $bb [ ! -z "$lastError" ]; then
+                                                    doLog d script "Shell Error Message: [%arg1 ...]" "$($bb echo $lastError | $bb awk '{print substr($0, 0, 150)}')"
+                                                fi
+
+                                                break
+                                            fi
+
+                                        else
+                                            doLog e enable_cache "Could not move Internal cache from %arg1 to %arg2" /cache /internal-cache
+
+                                            break
+                                        fi
+                                    fi
+
+                                    if $bb [ ! -z "`$bb grep ' /internal-cache ' /proc/mounts`" ]; then
+                                        doLog v script "The internal cache was successfully moved to %arg1" /internal-cache
+                                    fi
+
+                                else
+                                    doLog v script "Unmounting internal cache partition"
+                                    $bb umount /cache
                                 fi
 
-                                doCreateFolder /internal-cache
+                                doLog v script "Attaching %arg1 to %arg2" $cacheLocation /cache
+                                if $bb [ "$cacheLocation" = "tmpfs" ]; then
+                                     lastError=$($bb mount -t tmpfs -o rw,nosuid,nodev,noatime,nodiratime,relatime,mode=0771,uid=1000,gid=2001 tmpfs /cache 2>&1)
+                                else
+                                     lastError=$($bb mount --bind $cacheLocation /cache 2>&1)
+                                fi
 
-                                doLog d script "Moving Internal cache mount point from %arg1 to %arg2" /cache /internal-cache
-                                lastError=$($bb mount --move /cache /internal-cache 2>&1)
+                                if $bb [ ! -z "`$bb grep ' /cache ' /proc/mounts`" ] || ( $bb [ "$cacheLocation" != "tmpfs" ] && $bb [ ! -z "`$bb grep " $cacheLocation " /proc/mounts`" ] ); then
+                                    doProp set status.enable_cache 1
 
-                                if $bb [ -z "`$bb grep ' /internal-cache ' /proc/mounts`" ]; then
-                                    doLog d script "Moving Internal cache mount point failed. Trying manual umount/remount"
-                                    mtdDevice="`$bb grep '/dev/' /proc/mounts | $bb grep ' /cache ' | $bb awk '{print $1}'`"
+                                    doSetPerms /cache 1000.2001 0771
 
-                                    doLog d script "Unmounting Internal cache from %arg1" /cache
-                                    $bb umount /cache || $bb umount -f /cache || $bb umount -l /cache
+                                    if $bb [ "$cacheLocation" = "tmpfs" ]; then
+                                        doLog v destination.cache "Cache has been mounted as tmpfs"
+                                        doProp set status.destination.cache /cache
 
-                                    if $bb [ -z "`$bb grep ' /cache ' /proc/mounts`" ]; then
-                                        doLog d script "Trying to mount Internal cache on %arg1" /internal-cache
-                                        $bb mount $mtdDevice /internal-cache
+                                    else
+                                        doProp set status.destination.cache $cacheLocation
+                                    fi
 
-                                        if $bb [ -z "`$bb grep ' /internal-cache ' /proc/mounts`" ]; then
-                                            doLog e enable_cache "Could not move Internal cache from %arg1 to %arg2" /cache /internal-cache
+                                    for x in /*.rc; do
+                                        doCreate="$doCreate $($bb grep mkdir $x | $bb grep -e ' \/cache\/[^\/]*\(\/[^\/]*\)* ' | $bb tr -s ' ' | $bb sed 's/mkdir \(\/cache\/[^ ]*\).*$/\1/')"
+                                    done
+
+                                    doCreate="`echo $doCreate | sed 's/ /\n/g' | awk '!a[$0]++'`"
+
+                                    for i in $doCreate; do
+                                        doLog d script "Making sure that the init.rc defined folder %arg1 exists" $i
+                                        doCreateFolder $i
+                                    done
+
+                                    if $bb [ -z "`grep dalvik.vm.dexopt-data-only=1 /system/build.prop`" ] && $bb [ $(doCheckFolder /cache/dalvik-cache) -eq 1 ]; then
+                                        doLog v script "Attaching %arg1 to %arg2" /internal-cache/dalvik-cache $(doProp get status.destination.cache /cache)/dalvik-cache
+                                        $bb rm -rf $(doProp get status.destination.cache /cache)/dalvik-cache/*
+                                        lastError=$($bb mount --bind /internal-cache/dalvik-cache $(doProp get status.destination.cache /cache)/dalvik-cache 2>&1)
+
+                                        if $bb [ -z "`$bb grep ' /cache/dalvik-cache ' /proc/mounts`" ] && $bb [ -z "`$bb grep ' /internal-cache/dalvik-cache ' /proc/mounts`" ] && $bb [ -z "`$bb grep " $(doProp get status.destination.cache /cache)/dalvik-cache " /proc/mounts`" ]; then
+                                            doLog w enable_cache "Could not attach CM's %arg1 to %arg2" /cache/dalvik-cache $(doProp get status.destination.cache /cache)/dalvik-cache
+                                            $bb rm -rf /internal-cache/dalvik-cache/*
 
                                             if $bb [ ! -z "$lastError" ]; then
                                                 doLog d script "Shell Error Message: [%arg1 ...]" "$($bb echo $lastError | $bb awk '{print substr($0, 0, 150)}')"
                                             fi
 
-                                            doProp set status.script 1; break
+                                        else
+                                            # Be very sure that these perms are as they should or you will end up with a lot of FC
+                                            doSetPerms /cache/dalvik-cache 1000.1000 0771
                                         fi
+                                    fi
+
+                                 else
+                                    doLog e enable_cache "It was not possible to attach %arg1 to %arg2!" $cacheLocation /cache
+                
+                                    if $bb [ -z "`grep dalvik.vm.dexopt-data-only=1 /system/build.prop`" ] && $bb [ $(doCheckFolder /cache/dalvik-cache) -eq 1 ]; then
+                                        $bb umount /internal-cache && $bb mount /cache
 
                                     else
-                                        doLog e enable_cache "Could not move Internal cache from %arg1 to %arg2" /cache /internal-cache
+                                        $bb mount /cache
+                                    fi
 
-                                        doProp set status.script 1; break
+                                    if $bb [ ! -z "$lastError" ]; then
+                                        doLog d script "Shell Error Message: [%arg1 ...]" "$($bb echo $lastError | $bb awk '{print substr($0, 0, 150)}')"
+                                    fi
+                                 fi
+
+                            elif $bb [ $(doProp get config.enable_cache) -eq 2 ]; then
+                                doLog d script "The cache stettings are set to auto and internal cache storage is %arg1, leaving cache untouched" $(doGetSize /cache)Mb
+
+                            else
+                                doLog d script "The cache stettings are disabled, leaving cache untouched"
+                            fi
+
+                            break
+                        done
+
+                        doLog d script "Examining how to handle %arg1" /data/data/com.android.providers.downloads/cache
+                        if $bb [ -d /data/data/com.android.providers.downloads/cache ]; then
+                            $bb [ $(doProp get status.move_data 0) -eq 1 ] && dataLoc=/sd-ext || dataLoc=/data
+                            $bb [ $(doProp get status.move_data 0) -eq 1 ] && extLoc=/data || extLoc=/sd-ext
+
+                            $bb [ ! -z "`$bb cat /proc/mounts | $bb grep "$extLoc "`" ] && extSize=$(doGetSize $extLoc) || extSize=0
+                            dataSize=$(doGetSize $dataLoc)
+
+                            if $bb [ $(doProp get config.disable_cache_folders) -eq 0 ] && $bb [ $extSize -gt $dataSize ]; then
+                                if $bb [ ! -d $extLoc/data@providers.downloads@cache ]; then
+                                    $bb mkdir $extLoc/data@providers.downloads@cache
+                                    $bb chmod 0777 $extLoc/data@providers.downloads@cache
+                                    $bb chown 2000.2000 $extLoc/data@providers.downloads@cache
+                                fi
+
+                                if $bb [ -d $dataLoc/data@providers.downloads@cache ]; then
+                                    $bb rm -rf $dataLoc/data@providers.downloads@cache
+                                fi
+
+                                doLog v script "Attaching %arg1 on %arg2" $dataLoc/data/com.android.providers.downloads/cache $externalDestination/data@providers.downloads@cache
+                                lastError=$($bb mount --bind $extLoc/data@providers.downloads@cache $dataLoc/data/com.android.providers.downloads/cache 2>&1)
+
+                                if $bb [ -z "`$bb busybox grep $dataLoc/data/com.android.providers.downloads/cache /proc/mounts`" ] && $bb [ -z "`$bb busybox grep $extLoc/data@providers.downloads@cache /proc/mounts`" ]; then
+                                    doLog w script "Could not attach %arg1 on %arg2" $dataLoc/data/com.android.providers.downloads/cache $extLoc/data@providers.downloads@cache
+
+                                    if $bb [ ! -z "$lastError" ]; then
+                                        doLog d script "Shell Error Message: [%arg1 ...]" "$($bb echo $lastError | $bb awk '{print substr($0, 0, 150)}')"
                                     fi
                                 fi
 
-                                if $bb [ ! -z "`$bb grep ' /internal-cache ' /proc/mounts`" ]; then
-                                    doLog v script "The internal cache was successfully moved to %arg1" /internal-cache
-                                fi
-
                             else
-                                doLog v script "Unmounting internal cache partition"
-                                $bb umount /cache
-                            fi
-
-                            doLog v script "Attaching %arg1 to %arg2" $cacheLocation /cache
-                            if $bb [ "$cacheLocation" = "tmpfs" ]; then
-                                 lastError=$($bb mount -t tmpfs -o rw,nosuid,nodev,noatime,nodiratime,relatime,mode=0771,uid=1000,gid=2001 tmpfs /cache 2>&1)
-                            else
-                                 lastError=$($bb mount --bind $cacheLocation /cache 2>&1)
-                            fi
-
-                            if $bb [ ! -z "`$bb grep ' /cache ' /proc/mounts`" ] || ( $bb [ "$cacheLocation" != "tmpfs" ] && $bb [ ! -z "`$bb grep " $cacheLocation " /proc/mounts`" ] ); then
-                                doProp set status.enable_cache 1
-
-                                doSetPerms /cache 1000.2001 0771
-
-                                if $bb [ "$cacheLocation" = "tmpfs" ]; then
-                                    doLog v destination.cache "Cache has been mounted as tmpfs"
-                                    doProp set status.destination.cache /cache
-
-                                else
-                                    doProp set status.destination.cache $cacheLocation
-                                fi
-
-                                for x in /*.rc; do
-                                    doCreate="$doCreate $($bb grep mkdir $x | $bb grep -e ' \/cache\/[^\/]*\(\/[^\/]*\)* ' | $bb tr -s ' ' | $bb sed 's/mkdir \(\/cache\/[^ ]*\).*$/\1/')"
-                                done
-
-                                doCreate="`echo $doCreate | sed 's/ /\n/g' | awk '!a[$0]++'`"
-
-                                for i in $doCreate; do
-                                    doLog d script "Making sure that the init.rc defined folder %arg1 exists" $i
-                                    doCreateFolder $i
-                                done
-
-                                if $bb [ -z "`grep dalvik.vm.dexopt-data-only=1 /system/build.prop`" ] && $bb [ $(doCheckFolder /cache/dalvik-cache) -eq 1 ]; then
-                                    doLog v script "Attaching %arg1 to %arg2" /internal-cache/dalvik-cache $(doProp get status.destination.cache /cache)/dalvik-cache
-                                    $bb rm -rf $(doProp get status.destination.cache /cache)/dalvik-cache/*
-                                    lastError=$($bb mount --bind /internal-cache/dalvik-cache $(doProp get status.destination.cache /cache)/dalvik-cache 2>&1)
-
-                                    if $bb [ -z "`$bb grep ' /cache/dalvik-cache ' /proc/mounts`" ] && $bb [ -z "`$bb grep ' /internal-cache/dalvik-cache ' /proc/mounts`" ] && $bb [ -z "`$bb grep " $(doProp get status.destination.cache /cache)/dalvik-cache " /proc/mounts`" ]; then
-                                        doLog w enable_cache "Could not attach CM's %arg1 to %arg2" /cache/dalvik-cache $(doProp get status.destination.cache /cache)/dalvik-cache
-                                        $bb rm -rf /internal-cache/dalvik-cache/*
-
-                                        if $bb [ ! -z "$lastError" ]; then
-                                            doLog d script "Shell Error Message: [%arg1 ...]" "$($bb echo $lastError | $bb awk '{print substr($0, 0, 150)}')"
-                                        fi
-
-                                    else
-                                        # Be very sure that these perms are as they should or you will end up with a lot of FC
-                                        doSetPerms /cache/dalvik-cache 1000.1000 0771
+                                for i in /data/data@providers.downloads@cache /sd-ext/data@providers.downloads@cache; do
+                                    if $bb [ -d $i ]; then
+                                        $bb rm -rf $i
                                     fi
-                                fi
+                                done
 
-                             else
-                                doLog e enable_cache "It was not possible to attach %arg1 to %arg2!" $cacheLocation /cache
-            
-                                if $bb [ -z "`grep dalvik.vm.dexopt-data-only=1 /system/build.prop`" ] && $bb [ $(doCheckFolder /cache/dalvik-cache) -eq 1 ]; then
-                                    $bb umount /internal-cache && $bb mount /cache
+                                doLog v script "Changing permissions on %arg1" /data/data/com.android.providers.downloads/cache
+                                $bb chmod 0777 /data/data/com.android.providers.downloads/cache
+                            fi
+                        else
+                            doLog d script "The cache folder %arg1 is not available. Trying again on next boot" /data/data/com.android.providers.downloads/cache
+                        fi
 
-                                else
-                                    $bb mount /cache
-                                fi
+                        doLog v script "Changing permissions on %arg1" /data/local/tmp
+                        if $bb [ ! -d /data/local/tmp ]; then
+                            $bb mkdir -p /data/local/tmp
+                        fi
+
+                        $bb chmod 0777 /data/local/tmp
+                        $bb chown 2000.2000 /data/local/tmp
+
+                        $bb [ ! -z "`$bb cat /proc/mounts | $bb grep "/sd-ext "`" ] && extSize=$(doGetSize /sd-ext) || extSize=0
+                        dataSize=$(doGetSize /data)
+
+                        if $bb [ $(doProp get config.disable_cache_folders) -eq 0 ] && $bb [ $extSize -gt $dataSize ]; then
+                            if $bb [ ! -d /sd-ext/data@local@tmp ]; then
+                                $bb mkdir /sd-ext/data@local@tmp
+                                $bb chmod 0777 /sd-ext/data@local@tmp
+                                $bb chown 2000.2000 /sd-ext/data@local@tmp
+                            fi
+
+                            doLog v script "Attaching %arg1 on %arg2" /data/local/tmp /sd-ext/data@local@tmp
+                            lastError=$($bb mount --bind /sd-ext/data@local@tmp /data/local/tmp 2>&1)
+
+                            if $bb [ -z "`$bb grep /data/local/tmp /proc/mounts`" ] && $bb [ -z "`$bb grep /sd-ext/data@local@tmp /proc/mounts`" ]; then
+                                doLog w script "Could not attach %arg1 on %arg2" /data/local/tmp /sd-ext/data@local@tmp
 
                                 if $bb [ ! -z "$lastError" ]; then
                                     doLog d script "Shell Error Message: [%arg1 ...]" "$($bb echo $lastError | $bb awk '{print substr($0, 0, 150)}')"
                                 fi
-                             fi
-
-                        elif $bb [ $(doProp get config.enable_cache) -eq 2 ]; then
-                            doLog d script "The cache stettings are set to auto and internal cache storage is %arg1, leaving cache untouched" $(doGetSize /cache)Mb
+                            fi
 
                         else
-                            doLog d script "The cache stettings are disabled, leaving cache untouched"
+                            if $bb [ -d /sd-ext/data@local@tmp ]; then
+                                $bb rm -rf /sd-ext/data@local@tmp
+                            fi
                         fi
 
                         doProp set status.script 1
