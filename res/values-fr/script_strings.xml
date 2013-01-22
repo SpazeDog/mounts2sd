@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="script_msg_empty_with_warning">Le status courrant ne correspond pas à vos réglages pour cette option</string>
+    <string name="script_msg_1715dbf8f537f7d198e3155fe50d05db" formatted="false">Fonction : Création du dossier %arg1 !</string>
+    <string name="script_msg_2a54263e38f6d25b0ce2cded869561d9" formatted="false">Fonction : Changement des permissions de %arg1 pour %arg2:%arg3</string>
+    <string name="script_msg_c28a16bba6ac91ef7756cfaa63b146e9" formatted="false">M2SD a été appelé sans les permissions super utilisateur !</string>
+    <string name="script_msg_6f8527b0b990c9ea36fb14c614a7df22" formatted="false">M2SD est désactivé. Annulation !</string>
+    <string name="script_msg_901278c4319a7a3ab330d08973373154" formatted="false">Le script n\'a pas été pleinement exécuté depuis le démarrage !</string>
+    <string name="script_msg_03d437c7dd73aad35bd39b9d0f9c3c2a" formatted="false">Exécution des dernières étapes du script</string>
+    <string name="script_msg_b3c92ea8b66bed5f443aa7f0bf29f16a" formatted="false">Examen de la façon de traiter %arg1</string>
+    <string name="script_msg_59dea4441a5000bee6c72046ded2d28f" formatted="false">Attachement de %arg1 sur %arg2</string>
+    <string name="script_msg_6d0b0762179345cdc4ab43445467ad24" formatted="false">Impossible d\'attacher %arg1 sur %arg2</string>
+    <string name="script_msg_6e3f6fb8a1bcf42f6c65424f817ecb2e" formatted="false">Changement des permissions de %arg1</string>
+    <string name="script_msg_7623ffaf25206fe4f65bd2bd9432a5e8" formatted="false">Le dossier cache %arg1 n\'est pas disponible. Nouvel essai au prochain démarrage</string>
+    <string name="script_msg_cc1e1112ba2190e65d0358baed47fe23" formatted="false">Recherche du binaire sqlite3 pour changer le seuil de stockage</string>
+    <string name="script_msg_a15b0e9814e4071ab1e16e70b3090381" formatted="false">Le seuil de stockage est défini à %arg1</string>
+    <string name="script_msg_126960891443f9b7e3e90bdabacee43b" formatted="false">Le seuil de stockage ne peut être changé. The binaire Sqlite3 a retourné le code \'%arg1\' !</string>
+    <string name="script_msg_6d9e39f9a858d010ffc0d241ced1ba2a" formatted="false">Le seuil de stockage ne peut être changé. The binaire Sqlite3 est absent !</string>
+    <string name="script_msg_930a5803a4688583f4c92d9c3f1a6314" formatted="false">Impossible d\'écrire le tmpfs ramdisk !</string>
+    <string name="script_msg_b55aecbdffd4b12b1a49f2c09808e1d3" formatted="false">Préparation des configurations</string>
+    <string name="script_msg_d318c722868ae845e120a91e4834ef94" formatted="false">Création de la propriété manquante %arg1</string>
+    <string name="script_msg_08e9fc8921bd2eda2f07964039fa9057" formatted="false">Déplacement de la propriété %arg1 vers %arg2</string>
+    <string name="script_msg_060f72c9e7709c754ea30887d5604f6f" formatted="false">/system/bin/servicemanager est en cours d\'exécution, désactivation de %arg1 pour préparer le safe-mode</string>
+    <string name="script_msg_20f78ea1e1596ae6773e96286b88ca94" formatted="false">Le script est exécuté en safe-mode !</string>
+    <string name="script_msg_83d101c7f010b65d7ba6a2bfd98107d0" formatted="false">Le safe-mode a été désactivé, test init.d ignoré !</string>
+    <string name="script_msg_c501452f639c87df8410394588eee1fc" formatted="false">Attente de l\'initialisation de la carte SD</string>
+    <string name="script_msg_6df8f97bc7e3bf368c34436a2f2b4b9a" formatted="false">Préparation de l\'essai numéro %arg1 de localisation de la carte SD</string>
+    <string name="script_msg_6cde647f5e4bfc48014eefa634fefb3f" formatted="false">Vérification du type de périphérique sur %arg1</string>
+    <string name="script_msg_deb6405567663d632d02caf72c6fccdd" formatted="false">La carte SD was été trouvée sur %arg1</string>
+    <string name="script_msg_2aab77b557c75af0670583bf18a87c0d" formatted="false">La carte SD MM number a été trouvée sur %arg1</string>
+    <string name="script_msg_b1dc1a9f2a66ce96d1dc5e162ea53b52" formatted="false">Définition du readahead de la carte SD à %arg1</string>
+    <string name="script_msg_2548af45980e9e593d204699beb3a8c1" formatted="false">Impossible de définir le readahead de la carte SD !</string>
+    <string name="script_msg_321879b8bcb4ec6caece021f0b11afe5" formatted="false">Le fichier readahead du périphérique de la carte SD n\'a pas trouvé sur %arg1</string>
+    <string name="script_msg_490719fa7b8d0139ac1ce1bd9e53b79d" formatted="false">Vérification des partitions de la carte SD</string>
+    <string name="script_msg_c5654961a3c28ca41ee9b3005c6691cd" formatted="false">Recherche du fichier de périphérique %arg1</string>
+    <string name="script_msg_1d4939e598e9de2ce3703484f23b569a" formatted="false">Utilisation de %arg1 comme %arg2</string>
+    <string name="script_msg_3e17883712011a8d49536761e4a9c48f" formatted="false">Le système de fichier %arg1 de sd-ext n\'est pas supporté. Basculé vers auto-détection !</string>
+    <string name="script_msg_aa4d663412567bb461154d4d256011f8" formatted="false">Le fichier de périphérique %arg1 n\'existe pas</string>
+    <string name="script_msg_dc52c9b94808b637752296597d1461ee" formatted="false">La partition sd-ext ne peut être trouvée !</string>
+    <string name="script_msg_bbde9118eda8ca44e51a1bb42d93cf51" formatted="false">Le périphérique sd-ext est déjà utilisé par un autre script !</string>
+    <string name="script_msg_2df3ae3fef9a6d8ad5f020820fb247de" formatted="false">Exécution de la vérification du système de fichiers sur sd-ext</string>
+    <string name="script_msg_b0d8b516bb53e6ef1adc8680eb296294" formatted="false">Erreur détectée pendant la vérification de sd-ext. La correction automatique a été effectuée !</string>
+    <string name="script_msg_23203bf23aa948acb39c49a33e450e36" formatted="false">Erreur détectée pendant la vérification de sd-ext. Tout a été laissé non corrigé !</string>
+    <string name="script_msg_32aae2b4400e08d62f59686affc2dd6d" formatted="false">Impossible de faire une vérification du système de fichiers. E2fsck absent !</string>
+    <string name="script_msg_ef032340c057d628e5164c03e5f5bebc" formatted="false">La vérification du système de fichier est désactivée, ignoré</string>
+    <string name="script_msg_f57523c9d8a11d1790204fa1ea7d5b41" formatted="false">Définition des paramètres de montage optimisés sur sd-ext</string>
+    <string name="script_msg_a5cd6f5ec0381073da57bce93728d3a0" formatted="false">Système de fichier %arg1 supprimé, vérification des réglages du journal</string>
+    <string name="script_msg_87e5f8901ae27afd595dcd8c57a70ee1" formatted="false">Désactivation %arg1 journal sur sd-ext</string>
+    <string name="script_msg_7661eb58f0d2c801a4ee6b1e3eb420a0" formatted="false">Erreur lors de l\'arrêt du journal sur sd-ext %arg1 !</string>
+    <string name="script_msg_6d0b6deb930cd4d7556d8851b7f9b147" formatted="false">Impossible d\'arrêter le journal sur sd-ext %arg1 !</string>
+    <string name="script_msg_e9decbac62e281464e129d3be10d7a93" formatted="false">Activation de journal de sd-ext %arg1</string>
+    <string name="script_msg_f9a54740a61b4f4ad1a711a0a2016fbf" formatted="false">Erreur lors de l\'activation du journal sur sd-ext %arg1 !</string>
+    <string name="script_msg_90a86634b06508bba59afbd053382e09" formatted="false">Impossible d\'activer le journal sur sd-ext %arg1 !</string>
+    <string name="script_msg_29be0e551cbdfbe158412cea7ff4dc4f" formatted="false">Le réglage du journal est défini à auto. Réglages par défaut laissés</string>
+    <string name="script_msg_51f9fb95f022b639a22b17c17d39aec2" formatted="false">Impossible de gérer le journal de %arg1. Tune2fs manquant !</string>
+    <string name="script_msg_1b8816b363fa382b22892cb2e4c02e93" formatted="false">Définition du paramètre pour désactiver le journal de %arg1</string>
+    <string name="script_msg_3b5b5fa246e544d04a711185593eefa3" formatted="false">Les réglages du journal ne sont pas définis comme désactivés, journal actif laissé</string>
+    <string name="script_msg_d50be3c3202c491758691334885d160e" formatted="false">R-mount est actif, déplacement du point de montage de la mémoire interne vers /sd-ext</string>
+    <string name="script_msg_70db4b2de9e960a52e65710e8b870997" formatted="false">Déplacement du point de montage de la mémoire interne échoué. Essai de mountage/remountage manuel</string>
+    <string name="script_msg_7f03b43d43f56b35480bb56b478571df" formatted="false">Démontage de la mémoire intere depuis /data</string>
+    <string name="script_msg_5b320fcca9029a94ef5b3074bbe8cdc0" formatted="false">Essai de montage de la mémoire interne sur /sd-ext</string>
+    <string name="script_msg_33202e6eabf0485aa804302a18b0f67c" formatted="false">Échec du montage de la mémoire interne sur /sd-ext, remontage sur /data</string>
+    <string name="script_msg_05e65db5578f5a2745e072d47840d8d4" formatted="false">La mémoire interne a correctement été déplacée de /data vers /sd-ext</string>
+    <string name="script_msg_798e4fc61a2ea64d48cc373c3c3d567c" formatted="false">Il a été impossible de déplacer le point de montage de la mémoire interne !</string>
+    <string name="script_msg_ff2d94ea3459266bd7bb626a24cb48ee" formatted="false">Échec de l\'inversion des options de contenu de r-mount pour garder le contenu aux mêmes endroits</string>
+    <string name="script_msg_546d70a2e7d5e6053f450d233c0fe9ed" formatted="false">Démarrage des opérations de montage sur sd-ext</string>
+    <string name="script_msg_b67649ca1696cdb8582a7acd906dfca7" formatted="false">Essai de montage de sd-ext comme %arg1 sur avec les options \'%arg3\'</string>
+    <string name="script_msg_56c395702303573fff9ce380c7ae1834" formatted="false">La partition sd-ext a été montée, test d\'écriture en cours</string>
+    <string name="script_msg_4d18d1911256545121a8911ae4a273cc" formatted="false">Le type du système de fichiers ne peut être utilisé comme partition data. Merci de changer pour un type comme Ext(2/3/4) !</string>
+    <string name="script_msg_f21e05202f08856697975c11b421ff44" formatted="false">La partition sd-ext a été montée correctement sur %arg1</string>
+    <string name="script_msg_1db059ab2a19886c27a479713da6c90b" formatted="false">Il a été impossible de monter la partition sd-ext sans le journal !</string>
+    <string name="script_msg_c8346e7e65f96a08b75ec8804ab913c3" formatted="false">La partition sd-ext n\'a pu être montée. Nouvel essai avec différentes options de montage</string>
+    <string name="script_msg_d771a3f89cb9e0a698fd1c07f159da10" formatted="false">La partition sd-ext n\'a pu être montée. Nouvel essai sans les options additionnelles de montage</string>
+    <string name="script_msg_8c9877b2315fe2146766c7676c984f91" formatted="false">Impossible de mounter sd-ext comme %arg1. Basculé vers auto détection !</string>
+    <string name="script_msg_9b5715aa27cc77ad200bbead91f33fb1" formatted="false">la partition sd-ext n\'a pu être montée !</string>
+    <string name="script_msg_1a1b78ef061492156cdb63b378febd71" formatted="false">Restauration du point de montage de la mémoire nand interne sur /data !</string>
+    <string name="script_msg_ee613452b31657ec2d8ae51dcd12d3cd" formatted="false">Démontage de la mémoire interne depuis /sd-ext</string>
+    <string name="script_msg_e130b17c319a83cd802abaa47339869f" formatted="false">Essai de montage de la mémoire interne sur /data</string>
+    <string name="script_msg_ee1911fd2d61072b860ab94d01df0cb8" formatted="false">Impossible de restaurer data de /sd-ext vers /data</string>
+    <string name="script_msg_765e81d26305e0d9a080c336e888d78c" formatted="false">Safe-mode détecté, création des liens symboliques temporaires entre /sd-ext/app(-*) et /data/app(-*)</string>
+    <string name="script_msg_978b7b14d58cde52d1719ab40aa88a3c" formatted="false">Préparation au déplacement du contenu entre /data et /sd-ext</string>
+    <string name="script_msg_93300e0c442f713f4f626b9d9245e8bb" formatted="false">Recherche dans %arg1 pour voir si quelque chose peut être restauré vers %arg2</string>
+    <string name="script_msg_8466f0f057c5b2fff60a30f5b9e1b504" formatted="false">Restauration de %arg1 vers %arg2</string>
+    <string name="script_msg_c4fc76139df4db30325ae1e374c4758f" formatted="false">La taille de %arg1 est %arg3. Comparaison avec l\'espace restant sur %arg2 qui est %arg4</string>
+    <string name="script_msg_3aba7793aa9fa721eb3b2b14daa22fb0" formatted="false">Impossible de restaurer %arg1 à cause du faible espace sur %arg2. Abandon</string>
+    <string name="script_msg_9b609973454e8d53b5db38a53cfba187" formatted="false">Impossible de restaurer %arg1 à cause du faible espace sur %arg2. Nouvel essai plus tard</string>
+    <string name="script_msg_05cb598180252c2417d745ea0ae41b81" formatted="false">Recherche dans %arg1 pour voir si quelque chose peut être déplacé dans %arg2</string>
+    <string name="script_msg_d3b1ea7529aebdf6f95c332bfd17cc13" formatted="false">Déplacement du contenu depuis %arg1 vers %arg2</string>
+    <string name="script_msg_8da44010bc7cc610a58afde63356caa8" formatted="false">Impossible de déplacer %arg1 à cause du faible espace sur %arg2. Abandon</string>
+    <string name="script_msg_9b17fa5f0840b712d062e4d279229df5" formatted="false">Impossible de déplacer %arg1 à cause du failbe espace sur %arg2. Nouvel essai plus tard</string>
+    <string name="script_msg_40d60a5488a85c045488f00842e4c68e" formatted="false">le contenu de %arg1 est trop gros pour être déplacé vers %arg2 !</string>
+    <string name="script_msg_9939466b0a55d4cb57b1e58b8fad6bf9" formatted="false">Tout depuis %arg1 ne peut être déplacer vers %arg2. Vérifier l\'espace disque disponible !</string>
+    <string name="script_msg_33c3c2b83a70554c236456ce4d63f548" formatted="false">Le contenu de %arg1 is trop gros pour être restauré vers %arg2 !</string>
+    <string name="script_msg_dbde540107e7303780ab1bf16c7dfa4c" formatted="false">Tout depuis %arg1 ne peut être restauré vers %arg2. Vérifier l\'espace disque disponible !</string>
+    <string name="script_msg_ee70149b5ec633dd5e3fab5902391d7e" formatted="false">Safe-mode détecté, nettoyage de quelques liens symboliques non utilisés</string>
+    <string name="script_msg_7f0b9953ca57f8d34d35c1e366cfb11d" formatted="false">Il a été impossibe de lier %arg1 vers %arg2 !</string>
+    <string name="script_msg_ac37b902dc8734789996da6c963eff9d" formatted="false">Vérifier que le dossier défini par init.rc existe</string>
+    <string name="script_msg_88a2c972c0acc1075b2c31fa3ed591ea" formatted="false">Temps d\attente dépassée pendant la recherche de la partition sd-ext !</string>
+    <string name="script_msg_24de1b7128ac7ead360b5af0c28b60d6" formatted="false">Optimisation des partitions de la nand interne</string>
+    <string name="script_msg_8e6df5db692ba56be582cd7758ef7fa1" formatted="false">Le périphérique %arg1 a été trouvé appartenant à %arg2</string>
+    <string name="script_msg_e1e9407759706b55893d037bab8cb861" formatted="false">Le périphérique MM numéro %arg1 a été trouvé appartenant à %arg2</string>
+    <string name="script_msg_410acc3ded985b816d932d3811db5f2e" formatted="false">Définition du nand readahead de %arg1 à 4kb</string>
+    <string name="script_msg_b32e34f4282ff7f9298eda924b75b1cc" formatted="false">Définition des paramètres de montage optimisés sur %arg1</string>
+    <string name="script_msg_b38673ad5d4218f01e357843d11448da" formatted="false">Impossible de trouver le fichier périphérique %arg1</string>
+    <string name="script_msg_e269e545e7d74ed736adf95a9cc21086" formatted="false">Recherche des nouvelles applications système dans %arg1 pour les lier vers %arg2</string>
+    <string name="script_msg_e4a0eb50fe15409391d25fcac0c39059" formatted="false">Exécution du test S-On sur /system</string>
+    <string name="script_msg_5b0dfffc24350d27f2a63d17ce021956" formatted="false">Vérification du lien system sur %arg1</string>
+    <string name="script_msg_5c4b095cfdd6fada873b0cae4b20ac02" formatted="false">Création du lien for %arg1 vers %arg2</string>
+    <string name="script_msg_280810e7018042d72822bf2665728653" formatted="false">La partition /system est protégée S-On</string>
+    <string name="script_msg_97f789ed2155ab0d311d8274911fa838" formatted="false">Impossible de gérer les liens des application de %arg1 vers %arg2 sur les périphériques S-On !</string>
+    <string name="script_msg_a27b6db417b0c7df2b68d6879ed044b0" formatted="false">Vérification des partitions et des réglages SWAP</string>
+    <string name="script_msg_661bfa1074687f9b0fd3248fa6976588" formatted="false">Activation de la partition SWAP</string>
+    <string name="script_msg_b6aafe6d377c023ecb5e8404af794bb6" formatted="false">Définition de la valeur swappiness à \'%arg1\'</string>
+    <string name="script_msg_d98b0123fd235acfc4027865eb7e60e2" formatted="false">La valeur swappiness n\'a pu être changée !</string>
+    <string name="script_msg_3db6367bf7394a4790efd31a21c03ef5" formatted="false">Impossible d\'activer la partition SWAP !</string>
+    <string name="script_msg_4a4729e8c930e3eb355f1bf56fcfedad" formatted="false">Votre kernel ne supporte pas les partitions SWAP !</string>
+    <string name="script_msg_3293c299a6efa1f99544f0b1922be8d5" formatted="false">Impossible de trouver une partition SWAP !</string>
+    <string name="script_msg_d1e887009d7d055e322104a5956e3345" formatted="false">Gestion de la partition cache et de ses réglages</string>
+    <string name="script_msg_f17a0056db467b4e3d08bf43d66eec3f" formatted="false">Préparation du remplacement de la partition cache</string>
+    <string name="script_msg_14af132031e2fdcbc83ff0e850109095" formatted="false">Définition de l\'emplacement du cache à %arg1</string>
+    <string name="script_msg_07610bf006b2c326439728f15c32bfce" formatted="false">Impossible de gérer le cache avec le CM %arg1 sur les systèmes tournant en safe-mode !</string>
+    <string name="script_msg_93ad7d6799eba1361b2b7d713dabe716" formatted="false">Safe-mode détecté avec CM %arg1, configurations du cache ignorés</string>
+    <string name="script_msg_5deaeb376bb667b8bb21f73589652617" formatted="false">Déplacement du point de montage du cache interne depuis %arg1 vers %arg2</string>
+    <string name="script_msg_d5dd6044c564b2798019318444cad23e" formatted="false">Déplacement du point de montage du cache interne échoué. Essai de mountage/démontage manuel</string>
+    <string name="script_msg_23989fe1e069437f248400921033f029" formatted="false">Démontage du cache interne depuis %arg1</string>
+    <string name="script_msg_144be83a342d1d581f65aabfeefcc148" formatted="false">Essai de montage du cache interne sur %arg1</string>
+    <string name="script_msg_71d0f6c79b1794284871703b4d5bad06" formatted="false">Impossible de déplacer le cache interne depuis %arg1 vers %arg2</string>
+    <string name="script_msg_27a847d9c81fb9547de309dc47996c89" formatted="false">Le cache interne a été correctement déplacé vers %arg1</string>
+    <string name="script_msg_cc45a28a70455e735a3fe49d9004cc00" formatted="false">Démontage de la partition du cache interne</string>
+    <string name="script_msg_13d5306fe893255a9fb40b4ef7e5d5d5" formatted="false">Attachement de %arg1 vers %arg2</string>
+    <string name="script_msg_d24fd3f4ce1097a7bd8d7fe8c1d0c957" formatted="false">Le cache a été monté comme tmpfs</string>
+    <string name="script_msg_87c60806982c0caea60c92a00cd8691b" formatted="false">Impossible d\'attacher CM %arg1 vers %arg2</string>
+    <string name="script_msg_ab82df4a2b20a1298ba6dc141739d34c" formatted="false">Il a été impossible d\'attacher %arg1 vers %arg2 !</string>
+    <string name="script_msg_fef2acda076938600fa89f8dcf563933" formatted="false">Les réglages du cache sont définis à auto et le stockage du cache interne est %arg1, cache laissé non modifié</string>
+    <string name="script_msg_51954f3eca937f31a8e48104bddb6ff0" formatted="false">Les réglages du cache sont désactivés, cache laissé non modifié</string>
+    <string name="script_msg_9260156ff702a9585a118ed51a99a1f7" formatted="false">Message d\'erreur Shell : [%arg1 ...]</string>
+
+</resources>

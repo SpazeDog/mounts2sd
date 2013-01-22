@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- ############################################
+     Menu strings for the Log layout
+    ############################################# -->
+    <string name="menu_save_log">Copier le journal sur la carte SD</string>
+
+    <!-- ############################################
+     Menu strings for the Status layout
+    ############################################# -->
+    <string name="menu_settings">Paramètres</string>
+    <string name="options_configure">Configurer</string>
+    <string name="options_view_log">Voir le journal</string>
+
+    <!-- ############################################
+     Headlines for the Settings layout
+    ############################################# -->
+    <string name="settings_script_headline">Installer le script</string>
+    <string name="settings_busybox_headline">Configurer Busybox</string>
+
+    <!-- ############################################
+     Headlines for the Status and Configure layout
+    ############################################# -->
+    <string name="global_status_headline">Statuts</string>
+    <string name="options_headline">Options</string>
+    <string name="storage_headline">Stockage</string>
+    <string name="content_headline">Contenu</string>
+    <string name="memory_headline">Mémoire</string>
+    <string name="device_headline">Périphérique SD</string>
+    <string name="partition_headline">Partition SD-Ext</string>
+    <string name="misc_headline">Autres</string>
+
+    <!-- ############################################
+     Headers for the Status and Configure layout
+    ############################################# -->
+    <string name="storage_internal_header">Mémoire interne</string>
+    <string name="storage_external_header">Mémoire externe</string>
+    <string name="storage_cache_header">Cache</string>
+    <string name="storage_rmount_header">Mountage inversé</string>
+    <string name="misc_safemode_header">Désactiver le mode sécurité</string>
+    <string name="misc_tmpfs_header">Désactiver le cache tmpfs</string>
+    <string name="misc_cache_folders_header">Désactiver le cache des dossiers</string>
+    <string name="misc_debug_header">Activer le débogage</string>
+    <string name="storage_usage_text">%1$s sur %2$s</string>
+    <string name="memory_swap_header">Partition SWAP</string>
+    <string name="memory_swappiness_header">Swappiness</string>
+    <string name="device_readahead_header">Readahead</string>
+    <string name="partition_fschk_header">Vérification du système de fichiers</string>
+    <string name="partition_journal_header">Journal Ext(3/4)</string>
+    <string name="partition_fstype_header">Type de système du fichiers</string>
+    <string name="content_apps_header">Applications</string>
+    <string name="content_data_header">Données</string>
+    <string name="content_dalvik_header">Cache Dalvik</string>
+
+    <!-- ############################################
+     Text for the Status layout
+    ############################################# -->
+    <string name="not_available_text">Non disponible</string>
+
+    <!-- ############################################
+     Text for the Configure layout
+    ############################################# -->
+    <string name="global_status_text">Activer/Désactiver le script. Attention, désactiver le script ne restaurera rien aux positions initiales</string>
+    <string name="storage_rmount_text">Inverse les points de montage : sd-ext sera utilé comme mémoire interne alors que data sera utilisé comme externe</string>
+    <string name="content_apps_text">Déplace toutes les applications de /data/app vers /sd-ext/app</string>
+    <string name="content_data_text">Déplace toutes les données des applications de /data/data vers /sd-ext/data</string>
+    <string name="content_dalvik_text">Déplace le cache dalvik de /data/dalvik-cache vers /sd-ext/dalvik-cache</string>
+    <string name="storage_cache_text">Déplace /cache vers /data/cache ou /sd-ext/cache en fonction de là où il y a le plus de place disponible</string>
+    <string name="memory_swap_text">Activer la partition SWAP (3ème partition de la carte SD) durant le démarrage</string>
+    <string name="memory_swappiness_text">Définir la répartion SWAP/RAM. Plus le niveau est élevé, plus le SWAP est utilisé ce qui peut ralentir votre système</string>
+    <string name="partition_fschk_text">Effectuer une vérification/réparation du système de fichier sur la partition sd-ext partition au démarrage</string>
+    <string name="partition_journal_text">Activer/Désactiver le journal ext(3/4) journal au démarrage (Mettre à auto pour le réglage système par défaut)</string>
+    <string name="partition_fstype_text">Définir le type du système de fichiers pour la partition sd-ext qui doit être forcé au démarrage</string>
+    <string name="device_readahead_text">Définir le readahead pour la carte SD</string>
+    <string name="misc_safemode_text">Si oui ou non le mode de débogage doit être utilisé lorsqu\'un support inconnu d\'init.d est détecté</string>
+    <string name="misc_tmpfs_text">Utiliser seulement /data ou /sd-ext comme remplacement du cache, jamais tmpfs</string>
+    <string name="misc_cache_folders_text">M2SD déplace automatiquement les dossiers cache pour le gestionnaire de téléchargement et de paquets vers le stockage qui dispose le plus d\'espace. Celà va désactiver cette fonction</string>
+    <string name="misc_debug_text">En activant le débogage, vous obtiendrez des entrées plus nombreuses et plus détaillées dans le journal</string>
+
+</resources>
