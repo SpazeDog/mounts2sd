@@ -19,8 +19,6 @@
 
 package com.spazedog.mounts2sd;
 
-import com.spazedog.mounts2sd.UtilsHelper.SelectorOptions;
-
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
@@ -37,6 +35,8 @@ import android.view.WindowManager.LayoutParams;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.spazedog.mounts2sd.UtilsHelper.SelectorOptions;
 
 public class SelectorDialog extends DialogFragment {
 
