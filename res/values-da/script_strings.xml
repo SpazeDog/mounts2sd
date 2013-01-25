@@ -135,6 +135,8 @@
 	<string name="script_msg_ab82df4a2b20a1298ba6dc141739d34c" formatted="false">Det var ikke muligt at montere %arg1 på %arg2!</string>
 	<string name="script_msg_fef2acda076938600fa89f8dcf563933" formatted="false">Cache indstillingerne er sat til automatisk og den interne cache størelse er %arg1, efterlader cache uberørt</string>
 	<string name="script_msg_51954f3eca937f31a8e48104bddb6ff0" formatted="false">Cache indstillingerne er deaktiverede, efterlader cache uberørt</string>
-    <string name="script_msg_9260156ff702a9585a118ed51a99a1f7" formatted="false">Shell Fejl Besked: [%arg1 ...]</string>
+    <string name="script_msg_9260156ff702a9585a118ed51a99a1f7" formatted="false">Shell Fejl Besked: [%arg1 ...]
+    <string name="script_msg_8f1accbbf76c247da515cc09c0c2ae69" formatted="false">/system/bin/servicemanager køre, blokere System Server</string>
+    <string name="script_msg_182352c9ce0e645820c479d0f5cf5d2d" formatted="false">Genstarter System Server</string></string>
 
 </resources>

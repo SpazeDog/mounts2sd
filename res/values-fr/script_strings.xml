@@ -135,5 +135,7 @@
     <string name="script_msg_fef2acda076938600fa89f8dcf563933" formatted="false">Les réglages du cache sont définis à auto et le stockage du cache interne est %arg1, cache laissé non modifié</string>
     <string name="script_msg_51954f3eca937f31a8e48104bddb6ff0" formatted="false">Les réglages du cache sont désactivés, cache laissé non modifié</string>
     <string name="script_msg_9260156ff702a9585a118ed51a99a1f7" formatted="false">Message d\'erreur Shell : [%arg1 ...]</string>
+    <string name="script_msg_8f1accbbf76c247da515cc09c0c2ae69" formatted="false">/system/bin/servicemanager se está ejecutando, el bloqueo del sistema del servidor</string>
+    <string name="script_msg_182352c9ce0e645820c479d0f5cf5d2d" formatted="false">El reinicio del sistema del servidor</string>
 
 </resources>

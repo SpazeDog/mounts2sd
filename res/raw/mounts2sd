@@ -175,6 +175,14 @@ doCheckFolder() {
     echo $doCheckFolderValue
 }
 
+doKillSystemServer() {
+    while :; do
+        $bb killall system_server 2>/dev/null
+
+        $bb sleep 3
+    done
+}
+
 # This is used as a hack to break out of at any time
 for loopwrapper in true; do
 
@@ -329,28 +337,38 @@ for loopwrapper in true; do
 
                         cmdPS=$($bb which ps || echo "$bb ps")
 
-                        if $bb [ $(doProp get config.disable_safemode 0) -eq 0 ] && $bb [ ! `$bb sleep 1` ] && $bb [ ! -z "`$cmdPS | $bb grep /system/bin/servicemanager`" ]; then
-                            if $bb [ $(doProp get config.enable_reversed_mount 0) -eq 1 ]; then
-                                if $bb [ $(doProp get config.move_apps 0) -eq 1 ]; then
-                                    $bb echo 0 > /data/property/m2sd.move_apps
-                                    $bb echo 0 > /props/config.move_apps
-                                else
-                                    $bb echo 1 > /data/property/m2sd.move_apps
-                                    $bb echo 1 > /props/config.move_apps
-                                fi
+                        $bb sleep 1
+
+                        if $bb [ ! -z "`$cmdPS | $bb grep /system/bin/servicemanager`" ]; then
+                            if $bb [ $(doProp get config.disable_safemode 0) -eq 0 ]; then
+                               if $bb [ $(doProp get config.enable_reversed_mount 0) -eq 1 ]; then
+                                   if $bb [ $(doProp get config.move_apps 0) -eq 1 ]; then
+                                       $bb echo 0 > /data/property/m2sd.move_apps
+                                       $bb echo 0 > /props/config.move_apps
+                                   else
+                                       $bb echo 1 > /data/property/m2sd.move_apps
+                                       $bb echo 1 > /props/config.move_apps
+                                   fi
+                               fi
+
+                               for i in move_dalvik move_data enable_reversed_mount; do
+                                   doLog d script "/system/bin/servicemanager is running, disabling property %arg1 to prepare safe-mode" /data/property/m2sd.$i
+                                   $bb echo 0 > /data/property/m2sd.$i
+                                   $bb echo 0 > /props/config.$i
+                               done
+
+                               doLog i script "The script is running in safe-mode!"
+                               doProp set status.script_safe_mode 1
+
+                            elif $bb [ $(doProp get config.disable_safemode 0) -gt 0 ]; then
+                                # doLog v script "Safe-mode has been disabled, skipping init.d test!"
+
+                                doLog v script "/system/bin/servicemanager is running, Stalling System Server"
+
+                                doKillSystemServer & 
+
+                                export doKillPid=$!
                             fi
-
-                            for i in move_dalvik move_data enable_reversed_mount; do
-                                doLog d script "/system/bin/servicemanager is running, disabling property %arg1 to prepare safe-mode" /data/property/m2sd.$i
-                                $bb echo 0 > /data/property/m2sd.$i
-                                $bb echo 0 > /props/config.$i
-                            done
-
-                            doLog i script "The script is running in safe-mode!"
-                            doProp set status.script_safe_mode 1
-
-                        elif $bb [ $(doProp get config.disable_safemode 0) -gt 0 ]; then
-                            doLog v script "Safe-mode has been disabled, skipping init.d test!"
                         fi
 
                         doLog v script "Waiting for sdcard to initiate"
@@ -1316,3 +1334,9 @@ for loopwrapper in true; do
     break
 
 done
+
+if [ ! -z "$doKillPid" ]; then
+    doLog v script "Restarting System Server"
+
+    $bb kill -9 $doKillPid
+fi
