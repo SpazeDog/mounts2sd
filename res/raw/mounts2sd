@@ -980,15 +980,15 @@ for loopwrapper in true; do
 
                         doLog v script "Optimizing the internal nand partitions"
 
-                        for i in system data cache; do
-                                mtdDevice="`$bb grep '/dev/' /proc/mounts | $bb grep " /$i " | $bb awk '{print $1}'`"
+                        for i in /system $(doProp get status.destination.internal /data) /cache; do
+                                mtdDevice="`$bb grep '/dev/' /proc/mounts | $bb grep " $i " | $bb awk '{print $1}'`"
 
-                                doLog d script "Located the device %arg1 belonging to %arg2" $mtdDevice /$i
+                                doLog d script "Located the device %arg1 belonging to %arg2" $mtdDevice $i
 
                                 if $bb [ -b $mtdDevice ]; then
                                         mtdMM="`$bb ls -l $mtdDevice | $bb tr -s ' ' | $bb sed -ne 's/^.*[ ]\([0-9]*\),[ ]\([0-9]*\)[ ].*$/\1:\2/p'`"
 
-                                        doLog d script "Located the device MM number %arg1 belonging to %arg2" $mtdMM /$i
+                                        doLog d script "Located the device MM number %arg1 belonging to %arg2" $mtdMM $i
 
                                         if $bb [ -e /sys/devices/virtual/bdi/$mtdMM/read_ahead_kb ]; then
                                                 doLog v script "Setting %arg1 nand readahead to 4kb" $i
@@ -996,10 +996,10 @@ for loopwrapper in true; do
                                         fi
 
                                         doLog v script "Setting optimized mount parameters on %arg1" $i
-                                        $bb mount -o remount,noatime,nodiratime,relatime /$i
+                                        $bb mount -o remount,noatime,nodiratime,relatime $i
 
                                 else
-                                        doLog w script "Could not locate the device file for %arg1" /$i
+                                        doLog w script "Could not locate the device file for %arg1" $i
                                 fi
                         done
 
