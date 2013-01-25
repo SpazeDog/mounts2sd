@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="config_app_id">3a7e7a0922120855d5c44700db6a7769</string>
-    <string name="config_script_id">a214a14f008b92e56a83c7c5318b3356</string>
+    <string name="config_app_id">49de75b516d061dde82f0843c758491d</string>
+    <string name="config_script_id">504bfd59ed2d6ce890e27a84e507caa3</string>
     <string name="config_busyboxsh_id">dfbb93e19255d293be4e7403cc21944f</string>
     <string name="config_script_path">/system/etc/init.d/10mounts2sd</string>
     
