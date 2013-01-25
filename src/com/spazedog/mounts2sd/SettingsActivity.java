@@ -214,17 +214,19 @@ public class SettingsActivity extends Activity {
 					status = rootfw.filesystem.copyFileResource(getBaseContext(), getResources().getIdentifier("busybox_sh", "raw", getPackageName()), "/system/bin/busybox.sh", "0770", "0", "0");
 					
 					if (status) {
-						rootfw.runShell("/system/bin/busybox.sh configure"); 
-						status = rootfw.runShell("/system/bin/busybox.sh check").getResultCode() == 0 ? true : false;
-						
-						if (!status) { 
-							status = rootfw.utils.recoveryInstall(getBaseContext(), getResources().getIdentifier( rootfw.filesystem.exist("/proc/mtd") ? "busybox_mtd_zip" : "busybox_ext4_zip" , "raw", getPackageName()));
+						if ((status = rootfw.utils.matchMd5("/system/bin/busybox.sh", getResources().getString(R.string.config_busyboxsh_id)))) {
+							rootfw.runShell("/system/bin/busybox.sh configure"); 
+							status = rootfw.runShell("/system/bin/busybox.sh check").getResultCode() == 0 ? true : false;
 							
-						} else {
-							SharedPreferences settings = SettingsActivity.this.getSharedPreferences("prop_configuration", 0x00000000);
-							Editor editor = settings.edit();
-							editor.putBoolean("check.busybox.configured", true);
-							editor.commit();
+							if (!status) { 
+								status = rootfw.utils.recoveryInstall(getBaseContext(), getResources().getIdentifier( rootfw.filesystem.exist("/proc/mtd") ? "busybox_mtd_zip" : "busybox_ext4_zip" , "raw", getPackageName()));
+								
+							} else {
+								SharedPreferences settings = SettingsActivity.this.getSharedPreferences("prop_configuration", 0x00000000);
+								Editor editor = settings.edit();
+								editor.putBoolean("check.busybox.configured", true);
+								editor.commit();
+							}
 						}
 					} 
 					

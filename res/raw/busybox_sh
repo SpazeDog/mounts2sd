@@ -9,6 +9,15 @@ TB_BIN="watchprops wipe vmstat date uptime reboot getevent getprop setprop id if
 BB_BIN="`$SYS_BB --list`"
 
 if $BB [ "$1" = "check" ]; then
+    if $BB [ -f /system/busybox.md5 ] ; then
+        if $BB [ "`$BB md5sum $SYS_BB | $BB awk '{print $1}'`" = "`$BB cat /system/busybox.md5`" ]; then
+            exit 0
+        fi
+    fi
+
+    exit 1
+
+elif $BB [ "$1" = "full-check" ]; then
     for i in $BB_BIN; do
         whichCmd=$($BB which $i)
 
@@ -72,4 +81,6 @@ elif $BB [ "$1" = "configure" ]; then
 		    fi
 	    done
     fi
+
+    $BB echo $($BB md5sum $SYS_BB | $BB awk '{print $1}') > /system/busybox.md5
 fi

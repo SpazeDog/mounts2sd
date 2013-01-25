@@ -285,10 +285,12 @@ public class SettingsHelper {
 				if (result.getResultCode() == 0 && result.getResult().getAssembled().contains("46a313b06d28557b0ed1e03fb3d92a40")) {
 					editor.putBoolean("check.busybox.compatibility", true);
 					
-					result = rootfw.runShell("/system/bin/busybox.sh check");
-					
-					if (result.getResultCode() == 0) {
-						editor.putBoolean("check.busybox.configured", true);
+					if (rootfw.utils.matchMd5("/system/bin/busybox.sh", BaseApplication.getContext().getResources().getString(R.string.config_busyboxsh_id))) {
+						result = rootfw.runShell("/system/bin/busybox.sh check");
+						
+						if (result.getResultCode() == 0) {
+							editor.putBoolean("check.busybox.configured", true);
+						}
 					}
 					
 					if (checkScript()) {
