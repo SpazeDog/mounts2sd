@@ -40,6 +40,7 @@ move_dalvik 0
 move_data 0
 move_libs 0
 move_media 0
+move_system 0
 enable_cache 0
 enable_swap 0
 set_swap_level 0
@@ -371,12 +372,13 @@ ProcessBoot() {
 
             # These options is known to cause issues when core services are running.
             # So we will disable these in safe-mode
-            for lPropName in move_dalvik move_data move_libs move_media; do
+            for lPropName in move_dalvik move_data move_libs move_media move_system; do
                 $_echo 0 > $iDirProperty/m2sd.$lPropName
                 Session set prop_$lPropName 0
             done
 
             $_echo 1 > $iDirTmp/safemode.result
+            Session set status_safemode 1
         fi
 
     else
@@ -542,9 +544,9 @@ ProcessStorage() {
             fi
         fi
 
-        if $_test $(Session get prop_enable_sdext_journal 0) -ne 0 && $_blkid $lDevice | grep -q 'TYPE="ext4"'; then
+        if $_test $(Session get prop_enable_sdext_journal 0) -ne 2 && $_blkid $lDevice | grep -q 'TYPE="ext4"'; then
             if ! $_test -z "$_tune2fs"; then
-                local lHasJournal=$($_tune2fs -l $lDevice | $_grep features | $_grep -q has_journal && $_echo 1 || $_echo -1)
+                local lHasJournal=$($_tune2fs -l $lDevice | $_grep features | $_grep -q has_journal && $_echo 1 || $_echo 0)
                 local lShellError
 
                 Log d "Checking current journal status on $lDevice"
@@ -594,6 +596,9 @@ ProcessContent() {
         local lContentMove
         local lContentRevert
         local lContentCurrent
+        local lSystemContent
+        local lPath
+        local lFolder
 
         # Don't delete newly created content. Wait until next boot to allow users to restore the content if needed
         if $_test -d $iDirSdext/lost+found && $_test -f $iDirSdext/lost+found/delete; then
@@ -608,11 +613,21 @@ ProcessContent() {
         Log v "Preparing to move content between /data and $iDirSdext"
 
         # This is a fix for fast booting devices using the init.d service implementation. They some times boot up before an sd-ext script is done moving the content and attaching the folders
-        for lSdextPath in $iDirSdext/app/* $iDirSdext/app-private/* $iDirSdext/app-asec/* $iDirSdext/app-system/*; do
-            lDataPath=$($_echo $lSdextPath | $_sed -e "s/^$($_echo $iDirSdext | $_sed 's/\//\\\//')\//\/data\//")
+        if $_test $(Session get status_safemode 0) -eq 1; then
+            for lSdextPath in $iDirSdext/app/* $iDirSdext/app-private/* $iDirSdext/app-asec/* $iDirSdext/app-system/*; do
+                lDataPath=$($_echo $lSdextPath | $_sed -e "s/^$($_echo $iDirSdext | $_sed 's/\//\\\//')\//\/data\//")
 
-            if ! $_test -e $lDataPath && $_test -f $lSdextPath; then
-                $_ln -s $lSdextPath $lDataPath
+                if ! $_test -e $lDataPath && $_test -f $lSdextPath; then
+                    $_ln -s $lSdextPath $lDataPath
+                fi
+            done
+        fi
+
+        for lPath in /system/*; do
+            lFolder=$($_basename $lPath)_s
+
+            if $_test -d $iDirSdext/$lFolder || $_test -d /data/$lFolder; then
+                lSystemContent="$lSystemContent $lFolder"
             fi
         done
 
@@ -634,6 +649,10 @@ ProcessContent() {
 
         if CheckDir /data/app-lib; then
             $_test $(Session get prop_move_libs 0) -eq 1 && lContentMove="$lContentMove app-lib" || lContentRevert="$lContentRevert app-lib"
+        fi
+
+        if ! $_test -z "$lSystemContent"; then
+            $_test $(Session get prop_move_system 0) -eq 1 && lContentMove="$lContentMove $lSystemContent" || lContentRevert="$lContentRevert $lSystemContent"
         fi
 
         local lExtSize=$(PartitionSize $iDirSdext)
@@ -748,16 +767,18 @@ ProcessContent() {
 
                         if $_test -d $iDirSdext/$lFolder; then
                             # Cleanup old links
-                            if $_echo $lFolder | $_grep -q -e "^app"; then
-                                for lDataPath in /data/$lFolder/*; do
-                                    if $_test -L $lDataPath; then
-                                        lSdextPath=$($_echo $lDataPath | $_sed -e "s/^\/data\//$($_echo $iDirSdext | $_sed 's/\//\\\//')\//")
+                            if $_test $(Session get status_safemode 0) -eq 1; then
+                                if $_echo $lFolder | $_grep -q -e "^app"; then
+                                    for lDataPath in /data/$lFolder/*; do
+                                        if $_test -L $lDataPath; then
+                                            lSdextPath=$($_echo $lDataPath | $_sed -e "s/^\/data\//$($_echo $iDirSdext | $_sed 's/\//\\\//')\//")
 
-                                        if ! $_test -e $lSdextPath; then
-                                            $_rm -rf $lDataPath
+                                            if ! $_test -e $lSdextPath; then
+                                                $_rm -rf $lDataPath
+                                            fi
                                         fi
-                                    fi
-                                done
+                                    done
+                                fi
                             fi
 
                             AttachMount $iDirSdext/$lFolder /data/$lFolder
@@ -784,8 +805,19 @@ ProcessContent() {
 # 
 ProcessLinks() {
     local lFile
+    local lDirs="/data/app-system"
+    local lFolder
+    local lPath
+    local lSystemLocation
+    local lDataLocation
 
-    Log v "Looking for new system apps in /data/app-system"
+    for lPath in /system/*; do
+        lFolder=$($_basename $lPath)_s
+
+        if $_test -d /data/$lFolder; then
+            lDirs="$lDirs /data/$lFolder"
+        fi
+    done
 
     # Make sure that the device has not got the HTC S-On flag on the /system partition
     Log d "Running an S-On protection test on /system"
@@ -794,24 +826,32 @@ ProcessLinks() {
     if $_test -e /system/s-off; then
         $_rm -rf /system/s-off
 
-        # Cleanup removed files
-        for lFile in /system/app/*; do
-            if $_test -L $lFile && $_test -z "`$_readlink $lFile`"; then
-                $_rm -rf $lFile
+        Log v "Linking system content to the /system location"
+
+        for lDataLocation in $lDirs; do
+            lSystemLocation="$($_echo "$lDataLocation" | $_sed 's/\/data\/\(.*\)\(_s\|-system\)/\/system\/\1/')"
+
+            Log d "Linking content from $lDataLocation to $lSystemLocation"
+
+            for lFile in $lSystemLocation/*; do
+                if $_test -L $lFile && $_test -z "`$_readlink $lFile`"; then
+                    Log d "Removing unused link $lFile"
+                    $_rm -rf $lFile
+                fi
+            done
+
+            if $_test -d $lDataLocation; then
+                for lFile in $lDataLocation/*; do
+                    if $_test -f $lFile && ! $_test -e $lSystemLocation/$($_basename $lFile); then
+                        Log d "Creating a link for $lFile in $lSystemLocation"
+                        $_ln -s $lFile $lSystemLocation/
+                    fi
+                done
             fi
         done
 
-        if $_test -d /data/app-system; then
-            for lFile in /data/app-system/*; do
-                if $_test -f $lFile && ! $_test -e /system/app/$($_basename $lFile); then
-                    Log v "Creating a link for $lFile in /system/app/"
-                    $_ln -s $lFile /system/app/
-                fi
-            done
-        fi
-
     else
-        Log i "Could not handle system apps from /data/app-system. The system partition is S-On protected!"
+        Log i "The system partition is S-On protected and it is therefore not possible to link system content to the /system location!"
     fi
 }
 
