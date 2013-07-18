@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" style="?content_mainWrapper">
+    
+    <LinearLayout style="?content_groupWrapper">
+        <TextView style="?content_groupHeader" android:text="@string/option_storage_header" />
+        
+		<LinearLayout style="?content_itemWrapper_clickable" android:id="@+id/option_storage_item_cache">
+		    <LinearLayout style="?content_itemWrapper_inline_clickable">
+		        <TextView style="?content_itemNameField_inline_clickable" android:layout_weight="1" android:id="@+id/item_name" android:text="@string/option_storage_item_cache" />
+		        <TextView style="?content_itemValueField_inline_clickable" android:id="@+id/item_value" />
+		    </LinearLayout>
+		    <TextView style="?content_itemDescription_clickable" android:id="@+id/item_description" android:text="@string/option_storage_description_cache" />
+		</LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout style="?content_groupWrapper">
+        <TextView style="?content_groupHeader" android:text="@string/option_system_header" />
+        
+		<LinearLayout style="?content_itemWrapper_clickable" android:id="@+id/option_system_item_threshold">
+		    <LinearLayout style="?content_itemWrapper_inline_clickable">
+		        <TextView style="?content_itemNameField_inline_clickable" android:layout_weight="1" android:id="@+id/item_name" android:text="@string/option_system_item_threshold" />
+		        <TextView style="?content_itemValueField_inline_clickable" android:id="@+id/item_value" />
+		    </LinearLayout>
+		    <TextView style="?content_itemDescription_clickable" android:id="@+id/item_description" android:text="@string/option_system_description_threshold" />
+		</LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout style="?content_groupWrapper">
+        <TextView style="?content_groupHeader" android:text="@string/option_content_header" />
+        
+		<LinearLayout style="?content_itemWrapper_clickable" android:id="@+id/option_content_item_apps">
+		    <LinearLayout style="?content_itemWrapper_inline_clickable">
+		        <TextView style="?content_itemNameField_inline_clickable" android:layout_weight="1" android:id="@+id/item_name" android:text="@string/option_content_item_apps" />
+		        <ImageView style="?content_itemCheckboxIcon_clickable" android:id="@+id/item_icon" />
+		    </LinearLayout>
+		    <TextView style="?content_itemDescription_clickable" android:id="@+id/item_description" android:text="@string/option_content_description_apps" />
+		</LinearLayout>
+		
+		<View style="?content_itemDivider" android:id="@+id/item_divider" />
+		
+		<LinearLayout style="?content_itemWrapper_clickable" android:id="@+id/option_content_item_libs">
+		    <LinearLayout style="?content_itemWrapper_inline_clickable">
+		        <TextView style="?content_itemNameField_inline_clickable" android:layout_weight="1" android:id="@+id/item_name" android:text="@string/option_content_item_libs" />
+		        <ImageView style="?content_itemCheckboxIcon_clickable" android:id="@+id/item_icon" />
+		    </LinearLayout>
+		    <TextView style="?content_itemDescription_clickable" android:id="@+id/item_description" android:text="@string/option_content_description_libs" />
+		</LinearLayout>
+		
+		<View style="?content_itemDivider" android:id="@+id/item_divider" />
+		
+		<LinearLayout style="?content_itemWrapper_clickable" android:id="@+id/option_content_item_data">
+		    <LinearLayout style="?content_itemWrapper_inline_clickable">
+		        <TextView style="?content_itemNameField_inline_clickable" android:layout_weight="1" android:id="@+id/item_name" android:text="@string/option_content_item_data" />
+		        <ImageView style="?content_itemCheckboxIcon_clickable" android:id="@+id/item_icon" />
+		    </LinearLayout>
+		    <TextView style="?content_itemDescription_clickable" android:id="@+id/item_description" android:text="@string/option_content_description_data" />
+		</LinearLayout>
+		
+		<View style="?content_itemDivider" android:id="@+id/item_divider" />
+		
+		<LinearLayout style="?content_itemWrapper_clickable" android:id="@+id/option_content_item_dalvik">
+		    <LinearLayout style="?content_itemWrapper_inline_clickable">
+		        <TextView style="?content_itemNameField_inline_clickable" android:layout_weight="1" android:id="@+id/item_name" android:text="@string/option_content_item_dalvik" />
+		        <ImageView style="?content_itemCheckboxIcon_clickable" android:id="@+id/item_icon" />
+		    </LinearLayout>
+		    <TextView style="?content_itemDescription_clickable" android:id="@+id/item_description" android:text="@string/option_content_description_dalvik" />
+		</LinearLayout>
+		
+		<View style="?content_itemDivider" android:id="@+id/item_divider" />
+		
+		<LinearLayout style="?content_itemWrapper_clickable" android:id="@+id/option_content_item_media">
+		    <LinearLayout style="?content_itemWrapper_inline_clickable">
+		        <TextView style="?content_itemNameField_inline_clickable" android:layout_weight="1" android:id="@+id/item_name" android:text="@string/option_content_item_media" />
+		        <ImageView style="?content_itemCheckboxIcon_clickable" android:id="@+id/item_icon" />
+		    </LinearLayout>
+		    <TextView style="?content_itemDescription_clickable" android:id="@+id/item_description" android:text="@string/option_content_description_media" />
+		</LinearLayout>
+		
+		<View style="?content_itemDivider" android:id="@+id/item_divider" />
+		
+		<LinearLayout style="?content_itemWrapper_clickable" android:id="@+id/option_content_item_system">
+		    <LinearLayout style="?content_itemWrapper_inline_clickable">
+		        <TextView style="?content_itemNameField_inline_clickable" android:layout_weight="1" android:id="@+id/item_name" android:text="@string/option_content_item_system" />
+		        <ImageView style="?content_itemCheckboxIcon_clickable" android:id="@+id/item_icon" />
+		    </LinearLayout>
+		    <TextView style="?content_itemDescription_clickable" android:id="@+id/item_description" android:text="@string/option_content_description_system" />
+		</LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout style="?content_groupWrapper">
+        <TextView style="?content_groupHeader" android:text="@string/option_memory_header" />
+        
+		<LinearLayout style="?content_itemWrapper_clickable" android:id="@+id/option_memory_item_swap">
+		    <LinearLayout style="?content_itemWrapper_inline_clickable">
+		        <TextView style="?content_itemNameField_inline_clickable" android:layout_weight="1" android:id="@+id/item_name" android:text="@string/option_memory_item_swap" />
+		        <ImageView style="?content_itemCheckboxIcon_clickable" android:id="@+id/item_icon" />
+		    </LinearLayout>
+		    <TextView style="?content_itemDescription_clickable" android:id="@+id/item_description" android:text="@string/option_memory_description_swap" />
+		</LinearLayout>
+		
+		<View style="?content_itemDivider" android:id="@+id/item_divider" />
+		
+		<LinearLayout style="?content_itemWrapper_clickable" android:id="@+id/option_memory_item_zram">
+		    <LinearLayout style="?content_itemWrapper_inline_clickable">
+		        <TextView style="?content_itemNameField_inline_clickable" android:layout_weight="1" android:id="@+id/item_name" android:text="@string/option_memory_item_zram" />
+		        <TextView style="?content_itemValueField_inline_clickable" android:id="@+id/item_value" />
+		    </LinearLayout>
+		    <TextView style="?content_itemDescription_clickable" android:id="@+id/item_description" android:text="@string/option_memory_description_zram" />
+		</LinearLayout>
+		
+		<View style="?content_itemDivider" android:id="@+id/item_divider" />
+		
+		<LinearLayout style="?content_itemWrapper_clickable" android:id="@+id/option_memory_item_swappiness">
+		    <LinearLayout style="?content_itemWrapper_inline_clickable">
+		        <TextView style="?content_itemNameField_inline_clickable" android:layout_weight="1" android:id="@+id/item_name" android:text="@string/option_memory_item_swappiness" />
+		        <TextView style="?content_itemValueField_inline_clickable" android:id="@+id/item_value" />
+		    </LinearLayout>
+		    <TextView style="?content_itemDescription_clickable" android:id="@+id/item_description" android:text="@string/option_memory_description_swappiness" />
+		</LinearLayout>
+    </LinearLayout>
+    
+    <LinearLayout style="?content_groupWrapper">
+        <TextView style="?content_groupHeader" android:text="@string/option_filesystem_header" />
+        
+		<LinearLayout style="?content_itemWrapper_clickable" android:id="@+id/option_filesystem_item_fschk">
+		    <LinearLayout style="?content_itemWrapper_inline_clickable">
+		        <TextView style="?content_itemNameField_inline_clickable" android:layout_weight="1" android:id="@+id/item_name" android:text="@string/option_filesystem_item_fschk" />
+		        <ImageView style="?content_itemCheckboxIcon_clickable" android:id="@+id/item_icon" />
+		    </LinearLayout>
+		    <TextView style="?content_itemDescription_clickable" android:id="@+id/item_description" android:text="@string/option_filesystem_description_fschk" />
+		</LinearLayout>
+		
+		<View style="?content_itemDivider" android:id="@+id/item_divider" />
+		
+		<LinearLayout style="?content_itemWrapper_clickable" android:id="@+id/option_filesystem_item_fstype">
+		    <LinearLayout style="?content_itemWrapper_inline_clickable">
+		        <TextView style="?content_itemNameField_inline_clickable" android:layout_weight="1" android:id="@+id/item_name" android:text="@string/option_filesystem_item_fstype" />
+		        <TextView style="?content_itemValueField_inline_clickable" android:id="@+id/item_value" />
+		    </LinearLayout>
+		    <TextView style="?content_itemDescription_clickable" android:id="@+id/item_description" android:text="@string/option_filesystem_description_fstype" />
+		</LinearLayout>
+		
+		<View style="?content_itemDivider" android:id="@+id/item_divider" />
+		
+		<LinearLayout style="?content_itemWrapper_clickable" android:id="@+id/option_filesystem_item_journal">
+		    <LinearLayout style="?content_itemWrapper_inline_clickable">
+		        <TextView style="?content_itemNameField_inline_clickable" android:layout_weight="1" android:id="@+id/item_name" android:text="@string/option_filesystem_item_journal" />
+		        <TextView style="?content_itemValueField_inline_clickable" android:id="@+id/item_value" />
+		    </LinearLayout>
+		    <TextView style="?content_itemDescription_clickable" android:id="@+id/item_description" android:text="@string/option_filesystem_description_fstype" />
+		</LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout style="?content_groupWrapper">
+        <TextView style="?content_groupHeader" android:text="@string/option_immc_header" />
+        
+		<LinearLayout style="?content_itemWrapper_clickable" android:id="@+id/option_immc_item_readahead">
+		    <LinearLayout style="?content_itemWrapper_inline_clickable">
+		        <TextView style="?content_itemNameField_inline_clickable" android:layout_weight="1" android:id="@+id/item_name" android:text="@string/option_mmc_item_readahead" />
+		        <TextView style="?content_itemValueField_inline_clickable" android:id="@+id/item_value" />
+		    </LinearLayout>
+		    <TextView style="?content_itemDescription_clickable" android:id="@+id/item_description" android:text="@string/option_mmc_description_readahead" />
+		</LinearLayout>
+		
+		<View style="?content_itemDivider" android:id="@+id/item_divider" />
+		
+		<LinearLayout style="?content_itemWrapper_clickable" android:id="@+id/option_immc_item_scheduler">
+		    <LinearLayout style="?content_itemWrapper_inline_clickable">
+		        <TextView style="?content_itemNameField_inline_clickable" android:layout_weight="1" android:id="@+id/item_name" android:text="@string/option_mmc_item_scheduler" />
+		        <TextView style="?content_itemValueField_inline_clickable" android:id="@+id/item_value" />
+		    </LinearLayout>
+		    <TextView style="?content_itemDescription_clickable" android:id="@+id/item_description" android:text="@string/option_mmc_description_scheduler" />
+		</LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout style="?content_groupWrapper">
+        <TextView style="?content_groupHeader" android:text="@string/option_emmc_header" />
+        
+		<LinearLayout style="?content_itemWrapper_clickable" android:id="@+id/option_emmc_item_readahead">
+		    <LinearLayout style="?content_itemWrapper_inline_clickable">
+		        <TextView style="?content_itemNameField_inline_clickable" android:layout_weight="1" android:id="@+id/item_name" android:text="@string/option_mmc_item_readahead" />
+		        <TextView style="?content_itemValueField_inline_clickable" android:id="@+id/item_value" />
+		    </LinearLayout>
+		    <TextView style="?content_itemDescription_clickable" android:id="@+id/item_description" android:text="@string/option_mmc_description_readahead" />
+		</LinearLayout>
+		
+		<View style="?content_itemDivider" android:id="@+id/item_divider" />
+		
+		<LinearLayout style="?content_itemWrapper_clickable" android:id="@+id/option_emmc_item_scheduler">
+		    <LinearLayout style="?content_itemWrapper_inline_clickable">
+		        <TextView style="?content_itemNameField_inline_clickable" android:layout_weight="1" android:id="@+id/item_name" android:text="@string/option_mmc_item_scheduler" />
+		        <TextView style="?content_itemValueField_inline_clickable" android:id="@+id/item_value" />
+		    </LinearLayout>
+		    <TextView style="?content_itemDescription_clickable" android:id="@+id/item_description" android:text="@string/option_mmc_description_scheduler" />
+		</LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout style="?content_groupWrapper">
+        <TextView style="?content_groupHeader" android:text="@string/option_misc_header" />
+        
+		<LinearLayout style="?content_itemWrapper_clickable" android:id="@+id/option_misc_item_safemode">
+		    <LinearLayout style="?content_itemWrapper_inline_clickable">
+		        <TextView style="?content_itemNameField_inline_clickable" android:layout_weight="1" android:id="@+id/item_name" android:text="@string/option_misc_item_safemode" />
+		        <ImageView style="?content_itemCheckboxIcon_clickable" android:id="@+id/item_icon" />
+		    </LinearLayout>
+		    <TextView style="?content_itemDescription_clickable" android:id="@+id/item_description" android:text="@string/option_misc_description_safemode" />
+		</LinearLayout>
+		
+		<View style="?content_itemDivider" android:id="@+id/item_divider" />
+		
+		<LinearLayout style="?content_itemWrapper_clickable" android:id="@+id/option_misc_item_debug">
+		    <LinearLayout style="?content_itemWrapper_inline_clickable">
+		        <TextView style="?content_itemNameField_inline_clickable" android:layout_weight="1" android:id="@+id/item_name" android:text="@string/option_misc_item_debug" />
+		        <ImageView style="?content_itemCheckboxIcon_clickable" android:id="@+id/item_icon" />
+		    </LinearLayout>
+		    <TextView style="?content_itemDescription_clickable" android:id="@+id/item_description" android:text="@string/option_misc_description_debug" />
+		</LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>

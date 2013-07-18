@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<selector xmlns:android="http://schemas.android.com/apk/res/android" >
+	
+	<item android:state_selected="true">
+		<shape xmlns:android="http://schemas.android.com/apk/res/android">
+		    
+		    <gradient 
+		        android:startColor="@color/background_tab_item_indicator_start_themedark" 
+		        android:centerColor="@color/background_tab_item_indicator_stop_themedark"
+		        android:endColor="@color/background_tab_item_indicator_start_themedark"
+		        android:angle="90" />
+		    
+		</shape>
+	</item>
+	
+	<item android:drawable="@android:color/transparent" />
+	
+</selector>

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    
+    <style name="Layout.Main_Scroller">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">fill_parent</item>
+        <item name="android:padding">25dp</item>
+        <item name="android:background">@color/background_layout_main_scroller</item>
+    </style>
+    
+    <style name="Layout.Sub_Wrapper">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:orientation">vertical</item>
+    </style>
+    
+    <style name="Layout.Shadow_Wrapper">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:background">@drawable/image_shadow</item>
+        <item name="android:layout_margin">25dp</item>
+        <item name="android:paddingBottom">4px</item>
+        <item name="android:paddingLeft">5px</item>
+        <item name="android:paddingRight">4px</item>
+        <item name="android:paddingTop">4px</item>
+    </style>
+    
+    <style name="Layout.ThemeDark.Shadow_Wrapper" parent="Layout.Shadow_Wrapper"></style>
+    
+    <style name="Layout.Tab_Pane">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:orientation">horizontal</item>
+        <item name="android:layout_marginTop">25dp</item>
+        <item name="android:layout_marginLeft">25dp</item>
+        <item name="android:layout_marginRight">22dp</item>
+        <item name="android:background">@color/background_tab_pane</item>
+    </style>
+    
+    <style name="Layout.Tab_Item_SubWrapper">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:orientation">horizontal</item>
+    </style>
+    
+    <style name="Layout.Tab_Item_Wrapper">'
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:layout_marginRight">25dp</item>
+        <item name="android:clickable">true</item>
+    </style>
+
+    <style name="Layout.Tab_Item_Text">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
+    </style>
+    
+    <style name="Layout.ThemeDark.Tab_Item_Text" parent="Layout.Tab_Item_Text"></style>
+    
+    
+    <style name="Box.Placeholder">
+        <item name="android:orientation">vertical</item>
+        <item name="android:layout_marginTop">25dp</item>
+        <item name="android:layout_marginBottom">0dp</item>
+        <item name="android:layout_marginLeft">25dp</item>
+        <item name="android:layout_marginRight">25dp</item>
+        <item name="android:background">@drawable/background_box_placeholder</item>
+    </style>
+    
+    <style name="Box.ThemeDark.Placeholder" parent="Box.Placeholder">
+        <item name="android:background">@drawable/background_box_placeholder_themedark</item>
+    </style>
+    
+    <style name="Box.StyleSettings.Placeholder" parent="Box.Placeholder"></style>
+    <style name="Box.ThemeDark.StyleSettings.Placeholder" parent="Box.ThemeDark.Placeholder"></style>
+    
+</resources>

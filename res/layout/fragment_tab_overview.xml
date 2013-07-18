@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" style="?content_mainWrapper">
+    
+    <LinearLayout style="?content_groupWrapper">
+        <TextView style="?content_groupHeader" android:text="@string/option_storage_header" />
+        
+        <LinearLayout style="?content_itemWrapper" android:id="@+id/option_storage_item_internal">
+            <LinearLayout style="?content_itemWrapper_inline">
+                <TextView style="?content_itemNameField_inline" android:layout_weight="1" android:id="@+id/item_name" android:text="@string/option_storage_item_internal" />
+                <TextView style="?content_itemValueField_inline" android:id="@+id/item_value" />
+            </LinearLayout>
+            <TextView style="?content_itemValueField" android:id="@+id/item_value_extra" />
+        </LinearLayout>
+        
+        <View style="?content_itemDivider" android:id="@+id/item_divider" />
+        
+        <LinearLayout style="?content_itemWrapper" android:id="@+id/option_storage_item_external">
+            <LinearLayout style="?content_itemWrapper_inline">
+                <TextView style="?content_itemNameField_inline" android:layout_weight="1" android:id="@+id/item_name" android:text="@string/option_storage_item_external" />
+                <TextView style="?content_itemValueField_inline" android:id="@+id/item_value" />
+            </LinearLayout>
+            <TextView style="?content_itemValueField" android:id="@+id/item_value_extra" />
+        </LinearLayout>
+        
+        <View style="?content_itemDivider" android:id="@+id/item_divider" />
+        
+        <LinearLayout style="?content_itemWrapper" android:id="@+id/option_storage_item_cache">
+            <LinearLayout style="?content_itemWrapper_inline">
+                <TextView style="?content_itemNameField_inline" android:layout_weight="1" android:id="@+id/item_name" android:text="@string/option_storage_item_cache" />
+                <TextView style="?content_itemValueField_inline" android:id="@+id/item_value" />
+            </LinearLayout>
+            <TextView style="?content_itemValueField" android:id="@+id/item_value_extra" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout style="?content_groupWrapper">
+        <TextView style="?content_groupHeader" android:text="@string/option_system_header" />
+        
+        <LinearLayout style="?content_itemWrapper" android:id="@+id/option_system_item_threshold">
+            <LinearLayout style="?content_itemWrapper_inline">
+                <TextView style="?content_itemNameField_inline" android:layout_weight="1" android:id="@+id/item_name" android:text="@string/option_system_item_threshold" />
+                <TextView style="?content_itemValueField_inline" android:id="@+id/item_value" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout style="?content_groupWrapper">
+        <TextView style="?content_groupHeader" android:text="@string/option_content_header" />
+        
+        <LinearLayout style="?content_itemWrapper" android:id="@+id/option_content_item_apps">
+            <LinearLayout style="?content_itemWrapper_inline">
+                <TextView style="?content_itemNameField_inline" android:layout_weight="2" android:id="@+id/item_name" android:text="@string/option_content_item_apps" />
+                <TextView style="?content_itemValueField_inline" android:id="@+id/item_value_extra" android:layout_height="match_parent" android:gravity="center_vertical" />
+                <ImageView style="?content_itemStatusIcon" android:id="@+id/item_icon" />
+            </LinearLayout>
+        </LinearLayout>
+        
+        <View style="?content_itemDivider" android:id="@+id/item_divider" />
+        
+        <LinearLayout style="?content_itemWrapper" android:id="@+id/option_content_item_libs">
+            <LinearLayout style="?content_itemWrapper_inline">
+                <TextView style="?content_itemNameField_inline" android:layout_weight="2" android:id="@+id/item_name" android:text="@string/option_content_item_libs" />
+                <TextView style="?content_itemValueField_inline" android:id="@+id/item_value_extra" android:layout_height="match_parent" android:gravity="center_vertical" />
+                <ImageView style="?content_itemStatusIcon" android:id="@+id/item_icon" />
+            </LinearLayout>
+        </LinearLayout>
+        
+        <View style="?content_itemDivider" android:id="@+id/item_divider" />
+        
+        <LinearLayout style="?content_itemWrapper" android:id="@+id/option_content_item_data">
+            <LinearLayout style="?content_itemWrapper_inline">
+                <TextView style="?content_itemNameField_inline" android:layout_weight="1" android:id="@+id/item_name" android:text="@string/option_content_item_data" />
+                <TextView style="?content_itemValueField_inline" android:id="@+id/item_value_extra" android:layout_height="match_parent" android:gravity="center_vertical" />
+                <ImageView style="?content_itemStatusIcon" android:id="@+id/item_icon" />
+            </LinearLayout>
+        </LinearLayout>
+        
+        <View style="?content_itemDivider" android:id="@+id/item_divider" />
+        
+        <LinearLayout style="?content_itemWrapper" android:id="@+id/option_content_item_dalvik">
+            <LinearLayout style="?content_itemWrapper_inline">
+                <TextView style="?content_itemNameField_inline" android:layout_weight="1" android:id="@+id/item_name" android:text="@string/option_content_item_dalvik" />
+                <TextView style="?content_itemValueField_inline" android:id="@+id/item_value_extra" android:layout_height="match_parent" android:gravity="center_vertical" />
+                <ImageView style="?content_itemStatusIcon" android:id="@+id/item_icon" />
+            </LinearLayout>
+        </LinearLayout>
+        
+        <View style="?content_itemDivider" android:id="@+id/item_divider" />
+        
+        <LinearLayout style="?content_itemWrapper" android:id="@+id/option_content_item_media">
+            <LinearLayout style="?content_itemWrapper_inline">
+                <TextView style="?content_itemNameField_inline" android:layout_weight="1" android:id="@+id/item_name" android:text="@string/option_content_item_media" />
+                <TextView style="?content_itemValueField_inline" android:id="@+id/item_value_extra" android:layout_height="match_parent" android:gravity="center_vertical" />
+                <ImageView style="?content_itemStatusIcon" android:id="@+id/item_icon" />
+            </LinearLayout>
+        </LinearLayout>
+        
+        <View style="?content_itemDivider" android:id="@+id/item_divider" />
+        
+        <LinearLayout style="?content_itemWrapper" android:id="@+id/option_content_item_system">
+            <LinearLayout style="?content_itemWrapper_inline">
+                <TextView style="?content_itemNameField_inline" android:layout_weight="1" android:id="@+id/item_name" android:text="@string/option_content_item_system" />
+                <TextView style="?content_itemValueField_inline" android:id="@+id/item_value_extra" android:layout_height="match_parent" android:gravity="center_vertical" />
+                <ImageView style="?content_itemStatusIcon" android:id="@+id/item_icon" />
+            </LinearLayout>
+        </LinearLayout>
+        
+    </LinearLayout>
+    
+    <LinearLayout style="?content_groupWrapper">
+        <TextView style="?content_groupHeader" android:text="@string/option_memory_header" />
+        
+        <LinearLayout style="?content_itemWrapper" android:id="@+id/option_memory_item_swap">
+            <LinearLayout style="?content_itemWrapper_inline">
+                <TextView style="?content_itemNameField_inline" android:layout_weight="1" android:id="@+id/item_name" android:text="@string/option_memory_item_swap" />
+                <TextView style="?content_itemValueField_inline" android:id="@+id/item_value" />
+            </LinearLayout>
+        </LinearLayout>
+        
+        <View style="?content_itemDivider" android:id="@+id/item_divider" />
+        
+        <LinearLayout style="?content_itemWrapper" android:id="@+id/option_memory_item_zram">
+            <LinearLayout style="?content_itemWrapper_inline">
+                <TextView style="?content_itemNameField_inline" android:layout_weight="1" android:id="@+id/item_name" android:text="@string/option_memory_item_zram" />
+                <TextView style="?content_itemValueField_inline" android:id="@+id/item_value" />
+            </LinearLayout>
+        </LinearLayout>
+        
+        <View style="?content_itemDivider" android:id="@+id/item_divider" />
+        
+        <LinearLayout style="?content_itemWrapper" android:id="@+id/option_memory_item_swappiness">
+            <LinearLayout style="?content_itemWrapper_inline">
+                <TextView style="?content_itemNameField_inline" android:layout_weight="1" android:id="@+id/item_name" android:text="@string/option_memory_item_swappiness" />
+                <TextView style="?content_itemValueField_inline" android:id="@+id/item_value" />
+            </LinearLayout>
+        </LinearLayout>
+        
+    </LinearLayout>
+
+    <LinearLayout style="?content_groupWrapper">
+        <TextView style="?content_groupHeader" android:text="@string/option_filesystem_header" />
+        
+        <LinearLayout style="?content_itemWrapper" android:id="@+id/option_filesystem_item_fschk">
+            <LinearLayout style="?content_itemWrapper_inline">
+                <TextView style="?content_itemNameField_inline" android:layout_weight="1" android:id="@+id/item_name" android:text="@string/option_filesystem_item_fschk" />
+                <TextView style="?content_itemValueField_inline" android:id="@+id/item_value" />
+            </LinearLayout>
+        </LinearLayout>
+        
+        <View style="?content_itemDivider" android:id="@+id/item_divider" />
+        
+        <LinearLayout style="?content_itemWrapper" android:id="@+id/option_filesystem_item_fstype">
+            <LinearLayout style="?content_itemWrapper_inline">
+                <TextView style="?content_itemNameField_inline" android:layout_weight="1" android:id="@+id/item_name" android:text="@string/option_filesystem_item_fstype" />
+                <TextView style="?content_itemValueField_inline" android:id="@+id/item_value" />
+            </LinearLayout>
+        </LinearLayout>
+        
+        <View style="?content_itemDivider" android:id="@+id/item_divider" />
+        
+        <LinearLayout style="?content_itemWrapper" android:id="@+id/option_filesystem_item_journal">
+            <LinearLayout style="?content_itemWrapper_inline">
+                <TextView style="?content_itemNameField_inline" android:layout_weight="1" android:id="@+id/item_name" android:text="@string/option_filesystem_item_journal" />
+                <TextView style="?content_itemValueField_inline" android:id="@+id/item_value" />
+            </LinearLayout>
+        </LinearLayout>
+        
+    </LinearLayout>
+    
+    <LinearLayout style="?content_groupWrapper">
+        <TextView style="?content_groupHeader" android:text="@string/option_immc_header" />
+        
+        <LinearLayout style="?content_itemWrapper" android:id="@+id/option_immc_item_readahead">
+            <LinearLayout style="?content_itemWrapper_inline">
+                <TextView style="?content_itemNameField_inline" android:layout_weight="1" android:id="@+id/item_name" android:text="@string/option_mmc_item_readahead" />
+                <TextView style="?content_itemValueField_inline" android:id="@+id/item_value" />
+            </LinearLayout>
+        </LinearLayout>
+        
+        <View style="?content_itemDivider" android:id="@+id/item_divider" />
+        
+        <LinearLayout style="?content_itemWrapper" android:id="@+id/option_immc_item_scheduler">
+            <LinearLayout style="?content_itemWrapper_inline">
+                <TextView style="?content_itemNameField_inline" android:layout_weight="1" android:id="@+id/item_name" android:text="@string/option_mmc_item_scheduler" />
+                <TextView style="?content_itemValueField_inline" android:id="@+id/item_value" />
+            </LinearLayout>
+        </LinearLayout>
+        
+    </LinearLayout>
+    
+    <LinearLayout style="?content_groupWrapper">
+        <TextView style="?content_groupHeader" android:text="@string/option_emmc_header" />
+        
+        <LinearLayout style="?content_itemWrapper" android:id="@+id/option_emmc_item_readahead">
+            <LinearLayout style="?content_itemWrapper_inline">
+                <TextView style="?content_itemNameField_inline" android:layout_weight="1" android:id="@+id/item_name" android:text="@string/option_mmc_item_readahead" />
+                <TextView style="?content_itemValueField_inline" android:id="@+id/item_value" />
+            </LinearLayout>
+        </LinearLayout>
+        
+        <View style="?content_itemDivider" android:id="@+id/item_divider" />
+        
+        <LinearLayout style="?content_itemWrapper" android:id="@+id/option_emmc_item_scheduler">
+            <LinearLayout style="?content_itemWrapper_inline">
+                <TextView style="?content_itemNameField_inline" android:layout_weight="1" android:id="@+id/item_name" android:text="@string/option_mmc_item_scheduler" />
+                <TextView style="?content_itemValueField_inline" android:id="@+id/item_value" />
+            </LinearLayout>
+        </LinearLayout>
+        
+    </LinearLayout>
+    
+</LinearLayout>

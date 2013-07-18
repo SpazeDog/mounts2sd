@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<selector xmlns:android="http://schemas.android.com/apk/res/android" >
+	
+	<item android:color="@color/text_content_item_namefield_disabled_themedark" 
+	    android:state_enabled="false" />
+	
+	<item android:color="@color/text_content_item_namefield_themedark" />
+	
+</selector>

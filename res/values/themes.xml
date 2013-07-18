@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+
+    <style name="BaseTheme" parent="android:Theme.Light" />
+    <style name="BaseTheme.Dark" parent="android:Theme" />
+    
+    <!-- Application theme. -->
+    <style name="Theme" parent="BaseTheme">
+        
+	    <!-- ##########################################
+	         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+	    <item name="content_mainWrapper">@style/Content.Main_Wrapper</item>
+        <item name="content_groupWrapper">@style/Content.Group_Wrapper</item>
+        <item name="content_groupHeader">@style/Content.Group_Header</item>
+        <item name="content_itemWrapper">@style/Content.Item_Wrapper</item>
+        <item name="content_itemWrapper_clickable">@style/Content.Item_Wrapper_Clickable</item>
+        <item name="content_itemWrapper_inline">@style/Content.Item_Inline_Wrapper</item>
+        <item name="content_itemWrapper_inline_clickable">@style/Content.Item_Inline_Wrapper_Clickable</item>
+        <item name="content_itemNameField">@style/Content.Item_NameField</item>
+        <item name="content_itemNameField_clickable">@style/Content.Item_NameField_Clickable</item>
+        <item name="content_itemNameField_inline">@style/Content.Item_Inline_NameField</item>
+        <item name="content_itemNameField_inline_clickable">@style/Content.Item_Inline_NameField_Clickable</item>
+        <item name="content_itemValueField">@style/Content.Item_ValueField</item>
+        <item name="content_itemValueField_clickable">@style/Content.Item_ValueField_Clickable</item>
+        <item name="content_itemValueField_inline">@style/Content.Item_Inline_ValueField</item>
+        <item name="content_itemValueField_inline_clickable">@style/Content.Item_Inline_ValueField_Clickable</item>
+        <item name="content_itemDescription">@style/Content.Item_Description</item>
+        <item name="content_itemDescription_clickable">@style/Content.Item_Description_Clickable</item>
+        <item name="content_itemStatusIcon">@style/Content.Item_StatusIcon</item>
+        <item name="content_itemCheckboxIcon_clickable">@style/Content.Item_CheckboxIcon_Clickable</item>
+        <item name="content_itemRadioIcon_clickable">@style/Content.Item_RadioIcon_Clickable</item>
+        <item name="content_itemDivider">@style/Content.Item_Divider</item>
+        
+	    <!-- ##########################################
+	         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+	    <item name="settings_mainWrapper">@style/Settings.Main_Wrapper</item>
+	    <item name="settings_mainScroller">@style/Settings.Main_Scroller</item>
+	    <item name="settings_subWrapper">@style/Settings.Sub_Wrapper</item>
+	    <item name="settings_groupWrapper">@style/Settings.Group_Wrapper</item>
+	    <item name="settings_groupHeader">@style/Settings.Group_Header</item>
+	    <item name="settings_itemWrapper">@style/Settings.Item_Wrapper</item>
+	    <item name="settings_itemWrapper_clickable">@style/Settings.Item_Wrapper_Clickable</item>
+	    
+	    <!-- ##########################################
+	         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+		<item name="layout_mainWrapper">@style/Layout.Main_Wrapper</item>
+		<item name="layout_mainScroller">@style/Layout.Main_Scroller</item>
+		<item name="layout_subWrapper">@style/Layout.Sub_Wrapper</item>
+		<item name="layout_shadowWrapper">@style/Layout.Shadow_Wrapper</item>
+		<item name="layout_frameWindow">@style/Layout.Frame_Window</item>
+		<item name="layout_tabPane">@style/Layout.Tab_Pane</item>
+		<item name="layout_tabItemWrapper">@style/Layout.Tab_Item_Wrapper</item>
+		<item name="layout_tabItemSubWrapper">@style/Layout.Tab_Item_SubWrapper</item>
+		<item name="layout_tabItemIcon">@style/Layout.Tab_Item_Icon</item>
+		<item name="layout_tabItemText">@style/Layout.Tab_Item_Text</item>
+		<item name="layout_tabItemIndicator">@style/Layout.Tab_Item_Indicator</item>
+		<item name="layout_divider">@style/Layout.Divider</item>
+		
+	    <!-- ##########################################
+	         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+		<item name="box_placeholder">@style/Box.Placeholder</item>
+		<item name="box_messageWrapper">@style/Box.Message_Wrapper</item>
+		
+	    <!-- ##########################################
+	         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+		<item name="dialog_window">@style/Dialog.Window</item>
+		<item name="dialog_mainWrapper">@style/Dialog.Main_Wrapper</item>
+		<item name="dialog_panel">@style/Dialog.Panel</item>
+		<item name="dialog_mainScroller">@style/Dialog.Main_Scroller</item>
+		<item name="dialog_textBox">@style/Dialog.Text_Box</item>
+		<item name="dialog_placeholder">@style/Dialog.Placeholder</item>
+		<item name="dialog_divider">@style/Dialog.Divider</item>
+		<item name="dialog_buttonWrapper">@style/Dialog.Button_Wrapper</item>
+		<item name="dialog_button">@style/Dialog.Button</item>
+		
+	    <!-- ##########################################
+	         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+		<item name="colorRef_settingsButtonBorder">@color/border_settings_button</item>
+		<item name="colorRef_settingsButtonBackground">@drawable/background_settings_button</item>
+		<item name="colorRef_settingsButtonText">@color/text_settings_button</item>
+		
+	    <!-- ##########################################
+	         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+		<item name="colorRef_logItemBackgroundFirst">@color/background_log_item_first</item>
+		<item name="colorRef_logItemBackgroundSecond">@color/background_log_item_second</item>
+	    
+    </style>
+    
+    <style name="Theme.Dark" parent="BaseTheme.Dark">
+        
+	    <!-- ##########################################
+	         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+	    <item name="content_mainWrapper">@style/Content.ThemeDark.Main_Wrapper</item>
+        <item name="content_groupWrapper">@style/Content.ThemeDark.Group_Wrapper</item>
+        <item name="content_groupHeader">@style/Content.ThemeDark.Group_Header</item>
+        <item name="content_itemWrapper">@style/Content.ThemeDark.Item_Wrapper</item>
+        <item name="content_itemWrapper_clickable">@style/Content.ThemeDark.Item_Wrapper_Clickable</item>
+        <item name="content_itemWrapper_inline">@style/Content.ThemeDark.Item_Inline_Wrapper</item>
+        <item name="content_itemWrapper_inline_clickable">@style/Content.ThemeDark.Item_Inline_Wrapper_Clickable</item>
+        <item name="content_itemNameField">@style/Content.ThemeDark.Item_NameField</item>
+        <item name="content_itemNameField_clickable">@style/Content.ThemeDark.Item_NameField_Clickable</item>
+        <item name="content_itemNameField_inline">@style/Content.ThemeDark.Item_Inline_NameField</item>
+        <item name="content_itemNameField_inline_clickable">@style/Content.ThemeDark.Item_Inline_NameField_Clickable</item>
+        <item name="content_itemValueField">@style/Content.ThemeDark.Item_ValueField</item>
+        <item name="content_itemValueField_clickable">@style/Content.ThemeDark.Item_ValueField_Clickable</item>
+        <item name="content_itemValueField_inline">@style/Content.ThemeDark.Item_Inline_ValueField</item>
+        <item name="content_itemValueField_inline_clickable">@style/Content.ThemeDark.Item_Inline_ValueField_Clickable</item>
+        <item name="content_itemDescription">@style/Content.ThemeDark.Item_Description</item>
+        <item name="content_itemDescription_clickable">@style/Content.ThemeDark.Item_Description_Clickable</item>
+        <item name="content_itemStatusIcon">@style/Content.ThemeDark.Item_StatusIcon</item>
+        <item name="content_itemCheckboxIcon_clickable">@style/Content.ThemeDark.Item_CheckboxIcon_Clickable</item>
+        <item name="content_itemRadioIcon_clickable">@style/Content.ThemeDark.Item_RadioIcon_Clickable</item>
+        <item name="content_itemDivider">@style/Content.ThemeDark.Item_Divider</item>
+        
+	    <!-- ##########################################
+	         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+	    <item name="settings_mainWrapper">@style/Settings.ThemeDark.Main_Wrapper</item>
+	    <item name="settings_mainScroller">@style/Settings.ThemeDark.Main_Scroller</item>
+	    <item name="settings_subWrapper">@style/Settings.ThemeDark.Sub_Wrapper</item>
+	    <item name="settings_groupWrapper">@style/Settings.ThemeDark.Group_Wrapper</item>
+	    <item name="settings_groupHeader">@style/Settings.ThemeDark.Group_Header</item>
+	    <item name="settings_itemWrapper">@style/Settings.ThemeDark.Item_Wrapper</item>
+	    <item name="settings_itemWrapper_clickable">@style/Settings.ThemeDark.Item_Wrapper_Clickable</item>
+        
+	    <!-- ##########################################
+	         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+		<item name="layout_mainWrapper">@style/Layout.ThemeDark.Main_Wrapper</item>
+		<item name="layout_mainScroller">@style/Layout.ThemeDark.Main_Scroller</item>
+		<item name="layout_shadowWrapper">@style/Layout.ThemeDark.Shadow_Wrapper</item>
+		<item name="layout_subWrapper">@style/Layout.ThemeDark.Sub_Wrapper</item>
+		<item name="layout_frameWindow">@style/Layout.ThemeDark.Frame_Window</item>
+		<item name="layout_tabPane">@style/Layout.ThemeDark.Tab_Pane</item>
+		<item name="layout_tabItemWrapper">@style/Layout.ThemeDark.Tab_Item_Wrapper</item>
+		<item name="layout_tabItemSubWrapper">@style/Layout.ThemeDark.Tab_Item_SubWrapper</item>
+		<item name="layout_tabItemIcon">@style/Layout.ThemeDark.Tab_Item_Icon</item>
+		<item name="layout_tabItemText">@style/Layout.ThemeDark.Tab_Item_Text</item>
+		<item name="layout_tabItemIndicator">@style/Layout.ThemeDark.Tab_Item_Indicator</item>
+		<item name="layout_divider">@style/Layout.ThemeDark.Divider</item>
+		
+	    <!-- ##########################################
+	         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+		<item name="box_placeholder">@style/Box.ThemeDark.Placeholder</item>
+		<item name="box_messageWrapper">@style/Box.ThemeDark.Message_Wrapper</item>
+		
+	    <!-- ##########################################
+	         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+		<item name="dialog_window">@style/Dialog.ThemeDark.Window</item>
+		<item name="dialog_mainWrapper">@style/Dialog.ThemeDark.Main_Wrapper</item>
+		<item name="dialog_panel">@style/Dialog.ThemeDark.Panel</item>
+		<item name="dialog_mainScroller">@style/Dialog.ThemeDark.Main_Scroller</item>
+		<item name="dialog_textBox">@style/Dialog.ThemeDark.Text_Box</item>
+		<item name="dialog_placeholder">@style/Dialog.ThemeDark.Placeholder</item>
+		<item name="dialog_divider">@style/Dialog.ThemeDark.Divider</item>
+		<item name="dialog_buttonWrapper">@style/Dialog.ThemeDark.Button_Wrapper</item>
+		<item name="dialog_button">@style/Dialog.ThemeDark.Button</item>
+		
+	    <!-- ##########################################
+	         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+		<item name="colorRef_settingsButtonBorder">@color/border_settings_button_themedark</item>
+		<item name="colorRef_settingsButtonBackground">@drawable/background_settings_button</item>
+		<item name="colorRef_settingsButtonText">@color/text_settings_button</item>
+		
+	    <!-- ##########################################
+	         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+		<item name="colorRef_logItemBackgroundFirst">@color/background_log_item_first_themedark</item>
+		<item name="colorRef_logItemBackgroundSecond">@color/background_log_item_second_themedark</item>
+		
+    </style>
+    
+    <style name="Theme.Settings">
+	    <!-- ##########################################
+	         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+        <item name="content_mainWrapper">@style/Content.StyleSettings.Main_Wrapper</item>
+	    <item name="content_groupWrapper">@style/Settings.Group_Wrapper</item>
+	    <item name="content_groupHeader">@style/Settings.Group_Header</item>
+	    <item name="content_itemWrapper">@style/Settings.Item_Wrapper</item>
+	    <item name="content_itemWrapper_clickable">@style/Settings.Item_Wrapper_Clickable</item>
+	    
+	    <!-- ##########################################
+	         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+	    <item name="box_placeholder">@style/Box.StyleSettings.Placeholder</item>
+    </style>
+    
+    <style name="Theme.Dark.Settings">
+	    <!-- ##########################################
+	         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+        <item name="layout_mainScroller">@style/Layout.ThemeDark.StyleSettings.Main_Scroller</item>
+        
+	    <!-- ##########################################
+	         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+        <item name="content_mainWrapper">@style/Content.ThemeDark.StyleSettings.Main_Wrapper</item>
+	    <item name="content_groupWrapper">@style/Settings.ThemeDark.Group_Wrapper</item>
+	    <item name="content_groupHeader">@style/Settings.ThemeDark.Group_Header</item>
+	    <item name="content_itemWrapper">@style/Settings.ThemeDark.Item_Wrapper</item>
+	    <item name="content_itemWrapper_clickable">@style/Settings.ThemeDark.Item_Wrapper_Clickable</item>
+	    
+	    <!-- ##########################################
+	         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+	    <item name="box_placeholder">@style/Box.ThemeDark.StyleSettings.Placeholder</item>
+    </style> 
+
+</resources>

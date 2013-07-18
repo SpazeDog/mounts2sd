@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+    
+    <!-- ##########################################
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <attr name="content_mainWrapper" format="reference" />
+    <attr name="content_groupWrapper" format="reference" />
+    <attr name="content_groupHeader" format="reference" />
+    <attr name="content_itemWrapper" format="reference" />
+    <attr name="content_itemWrapper_clickable" format="reference" />
+    <attr name="content_itemWrapper_inline" format="reference" />
+    <attr name="content_itemWrapper_inline_clickable" format="reference" />
+    <attr name="content_itemNameField" format="reference" />
+    <attr name="content_itemNameField_clickable" format="reference" />
+    <attr name="content_itemNameField_inline" format="reference" />
+    <attr name="content_itemNameField_inline_clickable" format="reference" />
+    <attr name="content_itemValueField" format="reference" />
+    <attr name="content_itemValueField_clickable" format="reference" />
+    <attr name="content_itemValueField_inline" format="reference" />
+    <attr name="content_itemValueField_inline_clickable" format="reference" />
+    <attr name="content_itemDescription" format="reference" />
+    <attr name="content_itemDescription_clickable" format="reference" />
+    <attr name="content_itemStatusIcon" format="reference" />
+    <attr name="content_itemCheckboxIcon_clickable" format="reference" />
+    <attr name="content_itemRadioIcon_clickable" format="reference" />
+    <attr name="content_itemDivider" format="reference" />
+    
+    <!-- ##########################################
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <attr name="settings_mainWrapper" format="reference" />
+    <attr name="settings_mainScroller" format="reference" />
+    <attr name="settings_subWrapper" format="reference" />
+    <attr name="settings_groupWrapper" format="reference" />
+    <attr name="settings_groupHeader" format="reference" />
+    <attr name="settings_itemWrapper" format="reference" />
+    <attr name="settings_itemWrapper_clickable" format="reference" />
+    
+    <!-- ##########################################
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <attr name="layout_mainWrapper" format="reference" />
+    <attr name="layout_mainScroller" format="reference" />
+    <attr name="layout_shadowWrapper" format="reference" />
+    <attr name="layout_subWrapper" format="reference" />
+    <attr name="layout_frameWindow" format="reference" />
+    <attr name="layout_tabPane" format="reference" />
+    <attr name="layout_tabItemWrapper" format="reference" />
+    <attr name="layout_tabItemSubWrapper" format="reference" />
+    <attr name="layout_tabItemIcon" format="reference" />
+    <attr name="layout_tabItemText" format="reference" />
+    <attr name="layout_tabItemIndicator" format="reference" />
+    <attr name="layout_divider" format="reference" />
+    
+    <!-- ##########################################
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <attr name="box_placeholder" format="reference" />
+    <attr name="box_messageWrapper" format="reference" />
+    
+    <!-- ##########################################
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <attr name="dialog_window" format="reference" />
+    <attr name="dialog_mainWrapper" format="reference" />
+    <attr name="dialog_panel" format="reference" />
+    <attr name="dialog_mainScroller" format="reference" />
+    <attr name="dialog_textBox" format="reference" />
+    <attr name="dialog_placeholder" format="reference" />
+    <attr name="dialog_divider" format="reference" />
+    <attr name="dialog_buttonWrapper" format="reference" />
+    <attr name="dialog_button" format="reference" />
+    
+    <!-- ##########################################
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <attr name="colorRef_settingsButtonBorder" format="color" />
+    <attr name="colorRef_settingsButtonBackground" format="color" />
+    <attr name="colorRef_settingsButtonText" format="color" />
+    
+    <attr name="colorRef_logItemBackgroundFirst" format="color" />
+    <attr name="colorRef_logItemBackgroundSecond" format="color" />
+
+    <!-- 
+    ###
+    # Attr for the custom Dialog Fragment
+    ## -->
+   <declare-styleable name="ExtendedView">
+       <attr name="maxWidth" format="dimension" />
+       <attr name="maxHeight" format="dimension" />
+       <attr name="height" format="dimension" />
+       <attr name="width" format="dimension" />
+   </declare-styleable>
+   
+</resources>

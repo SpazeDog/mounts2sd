@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView style="?layout_mainScroller" xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools">
+    
+	<LinearLayout style="?layout_mainWrapper" >
+	    
+	    <LinearLayout style="?layout_tabPane" >
+	        <LinearLayout android:id="@+id/tab_fragment_overview" android:clickable="true" style="?layout_tabItemWrapper" >
+		        <ImageView style="?layout_tabItemIcon" android:src="@drawable/btn_tab_overview" />
+		        <View style="?layout_tabItemIndicator" android:duplicateParentState="true" />
+		    </LinearLayout>
+		    
+	        <LinearLayout android:id="@+id/tab_fragment_configure" android:clickable="true" style="?layout_tabItemWrapper" >
+		        <ImageView style="?layout_tabItemIcon" android:src="@drawable/btn_tab_configure" />
+		        <View style="?layout_tabItemIndicator" android:duplicateParentState="true" />
+		    </LinearLayout>
+		    
+	        <LinearLayout android:id="@+id/tab_fragment_log" android:clickable="true" style="?layout_tabItemWrapper" >
+		        <ImageView style="?layout_tabItemIcon" android:src="@drawable/btn_tab_log" />
+		        <View style="?layout_tabItemIndicator" android:duplicateParentState="true" />
+		    </LinearLayout>
+	    </LinearLayout>
+	    
+	    <View style="?layout_divider" />
+
+	    <LinearLayout style="?layout_subWrapper" >
+		    <LinearLayout android:id="@+id/placeholder" style="?box_placeholder" android:visibility="gone" />
+			<FrameLayout android:id="@+id/fragment_frame" style="?layout_frameWindow" />
+		</LinearLayout>
+		
+	</LinearLayout>
+
+</ScrollView>

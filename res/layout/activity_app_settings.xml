@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<com.spazedog.mounts2sd.tools.ExtendedLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools" android:gravity="center" android:background="#66000000">
+    <LinearLayout style="?settings_mainWrapper">
+		<ScrollView style="?settings_mainScroller">
+		    <LinearLayout style="?settings_subWrapper">
+			    <LinearLayout style="?settings_groupWrapper">
+			        <TextView style="?settings_groupHeader" android:text="Startup Script" />
+			        
+			        <LinearLayout style="?settings_itemWrapper">
+			            <TextView style="?content_itemNameField" android:text="Versions" />
+			                
+			            <TableLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:padding="7dp">
+			                <TableRow android:layout_height="wrap_content">
+			                    <TextView android:layout_height="wrap_content" android:text="Installed" android:paddingRight="28dp" android:textAppearance="?android:attr/textAppearanceSmall" android:textStyle="bold" />
+			                    <TextView android:layout_height="wrap_content" android:text="Bundled" android:textAppearance="?android:attr/textAppearanceSmall" android:textStyle="bold" />
+			                </TableRow>
+			                
+			                <TableRow android:layout_height="wrap_content">
+			                    <TextView android:id="@+id/settings_script_item_installed" android:layout_height="wrap_content" android:paddingRight="28dp" android:textAppearance="?android:attr/textAppearanceSmall" />
+			                    <TextView android:id="@+id/settings_script_item_bundled" android:layout_height="wrap_content" android:textAppearance="?android:attr/textAppearanceSmall" />
+			                </TableRow>
+			            </TableLayout>
+			            
+			            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:background="?colorRef_settingsButtonBorder" android:padding="1dp" android:layout_marginTop="7dp" android:layout_marginBottom="7dp">
+			            	<TextView android:clickable="true" android:id="@+id/settings_script_item_button" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Update Startup Script" android:gravity="center" android:padding="7dp" android:textColor="@drawable/text_content_item_namefield" android:background="?colorRef_settingsButtonBackground" />
+			            </LinearLayout>
+			        </LinearLayout>
+			    </LinearLayout>
+		        
+			    <LinearLayout style="?settings_groupWrapper">
+			        <TextView style="?settings_groupHeader" android:text="@string/settings_style_header" />
+			        
+			        <LinearLayout style="?settings_itemWrapper_clickable" android:id="@+id/settings_style_item_theme">
+			            <LinearLayout style="?content_itemWrapper_inline_clickable">
+			                <TextView style="?content_itemNameField_inline_clickable" android:layout_weight="1" android:id="@+id/item_name" android:text="@string/settings_style_theme_name" />
+			                <ImageView style="?content_itemCheckboxIcon_clickable" android:id="@+id/item_icon" />
+			            </LinearLayout>
+			            <TextView style="?content_itemDescription_clickable" android:id="@+id/item_description" android:text="@string/settings_style_theme_description" />
+			        </LinearLayout>
+			        
+			        <View style="?content_itemDivider" android:id="@+id/item_divider" />
+			        
+			        <LinearLayout style="?settings_itemWrapper_clickable" android:id="@+id/settings_style_item_layout">
+			            <LinearLayout style="?content_itemWrapper_inline_clickable">
+			                <TextView style="?content_itemNameField_inline_clickable" android:layout_weight="1" android:id="@+id/item_name" android:text="@string/settings_style_layout_name" />
+			                <ImageView style="?content_itemCheckboxIcon_clickable" android:id="@+id/item_icon" />
+			            </LinearLayout>
+			            <TextView style="?content_itemDescription_clickable" android:id="@+id/item_description" android:text="@string/settings_style_layout_description" />
+			        </LinearLayout>
+			        
+			        <View style="?content_itemDivider" android:id="@+id/item_divider" />
+			        
+			        <LinearLayout style="?settings_itemWrapper_clickable" android:id="@+id/settings_style_item_dialog">
+			            <LinearLayout style="?content_itemWrapper_inline_clickable">
+			                <TextView style="?content_itemNameField_inline_clickable" android:layout_weight="1" android:id="@+id/item_name" android:text="@string/settings_style_dialog_name" />
+			                <ImageView style="?content_itemCheckboxIcon_clickable" android:id="@+id/item_icon" />
+			            </LinearLayout>
+			            <TextView style="?content_itemDescription_clickable" android:id="@+id/item_description" android:text="@string/settings_style_dialog_description" />
+			        </LinearLayout>
+			    </LinearLayout>
+			    
+			    <LinearLayout style="?settings_groupWrapper">
+			        <TextView style="?settings_groupHeader" android:text="@string/settings_general_header" />
+			        
+			        <!-- <LinearLayout style="?settings_itemWrapper_clickable" android:id="@+id/settings_general_item_profiles">
+			            <LinearLayout style="?content_itemWrapper_inline_clickable">
+			                <TextView style="?content_itemNameField_inline_clickable" android:layout_weight="1" android:id="@+id/item_name" android:text="@string/settings_general_profiles_name" />
+			                <ImageView style="?content_itemCheckboxIcon_clickable" android:id="@+id/item_icon" />
+			            </LinearLayout>
+			            <TextView style="?contentItemDescription" android:id="@+id/item_description" android:text="@string/settings_general_profiles_description" />
+			        </LinearLayout>
+			        
+			        <View style="?content_itemDivider" android:id="@+id/item_divider" />  -->
+			        
+			        <LinearLayout style="?settings_itemWrapper_clickable" android:id="@+id/settings_general_item_busybox">
+			            <LinearLayout style="?content_itemWrapper_inline_clickable">
+			                <TextView style="?content_itemNameField_inline_clickable" android:layout_weight="1" android:id="@+id/item_name" android:text="@string/settings_general_busybox_name" />
+			                <ImageView style="?content_itemCheckboxIcon_clickable" android:id="@+id/item_icon" />
+			            </LinearLayout>
+			            <TextView style="?content_itemDescription_clickable" android:id="@+id/item_description" android:text="@string/settings_general_busybox_description" />
+			        </LinearLayout>
+			    </LinearLayout>
+			</LinearLayout>
+		</ScrollView>
+	</LinearLayout>
+</com.spazedog.mounts2sd.tools.ExtendedLayout>

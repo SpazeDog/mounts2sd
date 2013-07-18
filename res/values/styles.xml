@@ -1,0 +1,657 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+    
+    <!-- 
+    ####
+    ## CONTENT STYLE FOR OVERVIEW, CONFIGURE AND SETTINGS
+    ####
+     -->
+    
+    <style name="Content">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+    
+    <style name="Content.StyleSettings"></style>
+    <style name="Content.ThemeDark"></style>
+    <style name="Content.ThemeDark.StyleSettings"></style>
+
+    <!-- ##########################################
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <style name="Content.Main_Wrapper">
+        <item name="android:orientation">vertical</item>
+    </style>
+    
+    <style name="Content.ThemeDark.Main_Wrapper" parent="Content.Main_Wrapper"></style>
+    
+    <style name="Content.StyleSettings.Main_Wrapper" parent="Content.Main_Wrapper">
+        <item name="android:paddingLeft">7dp</item>
+        <item name="android:paddingRight">7dp</item>
+    </style>
+    
+    <style name="Content.ThemeDark.StyleSettings.Main_Wrapper" parent="Content.StyleSettings.Main_Wrapper"></style>
+    
+    <!-- ##########################################
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <style name="Content.Group_Wrapper">
+        <item name="android:orientation">vertical</item>
+    </style>
+    
+    <style name="Content.ThemeDark.Group_Wrapper" parent="Content.Group_Wrapper"></style>
+    
+    <!-- ##########################################
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <style name="Content.Group_Header">
+        <item name="android:paddingTop">7dp</item>
+        <item name="android:paddingBottom">7dp</item>
+        <item name="android:paddingRight">14dp</item>
+        <item name="android:paddingLeft">14dp</item>
+        <item name="android:textAppearance">?android:attr/textAppearanceSmall</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/text_content_group_header</item>
+        <item name="android:background">@drawable/background_content_group_header</item>
+    </style>
+    
+    <style name="Content.ThemeDark.Group_Header" parent="Content.Group_Header">
+        <item name="android:textColor">@color/text_content_group_header_themedark</item>
+        <item name="android:background">@drawable/background_content_group_header_themedark</item>
+    </style>
+
+    <!-- ##########################################
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <style name="Content.Item_Wrapper">
+        <item name="android:orientation">vertical</item>
+        <item name="android:padding">7dp</item>
+        <item name="android:layout_marginLeft">7dp</item>
+        <item name="android:layout_marginRight">7dp</item>
+    </style>
+    
+    <style name="Content.ThemeDark.Item_Wrapper" parent="Content.Item_Wrapper"></style>
+    
+    <!-- ##########################################
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <style name="Content.Item_Wrapper_Clickable" parent="Content.Item_Wrapper">
+        <item name="android:clickable">true</item>
+        <item name="android:background">@drawable/background_content_item_wrapper</item>
+    </style>
+    
+    <style name="Content.ThemeDark.Item_Wrapper_Clickable" parent="Content.Item_Wrapper_Clickable">
+        <item name="android:background">@drawable/background_content_item_wrapper_themedark</item>
+    </style>
+    
+    <!-- ##########################################
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <style name="Content.Item_Inline_Wrapper">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:orientation">horizontal</item>
+    </style>
+    
+    <style name="Content.ThemeDark.Item_Inline_Wrapper" parent="Content.Item_Inline_Wrapper"></style>
+    
+    <!-- ##########################################
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <style name="Content.Item_Inline_Wrapper_Clickable" parent="Content.Item_Inline_Wrapper">
+        <item name="android:duplicateParentState">true</item>
+    </style>
+    
+    <style name="Content.ThemeDark.Item_Inline_Wrapper_Clickable" parent="Content.Item_Inline_Wrapper_Clickable"></style>
+    
+    <!-- ##########################################
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <style name="Content.Item_NameField">
+        <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
+        <item name="android:textColor">@color/text_content_item_namefield</item>
+    </style>
+    
+    <style name="Content.ThemeDark.Item_NameField" parent="Content.Item_NameField">
+        <item name="android:textColor">@color/text_content_item_namefield_themedark</item>
+    </style>
+    
+    <!-- ##########################################
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <style name="Content.Item_NameField_Clickable" parent="Content.Item_NameField">
+        <item name="android:duplicateParentState">true</item>
+        <item name="android:textColor">@drawable/text_content_item_namefield</item>
+    </style>
+    
+    <style name="Content.ThemeDark.Item_NameField_Clickable" parent="Content.Item_NameField_Clickable">
+        <item name="android:textColor">@drawable/text_content_item_namefield_themedark</item>
+    </style>
+    
+    <!-- ##########################################
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <style name="Content.Item_Inline_NameField" parent="Content.Item_NameField">
+        <item name="android:layout_width">0dp</item>
+    </style>
+    
+    <style name="Content.ThemeDark.Item_Inline_NameField" parent="Content.Item_Inline_NameField">
+        <item name="android:textColor">@color/text_content_item_namefield_themedark</item>
+    </style>
+    
+    <!-- ##########################################
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <style name="Content.Item_Inline_NameField_Clickable" parent="Content.Item_Inline_NameField">
+        <item name="android:duplicateParentState">true</item>
+        <item name="android:textColor">@drawable/text_content_item_namefield</item>
+    </style>
+    
+    <style name="Content.ThemeDark.Item_Inline_NameField_Clickable" parent="Content.Item_Inline_NameField_Clickable">
+        <item name="android:textColor">@drawable/text_content_item_namefield_themedark</item>
+    </style>
+    
+    <!-- ##########################################
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <style name="Content.Item_ValueField">
+        <item name="android:gravity">right</item>
+        <item name="android:textAppearance">?android:attr/textAppearanceSmall</item>
+        <item name="android:paddingRight">7dp</item>
+        <item name="android:textColor">@color/text_content_item_valuefield</item>
+    </style>
+    
+    <style name="Content.ThemeDark.Item_ValueField" parent="Content.Item_ValueField">
+		<item name="android:textColor">@color/text_content_item_valuefield_themedark</item>
+    </style>
+    
+    <!-- ##########################################
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <style name="Content.Item_ValueField_Clickable" parent="Content.Item_ValueField">
+		<item name="android:duplicateParentState">true</item>
+		<item name="android:textColor">@drawable/text_content_item_valuefield</item>
+    </style>
+    
+    <style name="Content.ThemeDark.Item_ValueField_Clickable" parent="Content.Item_ValueField_Clickable">
+		<item name="android:textColor">@drawable/text_content_item_valuefield_themedark</item>
+    </style>
+    
+    <!-- ##########################################
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <style name="Content.Item_Inline_ValueField" parent="Content.Item_ValueField">
+		<item name="android:layout_width">wrap_content</item>
+    </style>
+    
+    <style name="Content.ThemeDark.Item_Inline_ValueField" parent="Content.Item_Inline_ValueField">
+		<item name="android:textColor">@color/text_content_item_valuefield_themedark</item>
+    </style>
+    
+    <!-- ##########################################
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <style name="Content.Item_Inline_ValueField_Clickable" parent="Content.Item_Inline_ValueField">
+		<item name="android:duplicateParentState">true</item>
+		<item name="android:textColor">@drawable/text_content_item_valuefield</item>
+    </style>
+    
+    <style name="Content.ThemeDark.Item_Inline_ValueField_Clickable" parent="Content.Item_Inline_ValueField_Clickable">
+		<item name="android:textColor">@drawable/text_content_item_valuefield_themedark</item>
+    </style>
+    
+    <!-- ##########################################
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <style name="Content.Item_Description">
+        <item name="android:gravity">left</item>
+        <item name="android:paddingRight">28dp</item>
+        <item name="android:textColor">@color/text_content_item_description</item>
+    </style>
+    
+    <style name="Content.ThemeDark.Item_Description" parent="Content.Item_Description">
+        <item name="android:textColor">@color/text_content_item_description_themedark</item>
+    </style>
+    
+    <!-- ##########################################
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <style name="Content.Item_Description_Clickable" parent="Content.Item_Description">
+        <item name="android:duplicateParentState">true</item>
+        <item name="android:textColor">@drawable/text_content_item_description</item>
+    </style>
+    
+    <style name="Content.ThemeDark.Item_Description_Clickable" parent="Content.Item_Description_Clickable">
+        <item name="android:textColor">@drawable/text_content_item_description_themedark</item>
+    </style>
+    
+    <!-- ##########################################
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <style name="Content.Item_Icon">
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:paddingRight">7dp</item>
+    </style>
+    
+    <!-- ##########################################
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <style name="Content.Item_StatusIcon" parent="Content.Item_Icon">
+		<item name="android:src">@drawable/src_content_item_statusicon</item>
+    </style>
+    
+    <style name="Content.ThemeDark.Item_StatusIcon" parent="Content.Item_StatusIcon"></style>
+    
+    <!-- ##########################################
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <style name="Content.Item_CheckboxIcon_Clickable" parent="Content.Item_Icon">
+        <item name="android:duplicateParentState">true</item>
+		<item name="android:src">@drawable/src_content_item_checkboxicon</item>
+    </style>
+    
+    <style name="Content.ThemeDark.Item_CheckboxIcon_Clickable" parent="Content.Item_CheckboxIcon_Clickable">
+        <item name="android:src">@drawable/src_content_item_checkboxicon_themedark</item>
+    </style>
+    
+    <!-- ##########################################
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <style name="Content.Item_RadioIcon_Clickable" parent="Content.Item_CheckboxIcon_Clickable">
+		<item name="android:src">@drawable/src_content_item_radioicon</item>
+    </style>
+    
+    <style name="Content.ThemeDark.Item_RadioIcon_Clickable" parent="Content.Item_RadioIcon_Clickable">
+        <item name="android:src">@drawable/src_content_item_radioicon_themedark</item>
+    </style>
+    
+    <!-- ##########################################
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <style name="Content.Item_Divider">
+        <item name="android:layout_height">1dp</item>
+        <item name="android:layout_marginRight">7dp</item>
+        <item name="android:layout_marginLeft">7dp</item>
+        <item name="android:background">@color/background_content_item_divider</item>
+    </style>
+    
+    <style name="Content.ThemeDark.Item_Divider" parent="Content.Item_Divider">
+        <item name="android:background">@color/background_content_item_divider_themedark</item>
+    </style>
+    
+    <!-- 
+    ####
+    ## SPECIFIC STYLES FOR SETTINGS
+    ####
+     -->
+
+    <style name="Settings" parent="Content"></style>
+    
+    <style name="Settings.ThemeDark"></style>
+    
+    <!-- ##########################################
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <style name="Settings.Main_Wrapper">
+        <item name="android:orientation">vertical</item>
+        <item name="android:background">@drawable/image_shadow</item>
+        <item name="android:paddingBottom">6px</item>
+        <item name="android:paddingLeft">6px</item>
+        <item name="android:paddingRight">5px</item>
+        <item name="android:paddingTop">5px</item>
+    </style>
+    
+    <style name="Settings.ThemeDark.Main_Wrapper" parent="Settings.Main_Wrapper"></style>
+    
+    <!-- ##########################################
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <style name="Settings.Main_Scroller">
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:paddingLeft">7dp</item>
+        <item name="android:paddingRight">7dp</item>
+        <item name="android:paddingBottom">7dp</item>
+        <item name="android:background">@color/background_settings_main_wrapper</item>
+    </style>
+    
+    <style name="Settings.ThemeDark.Main_Scroller" parent="Settings.Main_Scroller">
+        <item name="android:background">@drawable/background_settings_main_wrapper_themedark</item>
+    </style>
+    
+    <!-- ##########################################
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <style name="Settings.Sub_Wrapper">
+        <item name="android:orientation">vertical</item>
+    </style>
+    
+    <style name="Settings.ThemeDark.Sub_Wrapper" parent="Settings.Sub_Wrapper"></style>
+   
+    <!-- ##########################################
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <style name="Settings.Group_Wrapper">
+        <item name="android:orientation">vertical</item>
+    </style>
+    
+    <style name="Settings.ThemeDark.Group_Wrapper" parent="Settings.Group_Wrapper"></style>
+    
+    <!-- ##########################################
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <style name="Settings.Group_Header" parent="Content.Group_Header">
+        <item name="android:paddingTop">14dp</item>
+        <item name="android:paddingLeft">0dp</item>
+        <item name="android:layout_marginRight">7dp</item>
+        <item name="android:layout_marginLeft">7dp</item>
+        <item name="android:background">@drawable/background_settings_group_header</item>
+        <item name="android:textColor">@color/text_settings_group_header</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+    
+    <style name="Settings.ThemeDark.Group_Header" parent="Settings.Group_Header">
+        <item name="android:textColor">@color/text_settings_group_header_themedark</item>
+        <item name="android:background">@drawable/background_settings_group_header_themedark</item>
+    </style>
+    
+    <!-- ##########################################
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <style name="Settings.Item_Wrapper" parent="Content.Item_Wrapper">
+        <item name="android:gravity">center</item>
+        <item name="android:background">@android:color/transparent</item>
+    </style>
+    
+    <style name="Settings.ThemeDark.Item_Wrapper" parent="Content.ThemeDark.Item_Wrapper">
+        <item name="android:gravity">center</item>
+        <item name="android:background">@android:color/transparent</item>
+    </style>
+
+    <!-- ##########################################
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <style name="Settings.Item_Wrapper_Clickable" parent="Content.Item_Wrapper_Clickable">
+        <item name="android:background">@drawable/background_content_item_wrapper</item>
+    </style>
+    
+    <style name="Settings.ThemeDark.Item_Wrapper_Clickable" parent="Content.ThemeDark.Item_Wrapper_Clickable">
+        <item name="android:background">@drawable/background_content_item_wrapper_themedark</item>
+    </style>
+    
+    <!-- 
+    ####
+    ## CONTENT STYLE FOR THE MAIN LAYOUT
+    ####
+     -->
+    
+    <style name="Layout">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+    
+    <style name="Layout.ThemeDark"></style>
+    <style name="Content.ThemeDark.StyleSettings"></style>
+
+    <!-- ##########################################
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <style name="Layout.Main_Wrapper">
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:background">@color/background_layout_main_wrapper</item>
+    </style>
+    
+    <style name="Layout.ThemeDark.Main_Wrapper" parent="Layout.Main_Wrapper">
+        <item name="android:background">@color/background_layout_main_wrapper_themedark</item>
+    </style>
+    
+    <!-- ##########################################
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <style name="Layout.Main_Scroller">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">fill_parent</item>
+        <item name="android:background">@color/background_layout_main_scroller</item>
+    </style>
+    
+    <style name="Layout.ThemeDark.Main_Scroller" parent="Layout.Main_Scroller">
+        <item name="android:background">@color/background_layout_main_scroller_themedark</item>
+    </style>
+    
+    <style name="Layout.ThemeDark.StyleSettings.Main_Scroller" parent="Layout.ThemeDark.Main_Scroller">
+        <item name="android:background">@drawable/background_layout_main_scroller_themedark</item>
+    </style>
+    
+    <!-- ##########################################
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <style name="Layout.Sub_Wrapper">
+        <item name="android:orientation">vertical</item>
+    </style>
+    
+    <style name="Layout.ThemeDark.Sub_Wrapper" parent="Layout.Sub_Wrapper"></style>
+    <style name="Layout.ThemeDark.StyleSettings.Sub_Wrapper" parent="Layout.ThemeDark.Sub_Wrapper"></style>
+    
+    <!-- ##########################################
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <style name="Layout.Frame_Window"></style>
+    <style name="Layout.ThemeDark.Frame_Window" parent="Layout.Frame_Window"></style>
+    
+    <!-- ##########################################
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <style name="Layout.Tab_Pane">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:orientation">horizontal</item>
+        <item name="android:background">@color/background_tab_pane</item>
+    </style>
+    
+    <style name="Layout.ThemeDark.Tab_Pane" parent="Layout.Tab_Pane">
+        <item name="android:background">@color/background_tab_pane_themedark</item>
+    </style>
+    
+    <!-- ##########################################
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <style name="Layout.Tab_Item_Wrapper">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:gravity">center</item>
+        <item name="android:clickable">true</item>
+    </style>
+    
+    <style name="Layout.ThemeDark.Tab_Item_Wrapper" parent="Layout.Tab_Item_Wrapper"></style>
+
+    <!-- ##########################################
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <style name="Layout.Tab_Item_SubWrapper"></style>
+    <style name="Layout.ThemeDark.Tab_Item_SubWrapper" parent="Layout.Tab_Item_SubWrapper"></style>
+    
+    <!-- ##########################################
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <style name="Layout.Tab_Item_Icon">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:padding">5dp</item>
+    </style>
+    
+   	<style name="Layout.ThemeDark.Tab_Item_Icon" parent="Layout.Tab_Item_Icon"></style>
+   	
+    <!-- ##########################################
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <style name="Layout.Tab_Item_Text"></style>
+   	<style name="Layout.ThemeDark.Tab_Item_Text" parent="Layout.Tab_Item_Text"></style>
+         
+    <!-- ##########################################
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <style name="Layout.Tab_Item_Indicator">
+        <item name="android:duplicateParentState">true</item>
+        <item name="android:layout_height">2dp</item>
+        <item name="android:background">@drawable/background_tab_item_indicator</item>
+    </style>
+    
+    <style name="Layout.ThemeDark.Tab_Item_Indicator" parent="Layout.Tab_Item_Indicator">
+        <item name="android:background">@drawable/background_tab_item_indicator_themedark</item>
+        <item name="android:layout_marginBottom">2dp</item>
+    </style>
+    
+    <!-- ##########################################
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <style name="Layout.Divider">
+        <item name="android:layout_height">1dp</item>
+        <item name="android:background">@color/background_content_item_divider</item>
+    </style>
+    
+    <style name="Layout.ThemeDark.Divider" parent="Layout.Divider">
+        <item name="android:background">@color/background_content_item_divider_themedark</item>
+    </style>
+    
+    <!-- 
+    ####
+    ## CONTENT STYLE FOR THE MAIN INFORMATION BOX's
+    ####
+     -->
+     
+    <style name="Box">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+    
+    <style name="Box.StyleSettings"></style>
+    <style name="Box.ThemeDark"></style>
+    <style name="Box.ThemeDark.StyleSettings"></style>
+
+    <!-- ##########################################
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <style name="Box.Placeholder">
+        <item name="android:orientation">vertical</item>
+        <item name="android:paddingTop">1dp</item>
+        <item name="android:paddingBottom">1dp</item>
+        <item name="android:layout_marginTop">7dp</item>
+        <item name="android:layout_marginBottom">7dp</item>
+        <item name="android:background">@drawable/background_box_placeholder</item>
+    </style>
+    
+    <style name="Box.ThemeDark.Placeholder" parent="Box.Placeholder">
+        <item name="android:background">@drawable/background_box_placeholder_themedark</item>
+    </style>
+    
+    <style name="Box.StyleSettings.Placeholder" parent="Box.Placeholder">
+        <item name="android:layout_marginTop">14dp</item>
+        <item name="android:layout_marginBottom">7dp</item>
+        <item name="android:layout_marginLeft">14dp</item>
+        <item name="android:layout_marginRight">14dp</item>
+    </style>
+    
+    <style name="Box.ThemeDark.StyleSettings.Placeholder" parent="Box.ThemeDark.Placeholder">
+        <item name="android:layout_marginTop">14dp</item>
+        <item name="android:layout_marginBottom">7dp</item>
+        <item name="android:layout_marginLeft">14dp</item>
+        <item name="android:layout_marginRight">14dp</item>
+    </style>
+    
+    <!-- ##########################################
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <style name="Box.Message_Wrapper">
+        <item name="android:layout_marginTop">1dp</item>
+        <item name="android:layout_marginBottom">1dp</item>
+        <item name="android:paddingLeft">14dp</item>
+        <item name="android:paddingRight">7dp</item>
+        <item name="android:paddingTop">2dp</item>
+        <item name="android:paddingBottom">2dp</item>
+        <item name="android:textColor">@color/text_box_message</item>
+    </style>
+    
+    <style name="Box.ThemeDark.Message_Wrapper" parent="Box.Message_Wrapper">
+        <item name="android:textColor">@color/text_box_message_themedark</item>
+    </style>
+    
+    <!-- 
+    ####
+    ## CONTENT STYLE FOR DIALOGS
+    ####
+     -->
+    
+    <style name="Dialog">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="Dialog.ThemeDark"></style>
+    
+    <!-- ##########################################
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+         
+    <style name="Dialog.Window">
+        <item name="android:gravity">center</item>
+        <item name="android:background">@color/background_dialog_window</item>
+    </style>
+    
+    <style name="Dialog.ThemeDark.Window" parent="Dialog.Window"></style>
+    
+    <!-- ##########################################
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <style name="Dialog.Main_Wrapper">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:orientation">vertical</item>
+    </style>
+    
+    <style name="Dialog.ThemeDark.Main_Wrapper" parent="Dialog.Main_Wrapper"></style>
+    
+    <!-- ##########################################
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <style name="Dialog.Panel">
+        <item name="android:paddingTop">7dp</item>
+        <item name="android:paddingBottom">7dp</item>
+        <item name="android:paddingRight">14dp</item>
+        <item name="android:paddingLeft">14dp</item>
+        <item name="android:textAppearance">?android:attr/textAppearanceSmall</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/text_dialog_panel</item>
+        <item name="android:background">@drawable/background_dialog_panel</item>
+    </style>
+    
+    <style name="Dialog.ThemeDark.Panel" parent="Dialog.Panel">
+        <item name="android:textColor">@color/text_dialog_panel_themedark</item>
+        <item name="android:background">@drawable/background_dialog_panel_themedark</item>
+    </style>
+    
+    <!-- ##########################################
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <style name="Dialog.Main_Scroller">
+        <item name="android:layout_height">0dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:background">@color/background_dialog_main_scroller</item>
+    </style>
+    
+    <style name="Dialog.ThemeDark.Main_Scroller" parent="Dialog.Main_Scroller">
+        <item name="android:background">@color/background_dialog_main_scroller_themedark</item>
+    </style>
+    
+    <!-- ##########################################
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <style name="Dialog.Text_Box">
+        <item name="android:padding">14dp</item>
+        <item name="android:textAppearance">?android:attr/textAppearanceSmall</item>
+        <item name="android:textColor">@color/text_dialog_textbox</item>
+    </style>
+    
+    <style name="Dialog.ThemeDark.Text_Box" parent="Dialog.Text_Box">
+        <item name="android:textColor">@color/text_dialog_textbox_themedark</item>
+    </style>
+    
+    <!-- ##########################################
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <style name="Dialog.Placeholder">
+        <item name="android:orientation">vertical</item>
+        <item name="android:padding">7dp</item>
+    </style>
+    
+    <style name="Dialog.ThemeDark.Placeholder" parent="Dialog.Placeholder"></style>
+    
+    <!-- ##########################################
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <style name="Dialog.Divider">
+        <item name="android:layout_height">1dp</item>
+        <item name="android:background">@color/background_content_item_divider</item>
+    </style>
+    
+    <style name="Dialog.ThemeDark.Divider" parent="Dialog.Divider">
+        <item name="android:textColor">@color/text_dialog_textbox_themedark</item>
+        <item name="android:background">@color/background_content_item_divider_themedark</item>
+    </style>
+
+    <!-- ##########################################
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <style name="Dialog.Button_Wrapper">
+        <item name="android:orientation">horizontal</item>
+    </style>
+    
+    <style name="Dialog.ThemeDark.Button_Wrapper" parent="Dialog.Button_Wrapper"></style>
+    
+    <!-- ##########################################
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <style name="Dialog.Button">
+        <item name="android:padding">14dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:clickable">true</item>
+        <item name="android:background">@drawable/background_dialog_button</item>
+        <item name="android:textAppearance">?android:attr/textAppearanceSmall</item>
+        <item name="android:textColor">@color/text_dialog_button</item>
+        <item name="android:gravity">center</item>
+    </style>
+    
+    <style name="Dialog.ThemeDark.Button" parent="Dialog.Button">
+        <item name="android:background">@drawable/background_dialog_button_themedark</item>
+        <item name="android:textColor">@color/text_dialog_button_themedark</item>
+    </style>
+
+</resources>

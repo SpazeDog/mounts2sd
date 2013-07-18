@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools" style="?layout_mainWrapper" >
+    
+    <LinearLayout style="?layout_tabPane" >
+        <LinearLayout android:id="@+id/tab_fragment_overview" style="?layout_tabItemWrapper" >
+	        <View style="?layout_tabItemIndicator" />
+
+	        <LinearLayout style="?layout_tabItemSubWrapper" >
+	            <ImageView style="?layout_tabItemIcon" android:src="@drawable/btn_tab_overview" />
+	            <TextView style="?layout_tabItemText" android:text="Overview" />
+	        </LinearLayout>
+	    </LinearLayout>
+	    
+        <LinearLayout android:id="@+id/tab_fragment_configure" style="?layout_tabItemWrapper" >
+	        <View style="?layout_tabItemIndicator" />
+
+	        <LinearLayout style="?layout_tabItemSubWrapper" >
+	            <ImageView style="?layout_tabItemIcon" android:src="@drawable/btn_tab_configure" />
+	            <TextView style="?layout_tabItemText" android:text="Configure" />
+	        </LinearLayout>
+	    </LinearLayout>
+	    
+        <LinearLayout android:id="@+id/tab_fragment_log" style="?layout_tabItemWrapper" >
+	        <View style="?layout_tabItemIndicator" />
+
+	        <LinearLayout style="?layout_tabItemSubWrapper" >
+	            <ImageView style="?layout_tabItemIcon" android:src="@drawable/btn_tab_log" />
+	            <TextView style="?layout_tabItemText" android:text="Log" />
+	        </LinearLayout>
+	    </LinearLayout>
+    </LinearLayout>
+    
+	<LinearLayout style="?layout_subWrapper" >
+		<LinearLayout android:id="@+id/placeholder" style="?box_placeholder" android:visibility="gone" />
+		
+		<LinearLayout style="?layout_shadowWrapper" >
+	    	<ScrollView style="?layout_mainScroller">
+			    <FrameLayout android:id="@+id/fragment_frame" style="?layout_frameWindow" />
+			</ScrollView>
+		</LinearLayout>
+    </LinearLayout>
+    
+</LinearLayout>

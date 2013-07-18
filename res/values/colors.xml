@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+    
+    <!-- ##########################################
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <color name="background_log_item_first">#44cccccc</color>
+    <color name="background_log_item_second">#44f3f3f3</color>
+    
+    <color name="background_log_item_first_themedark">#44888888</color>
+    <color name="background_log_item_second_themedark">#44464646</color>
+    
+    <!-- ##########################################
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <color name="background_layout_main_wrapper">#f3f3f3</color>
+    <color name="background_layout_main_wrapper_themedark">#464646</color>
+    
+    <!-- ##########################################
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <color name="background_layout_main_scroller">#f4f4f4</color>
+    <color name="background_layout_main_scroller_themedark">#464646</color>
+    
+    <color name="background_layout_main_scroller_start_themedark">#464646</color>
+    <color name="background_layout_main_scroller_stop_themedark">#1d1d1d</color>
+    
+    <!-- ##########################################
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+	<color name="background_tab_pane">#f3f3f3</color>
+	<color name="background_tab_pane_themedark">#464646</color>
+	
+    <!-- ##########################################
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+	<color name="background_tab_item_indicator_start">#f3f3f3</color>
+    <color name="background_tab_item_indicator_stop">#606060</color>
+    
+	<color name="background_tab_item_indicator_start_themedark">#464646</color>
+    <color name="background_tab_item_indicator_stop_themedark">#ffffff</color>
+    
+    <!-- ##########################################
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <color name="background_box_placeholder">#fff5bd</color>
+    <color name="background_box_placeholder_themedark">#fee668</color>
+    
+	<color name="border_box_placeholder">#ffa95c</color>
+	<color name="border_box_placeholder_themedark">#e57008</color>
+	
+	<color name="text_box_message">#ffa95c</color>
+	<color name="text_box_message_themedark">#e57008</color>
+
+    <!-- ##########################################
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <color name="background_settings_main_wrapper">#f4f4f4</color>
+
+    <color name="background_settings_main_wrapper_start_themedark">#4b4b4b</color>
+    <color name="background_settings_main_wrapper_stop_themedark">#222222</color>
+	
+    <!-- ##########################################
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <color name="background_content_group_header_start">#ffcccccc</color>
+	<color name="background_content_group_header_stop">#f4f4f4</color>
+	
+    <color name="background_content_group_header_start_themedark">#121212</color>
+	<color name="background_content_group_header_stop_themedark">#4b4b4b</color>
+	
+    <color name="border_content_group_header">#ffcccccc</color>
+    <color name="border_content_group_header_themedark">#121212</color>
+    
+    <!-- ##########################################
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+	<color name="background_content_item_wrapper_pressed">#ffcccccc</color>
+    <color name="background_content_item_wrapper_pressed_themedark">#ff888888</color>
+         
+    <!-- ##########################################
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+	<color name="text_content_item_namefield">#000000</color>
+	<color name="text_content_item_namefield_disabled">#ffd9d9d9</color>
+	
+	<color name="text_content_item_namefield_themedark">#ffffff</color>
+	<color name="text_content_item_namefield_disabled_themedark">#ff555555</color>
+	
+    <!-- ##########################################
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+	<color name="text_content_item_valuefield">#000000</color>
+	<color name="text_content_item_valuefield_disabled">#ffd9d9d9</color>
+	
+	<color name="text_content_item_valuefield_themedark">#a6a6a6</color>
+	<color name="text_content_item_valuefield_disabled_themedark">#ff555555</color>
+	
+    <!-- ##########################################
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+	<color name="text_content_item_description">#ff888888</color>
+	<color name="text_content_item_description_disabled">#ffd9d9d9</color>
+	
+	<color name="text_content_item_description_themedark">#ff888888</color>
+	<color name="text_content_item_description_disabled_themedark">#ff555555</color>
+	
+    <!-- ##########################################
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <color name="text_content_group_header">#ff888888</color>
+    <color name="text_content_group_header_themedark">#ff888888</color>
+    
+    <color name="text_settings_group_header">#8c8b8b</color>
+    <color name="text_settings_group_header_themedark">#b0b0b0</color>
+    
+    <!-- ##########################################
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <color name="background_content_item_divider">#e5e5e5</color>
+    <color name="background_content_item_divider_themedark">#a6a6a6</color>
+    
+    <!-- ##########################################
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <color name="background_dialog_window">#66000000</color>
+   
+    <!-- ##########################################
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <color name="background_dialog_panel_start">#ffcccccc</color>
+	<color name="background_dialog_panel_stop">#f8f8f8</color>
+	
+    <color name="background_dialog_panel_start_themedark">#121212</color>
+	<color name="background_dialog_panel_stop_themedark">#515151</color>
+	
+    <color name="border_dialog_panel">#ffcccccc</color>
+    <color name="border_dialog_panel_themedark">#515151</color>
+    
+	<color name="text_dialog_panel">#ff888888</color>
+	<color name="text_dialog_panel_themedark">#ff888888</color>
+    
+    <!-- ##########################################
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+	<color name="background_dialog_main_scroller">#f3f3f3</color>
+	<color name="background_dialog_main_scroller_themedark">#464646</color>
+	
+    <!-- ##########################################
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+	<color name="text_dialog_textbox">#000000</color>
+	<color name="text_dialog_textbox_themedark">#ffffff</color>
+	
+    <!-- ##########################################
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <color name="text_dialog_button">#000000</color>
+    <color name="text_dialog_button_themedark">#ffffff</color>
+    
+    <!-- ##########################################
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+	<color name="background_dialog_button">#f3f3f3</color>
+    <color name="background_dialog_button_pressed">#ffcccccc</color>
+    
+	<color name="background_dialog_button_themedark">#515151</color>
+    <color name="background_dialog_button_pressed_themedark">#464646</color>
+    
+    <!-- ##########################################
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <color name="border_settings_button">#ff888888</color>
+    <color name="border_settings_button_themedark">#ffffff</color>
+    
+    <color name="text_settings_button">#000000</color>
+	
+</resources>

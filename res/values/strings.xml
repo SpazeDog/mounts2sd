@@ -1,0 +1,210 @@
+<resources>
+    
+    <!-- ######################################################
+       - General strings
+    ####################################################### -->
+    <string name="app_name">Mounts2SD</string>
+    <string name="app_settings">Application Settings</string>
+    
+    <string name="size_structure">%1$s of %2$s</string>
+    
+    <string name="status_unknown">Unknown</string>
+    <string name="status_disabled">Disabled</string>
+    <string name="status_enabled">Enabled</string>
+    <string name="status_okay">Ok</string>
+    <string name="status_warning">Warning</string>
+    <string name="status_error">Error</string>
+    
+    <string name="device_not_mounted">Not Mounted</string>
+    <string name="log_empty">The log file is empty</string>
+    
+    <!-- ######################################################
+       - General strings
+    ####################################################### -->
+    <string name="settings_btn_script_update">Update Startup Script</string>
+    <string name="settings_btn_script_remove">Remove Startup Script</string>
+    <string name="settings_btn_script_install">Install Startup Script</string>
+    
+    <!-- ######################################################
+       - Used in Application Settings when handling internal
+       - busybox and the upstart script in AsyncTask
+    ####################################################### -->
+    <string name="resource_copying_to_disk">Copying %1$s from resources into %2$s</string>
+    <string name="resource_deleting_from_disk">Removing %1$s from %2$s</string>
+    <string name="resource_copy_to_disk_failed">Failed to copy %1$s to %2$s</string>
+    <string name="resource_delete_from_disk_failed">Failed to remove %1$s from %2$s</string>
+    
+    <!-- ######################################################
+       - Names and Comments for Selectors. Used in the Configure
+       - Tab for everything not providing a checkbox to select
+       - the value of a script property
+    ####################################################### -->
+    <string name="selector_journal_name_default">Keep Default</string>
+    <string name="selector_journal_name_enable">Enable</string>
+    <string name="selector_journal_name_disable">Disable</string>
+    <string name="selector_filesystem_name_auto">Auto Detect</string>
+    <string name="selector_zram_name_disabled">Disabled</string>
+    <string name="selector_swappiness_name_low">Low</string>
+    <string name="selector_swappiness_name_medium">Medium</string>
+    <string name="selector_swappiness_name_high">High</string>
+    <string name="selector_cache_name_enabled">Enabled</string>
+    <string name="selector_cache_name_forced">Forced</string>
+    <string name="selector_cache_name_disabled">Disabled</string>
+    
+    <string name="selector_swappiness_comment_low">Recommended</string>
+    <string name="selector_swappiness_comment_medium">Linux Default</string>
+    <string name="selector_swappiness_comment_high">Aggressive</string>
+    <string name="selector_cache_comment_enabled">Use largest partition</string>
+    <string name="selector_cache_comment_forced">Use sd-ext when available</string>
+    
+    <!-- ######################################################
+       - Messages returned by the method Utils.sdcardStateMessage()
+    ####################################################### -->
+    <string name="sdcard_state_ro">The sdcard is mounted in read-only mode</string>
+    <string name="sdcard_state_format">The sdcard is not formated in a correct format</string>
+    <string name="sdcard_state_missing">The sdcard is not present</string>
+    <string name="sdcard_state_ums">The sdcard is corrently being shared via the USB</string>
+    <string name="sdcard_state_mount_failure">The sdcard is not mounted do to issues with the partition or the card it self</string>
+    <string name="sdcard_state_mount">The sdcard is not mounted</string>
+    
+    <!-- ######################################################
+       - Toast messages used by the Log Fragment
+    ####################################################### -->
+    <string name="toast_log_copied">Log file was copied to /sdcard/Mounts2SD/log.txt</string>
+    <string name="toast_log_unsuccessful">Could not copy the log file to the sdcard</string>
+
+    <!-- ######################################################
+       - Used by the progress dialog when loading AsyncTask
+    ####################################################### -->
+    <string name="progress_load_setup">Checking device setup</string>
+    <string name="progress_load_config">Collecting device configurations</string>
+    <string name="progress_load_properties">Collecting script property values</string>
+    
+    <!-- ######################################################
+       - Names for the menu entries
+    ####################################################### -->
+    <string name="menu_overview_reload">Reload Status</string>
+    <string name="menu_log_save">Save log to Sdcard</string>
+    <string name="menu_controller_app_settings">Application Settings</string>
+    
+    <!-- ######################################################
+       - Group names used by the Application Settings Activity
+    ####################################################### -->
+    <string name="settings_style_header">Application Style</string>
+    <string name="settings_general_header">General</string>
+    
+    <!-- ######################################################
+       - Item names used by the Application Settings Activity
+    ####################################################### -->
+    <string name="settings_style_theme_name">Dark Theme</string>
+    <string name="settings_style_theme_description">Use dark theme instead of default light</string>
+    <string name="settings_style_layout_name">Settings Style</string>
+    <string name="settings_style_layout_description">Use the settings style globally</string>
+    <string name="settings_style_dialog_name">Tablet Settings</string>
+    <string name="settings_style_dialog_description">Use dialog like window for application settings</string>
+    
+    <string name="settings_general_profiles_name">Allow all profiles</string>
+    <string name="settings_general_profiles_description">Allow all profiles to edit script configuration</string>
+    <string name="settings_general_busybox_name">Use built-in busybox</string>
+    <string name="settings_general_busybox_description">Use the applications built-in busybox binary</string>
+    
+    <!-- ######################################################
+       - Used the Tab Controller Activity to display
+       - in the Message Dialog opon error
+    ####################################################### -->
+    <string name="message_error_su_headline">Missing SuperUser</string>
+    <string name="message_error_su_text">The application could not optain SuperUser (root) privileges. This is needed by the application in order to check device configuration and change/safe script property files. Go to the xda-developer.com website and search how to root the device in your device specific forum section</string>
+
+    <string name="message_error_busybox_headline">Missing Busybox</string>
+    <string name="message_error_busybox_text">The application could not locate busybox on the device. Busybox is an all-in-one binary which contains most of the system tools needed by both the application and the startup script. Please search and install busybox from Google Play Store</string>
+    
+    <string name="message_error_unknown_headline">Unknown Issue</string>
+    <string name="message_error_unknown_text">For some reason the application could not complete it\'s configuration</string>
+    
+    <!-- ######################################################
+       - Button text for the Dialog
+    ####################################################### -->
+    <string name="button_close">Close</string>
+    <string name="button_cancel">Cancel</string>
+    <string name="button_okay">Okay</string>
+    
+    <!-- ######################################################
+       - Group names used by both Overview and Configure Fragments
+    ####################################################### -->
+    <string name="option_storage_header">Storage</string>
+    <string name="option_system_header">System</string>
+    <string name="option_content_header">Content</string>
+    <string name="option_memory_header">Memory</string>
+    <string name="option_filesystem_header">File System</string>
+    <string name="option_immc_header">Internal MMC</string>
+    <string name="option_emmc_header">External MMC</string>
+    <string name="option_misc_header">Misc</string>
+
+    <!-- ######################################################
+       - Item names used by both Overview and Configure Fragments
+    ####################################################### -->
+    <string name="option_storage_item_internal">Internal</string>
+    <string name="option_storage_item_external">External</string>
+    <string name="option_storage_item_cache">Cache</string>
+    
+    <string name="option_system_item_threshold">Storage Threshold</string>
+    
+    <string name="option_content_item_apps">Applications</string>
+    <string name="option_content_item_libs">Libraries</string>
+    <string name="option_content_item_data">Data</string>
+    <string name="option_content_item_dalvik">Dalvik Cache</string>
+    <string name="option_content_item_media">Media</string>
+    <string name="option_content_item_system">System Content</string>
+    
+    <string name="option_memory_item_swap">SWAP</string>
+    <string name="option_memory_item_zram">ZRAM</string>
+    <string name="option_memory_item_swappiness">Swappiness</string>
+    
+    <string name="option_filesystem_item_fschk">File System Check</string>
+    <string name="option_filesystem_item_fstype">Driver</string>
+    <string name="option_filesystem_item_journal">Journal</string>
+    
+    <string name="option_mmc_item_readahead">Readahead</string>
+    <string name="option_mmc_item_scheduler">Scheduler</string>
+    
+    <string name="option_misc_item_safemode">Disable Safe mode</string>
+    <string name="option_misc_item_debug">Enable Debug mode</string>
+    
+    <!-- ######################################################
+       - Item description used by the Configure Fragment
+    ####################################################### -->
+    <string name="option_storage_description_cache">Move the cache partition to data or sd-ext</string>
+    
+    <string name="option_system_description_threshold">How much space that needs to be left on data in order to install applications</string>
+    
+    <string name="option_content_description_apps">Move applications to sd-ext</string>
+    <string name="option_content_description_libs">Move application libraries to sd-ext</string>
+    <string name="option_content_description_data">Move application data to sd-ext</string>
+    <string name="option_content_description_dalvik">Move dalvikvm application caches to sd-ext</string>
+    <string name="option_content_description_media">Move internal storage (/data/media) to sd-ext</string>
+    <string name="option_content_description_system">Move all data stored system files to sd-ext</string>
+    
+    <string name="option_memory_description_swap">Enable SWAP (3\'rd sdcard partition)</string>
+    <string name="option_memory_description_zram">Enable ZRAM (Small memory stored SWAP partition for indexing)</string>
+    <string name="option_memory_description_swappiness">Set how aggressive the wapping should be</string>
+    
+    <string name="option_filesystem_description_fschk">Run a file system check on sd-ext during boot</string>
+    <string name="option_filesystem_description_fstype">Select file system type to mount sd-ext as</string>
+    <string name="option_filesystem_description_journal">Change the journal settings on sd-ext during boot</string>
+    
+    <string name="option_misc_description_safemode">Don\'t allow the upstart script to go into safe-mode (Enables a work-around for improper init.d implementations)</string>
+    <string name="option_misc_description_debug">Get a more detailed log entry from the upstart script</string>
+    
+    <string name="option_mmc_description_readahead">Set the MMC readahead</string>
+    <string name="option_mmc_description_scheduler">Set the MMC scheduler</string>
+    
+    <!-- ######################################################
+       - Messages to be displayed in the infobox by the
+       - Tab Controller
+    ####################################################### -->
+    <string name="infobox_safemode">The script is currently running in Safe-Mode. You can disable this mode in the configure tab!</string>
+    <string name="infobox_no_sdext">Could not locate the SD-EXT partition. This should be the second partition on the external sdcard!</string>
+    <string name="infobox_no_script">There is no startup script present on your device. Go to application settings and install it!</string>
+    <string name="infobox_update_script">The current startup script is outdated. Go to application settings and update it!</string>
+    
+</resources>

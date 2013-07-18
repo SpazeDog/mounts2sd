@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item>
+		<shape>
+		    <gradient
+		        android:angle="270"
+		        android:endColor="@color/background_layout_main_scroller_stop_themedark"
+		        android:startColor="@color/background_layout_main_scroller_start_themedark" />
+		</shape>
+    </item>
+</layer-list>

@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+    
+    <string-array name="selector_threshold_names">
+        <item>1%</item>
+        <item>2%</item>
+        <item>3%</item>
+        <item>4%</item>
+        <item>5%</item>
+        <item>6%</item>
+        <item>7%</item>
+        <item>8%</item>
+        <item>9%</item>
+        <item>10%</item>
+    </string-array>
+    
+    <string-array name="selector_threshold_values">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+    </string-array>
+    
+    <string-array name="selector_cache_names">
+        <item>@string/selector_cache_name_enabled</item>
+        <item>@string/selector_cache_name_forced</item>
+        <item>@string/selector_cache_name_disabled</item>
+    </string-array>
+   
+    <string-array name="selector_cache_values">
+        <item>2</item>
+        <item>1</item>
+        <item>0</item>
+   </string-array>
+   
+    <string-array name="selector_cache_comments">
+        <item>@string/selector_cache_comment_enabled</item>
+        <item>@string/selector_cache_comment_forced</item>
+        <item></item>
+   </string-array>
+    
+    <string-array name="selector_journal_names">
+        <item>@string/selector_journal_name_default</item>
+        <item>@string/selector_journal_name_enable</item>
+        <item>@string/selector_journal_name_disable</item>
+    </string-array>
+   
+    <string-array name="selector_journal_values">
+        <item>2</item>
+        <item>1</item>
+        <item>0</item>
+   </string-array>
+   
+    <string-array name="selector_filesystem_names">
+        <item>@string/selector_filesystem_name_auto</item>
+        <item>Ext2</item>
+        <item>Ext3</item>
+        <item>Ext4</item>
+        <item>XFS</item>
+        <item>ReiserFS</item>
+        <item>Fat(16/32)</item>
+        <item>exFat</item>
+        <item>NTFS</item>
+    </string-array>
+   
+    <string-array name="selector_filesystem_values">
+        <item>auto</item>
+        <item>ext2</item>
+        <item>ext3</item>
+        <item>ext4</item>
+        <item>xfs</item>
+        <item>reiserfs</item>
+        <item>vfat</item>
+        <item>exfat</item>
+        <item>ntfs</item>
+    </string-array>
+   
+    <string-array name="selector_readahead_names">
+        <item>4Kb</item>
+        <item>8Kb</item>
+        <item>16Kb</item>
+        <item>32Kb</item>
+        <item>64Kb</item>
+        <item>128Kb</item>
+        <item>256Kb</item>
+        <item>512Kb</item>
+        <item>1024Kb</item>
+        <item>2048Kb</item>
+        <item>4096Kb</item>
+        <item>6144Kb</item>
+        <item>8192Kb</item>
+    </string-array>
+   
+    <string-array name="selector_readahead_values">
+        <item>4</item>
+        <item>8</item>
+        <item>16</item>
+        <item>32</item>
+        <item>64</item>
+        <item>128</item>
+        <item>256</item>
+        <item>512</item>
+        <item>1024</item>
+        <item>2048</item>
+        <item>4096</item>
+        <item>6144</item>
+        <item>8192</item>
+    </string-array>
+    
+    <string-array name="selector_swappiness_names">
+        <item>@string/selector_swappiness_name_low</item>
+        <item>@string/selector_swappiness_name_medium</item>
+        <item>@string/selector_swappiness_name_high</item>
+    </string-array>
+    
+    <string-array name="selector_swappiness_values">
+        <item>0</item>
+        <item>60</item>
+        <item>100</item>
+    </string-array>
+    
+    <string-array name="selector_swappiness_comments">
+        <item>@string/selector_swappiness_comment_low</item>
+        <item>@string/selector_swappiness_comment_medium</item>
+        <item>@string/selector_swappiness_comment_high</item>
+    </string-array>
+    
+    <string-array name="selector_scheduler_names">
+        <item>Noop</item>
+        <item>Deadline</item>
+        <item>CFG</item>
+        <item>BFQ</item>
+        <item>Row</item>
+        <item>SIO</item>
+        <item>VR</item>
+        <item>Anticipatory</item>
+    </string-array>
+    
+    <string-array name="selector_scheduler_values">
+        <item>noop</item>
+        <item>deadline</item>
+        <item>cfq</item>
+        <item>bfq</item>
+        <item>row</item>
+        <item>sio</item>
+        <item>vr</item>
+        <item>anticipatory</item>
+    </string-array>
+
+    <string-array name="selector_zram_names">
+        <item>@string/selector_zram_name_disabled</item>
+        <item>6%</item>
+        <item>12%</item>
+        <item>18%</item>
+        <item>24%</item>
+    </string-array>
+    
+    <string-array name="selector_zram_values">
+        <item>0</item>
+        <item>6</item>
+        <item>12</item>
+        <item>18</item>
+        <item>24</item>
+    </string-array>
+    
+</resources>

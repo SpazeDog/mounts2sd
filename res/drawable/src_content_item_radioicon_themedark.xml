@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<selector xmlns:android="http://schemas.android.com/apk/res/android" >
+	
+	<item android:drawable="@drawable/btn_radio_on_themedark" 
+	    android:state_selected="true"
+	    android:state_enabled="true" />
+	
+	<!-- We need a more clear icon as disable to get it more unclear on the dark background -->
+	<item android:drawable="@drawable/btn_radio_off_themedark" 
+	    android:state_enabled="false" />
+	
+	<item android:drawable="@drawable/btn_radio_disabled_themedark" />
+	
+</selector>

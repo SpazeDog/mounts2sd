@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools" style="?layout_mainWrapper" >
+    
+    <LinearLayout style="?layout_tabPane" >
+        <LinearLayout android:id="@+id/tab_fragment_overview" style="?layout_tabItemWrapper" >
+	        <ImageView style="?layout_tabItemIcon" android:src="@drawable/btn_tab_overview" />
+	        <View style="?layout_tabItemIndicator" />
+	    </LinearLayout>
+	    
+        <LinearLayout android:id="@+id/tab_fragment_configure" style="?layout_tabItemWrapper" >
+	        <ImageView style="?layout_tabItemIcon" android:src="@drawable/btn_tab_configure" />
+	        <View style="?layout_tabItemIndicator" />
+	    </LinearLayout>
+	    
+        <LinearLayout android:id="@+id/tab_fragment_log" style="?layout_tabItemWrapper" >
+	        <ImageView style="?layout_tabItemIcon" android:src="@drawable/btn_tab_log" />
+	        <View style="?layout_tabItemIndicator" />
+	    </LinearLayout>
+    </LinearLayout>
+    
+    <View style="?layout_divider" />
+    
+    <ScrollView style="?layout_mainScroller">
+        <LinearLayout style="?layout_subWrapper" >
+	        <LinearLayout android:id="@+id/placeholder" style="?box_placeholder" android:visibility="gone" />
+		    <FrameLayout android:id="@+id/fragment_frame" style="?layout_frameWindow" />
+		</LinearLayout>
+	</ScrollView>
+    
+</LinearLayout>

@@ -1,6 +1,7 @@
 #!/system/bin/sh
 #####
-# @Id 2013060801
+# @id 2013071801
+# @version 6.0.0-b3
 #####
 # This file is part of the Mounts2SD Project: https://github.com/spazedog/mounts2sd
 #  
@@ -21,7 +22,6 @@
 #####
 
 export iLogName=Mounts2SD
-export iVersion="6.0.0-b1"
 export iDirTmp=/tmp
 export iDirSdext=/sd-ext
 export iDirProperty=/data/property
@@ -344,7 +344,7 @@ ProcessBoot() {
     if $_pgrep /system/bin/servicemanager; then
         $_echo service > $iDirTmp/init.type
 
-        Log d "The Android process /system/bin/servicemanager has been detected"
+        Log v "The Android process /system/bin/servicemanager has been detected"
 
         if $_test $(Session get prop_disable_safemode 0) -eq 1; then
             Log v "Stopping Android's System Server process"
@@ -542,14 +542,17 @@ ProcessStorage() {
             else
                 Log w "Could not run a file system check on $lDevice. Missing the e2fsck binary!"
             fi
+
+        else
+            Log d "File system check is disabled. Skipping test on $lDevice"
         fi
 
-        if $_test $(Session get prop_enable_sdext_journal 0) -ne 2 && $_blkid $lDevice | grep -q 'TYPE="ext4"'; then
+        if $_test $(Session get prop_enable_sdext_journal 0) -ne 2 && $_blkid $lDevice | $_grep -q 'TYPE="ext4"'; then
             if ! $_test -z "$_tune2fs"; then
                 local lHasJournal=$($_tune2fs -l $lDevice | $_grep features | $_grep -q has_journal && $_echo 1 || $_echo 0)
                 local lShellError
 
-                Log d "Checking current journal status on $lDevice"
+                Log v "Checking current journal status on $lDevice"
 
                 if $_test "`Session get prop_enable_sdext_journal 0`" != "$lHasJournal"; then
                     Log v "Changing journal settings on $lDevice"
@@ -558,6 +561,9 @@ ProcessStorage() {
                     if $_test $? -gt 0; then
                         Log e "Failed while trying to change journal settings on $lDevice" "$lShellError"
                     fi
+
+                else
+                    Log v "The journal status on $lDevice already matches the configuration"
                 fi
 
                 $_echo $lStatus > $iDirTmp/tune2fs.result
@@ -565,10 +571,17 @@ ProcessStorage() {
             else
                 Log w "Could not change journal settings on $lDevice. Missing the tune2fs binary!"
             fi
+
+        elif $_test $(Session get prop_enable_sdext_journal 0) -ne 2; then
+            Log d "The file system type on $lDevice is not ext4. Disabling journal handling on this device"
+
+        else
+            Log d "Journal handeling is disabled. Leaving journal on $lDevice as it is"
         fi
 
         if AttachMount --fstype $lFsType --options $lMountParamsFull --options $lMountParamsLimited $lDevice $iDirSdext; then
-            $_echo 1 > $iDirSdext/WriteTest
+            Log v "Checking writable state on $lDevice"
+            $_echo 1 > $iDirSdext/WriteTest; sync
 
             # Samsung has created some pretty strange file systems which has been used on their older devices,
             # and has been encountered a few times on the sd-ext partition (Don't know why). This is how to detect them.
@@ -578,7 +591,7 @@ ProcessStorage() {
                 Session set device_sdext_status 1
 
             else
-                Log e "The sd-ext file system cannot be mounted with write permissions. Please change your file system type to something like ext(2/3/4)!"
+                Log e "The $lDevice file system cannot be mounted with write permissions. Please change your file system type to something like ext(2/3/4)!"
                 DetachMount $iDirSdext
             fi
         fi
@@ -607,7 +620,7 @@ ProcessContent() {
 
         elif $_ls -v $iDirSdext/lost+found | $_grep -q ""; then
             Log i "Marking content in $iDirSdext/lost+found for deletion on next boot"
-            $_touch $iDirSdext/lost+found/delete
+            $_echo 1 > $iDirSdext/lost+found/delete
         fi
 
         Log v "Preparing to move content between /data and $iDirSdext"
@@ -655,8 +668,9 @@ ProcessContent() {
             $_test $(Session get prop_move_system 0) -eq 1 && lContentMove="$lContentMove $lSystemContent" || lContentRevert="$lContentRevert $lSystemContent"
         fi
 
-        local lExtSize=$(PartitionSize $iDirSdext)
-        local lIntSize=$(PartitionSize /data)
+        # Make sure to leave some extra room
+        local lExtSize=$(($(PartitionSize $iDirSdext) - 25))
+        local lIntSize=$(($(PartitionSize /data) - 25))
 
         local lSrcPath
         local lDestPath
@@ -701,7 +715,9 @@ ProcessContent() {
                         fi
 
                         if $_test -d $lSrcPath/$lFolder && $_ls -v $lSrcPath/$lFolder | $_grep -q "" && ( ! $_echo $lFolder | $_grep -q -e "^app" || $_find $lSrcPath/$lFolder -type f | $_grep -q "" ); then
-                            lContSize="`$_echo $($_du -s -m $lDestPath/$lFolder) | $_awk '{print $1}'`"
+                            lContSize="`$_echo $($_du -s -m $lSrcPath/$lFolder) | $_awk '{print $1}'`"
+
+                            Log d "Comparing $lSrcPath/$lFolder size of ${lContSize}MB to remaining spaze on $lDestPath of ${lDestSize}MB"
 
                             if $_test $lDestSize -gt $lContSize; then
                                 Log v "Moving $lSrcPath/$lFolder to $lDestPath/$lFolder"
@@ -718,14 +734,14 @@ ProcessContent() {
                                                 $_mv -f $lSrcPath/$lFolder/$lSubName $lDestPath/$lFolder/$lSubName
 
                                                 # This is a fix for fast booting devices using a service implemented init.d method
-                                                if ! $lActionRevert && $_echo $lFolder | $_grep -q -e "^app"; then
+                                                if ! $lActionRevert && $_echo $lFolder | $_grep -q -e "^app" && $_test $(Session get status_safemode 0) -eq 1; then
                                                     $_ln -sf $lDestPath/$lFolder/$lSubName $lSrcPath/$lFolder/$lSubName
                                                 fi
                                             fi
                                         fi
                                     done
 
-                                    lContSize="`$_echo $($_du -s -m $lSrcPath/$lFolder) | $_awk '{print $1}'`"
+                                    lContSize="`$_echo $($_du -s -m $lDestPath/$lFolder) | $_awk '{print $1}'`"
                                 fi
 
                                 lSrcSize=$(($lSrcSize + $lContSize))
@@ -744,8 +760,6 @@ ProcessContent() {
                                 fi
 
                             else
-                                Log d "Tried to move $lSrcPath/$lFolder (${lContSize}MB) into $lDestPath (${lDestSize}MB)"
-
                                 if $lContinue; then
                                     # Try again during round two
                                     Log i "Could not move $lSrcPath/$lFolder due to low storage on $lDestPath, trying again later!"
@@ -821,7 +835,7 @@ ProcessLinks() {
 
     # Make sure that the device has not got the HTC S-On flag on the /system partition
     Log d "Running an S-On protection test on /system"
-    $_touch /system/s-off 2> /dev/null
+    $_echo 1 > /system/s-off 2> /dev/null; sync
 
     if $_test -e /system/s-off; then
         $_rm -rf /system/s-off
@@ -873,8 +887,8 @@ ProcessMemory() {
                     local lMemory=$($_cat /proc/meminfo | $_awk '{ if ($1 eq "MemTotal:") print $2; exit }')
                     local lSize=$(Session get prop_set_zram_compression)
 
-                    if $_test -e /system/lib/modules/ramzswap.ko; then
-                        if ! $_test -z "$_rzscontrol" && ( $_grep ramzswap /proc/modules || $_insmod /system/lib/modules/ramzswap.ko ); then
+                    if $_test -e /system/lib/modules/ramzswap.ko || $_test -b /dev/block/ramzswap0; then
+                        if ! $_test -z "$_rzscontrol" && ( $_test -b /dev/block/ramzswap0 || $_insmod /system/lib/modules/ramzswap.ko ); then
                             lDevice=/dev/block/ramzswap0 && $_rzscontrol $lDevice --disksize_kb=$(($(($lMemory * $lSize)) / 100)) --init
                         
                         elif $_test -z "$_rzscontrol"; then
@@ -899,6 +913,11 @@ ProcessMemory() {
                 if ! $_test -z "$lDevice"; then
                     Log v "Enabling $lType on $lDevice"
                     lShellError=$($_swapon $lDevice 2>&1)
+
+                    if $_test -e /system/bin/compcache; then
+                        Log d "Disabling CM's comcache"
+                        $_chmod 0644 /system/bin/compcache
+                    fi
 
                     if $_test $? -ne 0 || ! $_grep -q $lDevice /proc/swaps; then
                         Log e "Failed while enabling $lType!" "$lShellError"
@@ -943,7 +962,7 @@ ProcessCache() {
         if $_test $(Session get prop_enable_cache 0) -eq 1 || ( $_test $lDataSize -gt $lCacheSize || $_test $lSdextSize -gt $lCacheSize ); then
             lCachePath=$iDirSdext/cache
 
-            if $_test $(Session get prop_enable_cache 0) -eq 2 || $_test $lDataSize -gt $lSdextSize; then
+            if ( $_test $(Session get prop_enable_cache 0) -eq 2 && $_test $lDataSize -gt $lSdextSize ) || $_test $lSdextSize -eq 0; then
                 if $_test -e $iDirSdext/cache; then
                     $_rm -rf $iDirSdext/cache
                 fi
@@ -1419,12 +1438,13 @@ Log() {
 echo -n "" > /data/m2sd.fallback.log
 
 # In bash, we could use 'exec 2> >(Log)', but this will raise an redirect error in sh. So we use a small sub process hack instead
-exec 3>&1 
+## exec 3>&1 
 
-ProcessEnviroment 2>&1 >&3 3>&- >> /data/m2sd.fallback.log
+## ProcessEnviroment 2>&1 >&3 3>&- >> /data/m2sd.fallback.log
+ProcessEnviroment
 
 if $iEnviroment; then
-    (
+    ## (
         ProcessBoot
         ProcessMMC
         ProcessStorage
@@ -1436,7 +1456,7 @@ if $iEnviroment; then
 
         $_echo 0 > $iDirTmp/script.result
 
-    ) 2>&1 >&3 3>&- | Log
+    ## ) 2>&1 >&3 3>&- | Log
 fi
 
 exit 0
