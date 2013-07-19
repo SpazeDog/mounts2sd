@@ -484,6 +484,7 @@ ProcessMMC() {
 
                 Log v "Setting readahead on $lDevice to ${lReadahead}kb"
                 $_echo $lReadahead > $mmcDeviceMM
+                $_chmod 0444 $mmcDeviceMM
 
             else
                 Log w "Could not change readahead on $lDevice. Device was not found!"
@@ -497,6 +498,7 @@ ProcessMMC() {
                 if $_grep -q $lScheduler $lDeviceScheduler; then
                     Log v "Setting scheduler on $lDevice to $lScheduler"
                     $_echo $lScheduler > $lDeviceScheduler
+                    $_chmod 0444 $lDeviceScheduler
 
                 else
                     Log w "Could not change scheduler on $lDevice. The scheduler type $lScheduler is not supported!"
