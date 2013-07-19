@@ -196,8 +196,13 @@ public class Preferences {
 							}
 							
 						} else {
-							if (lBundle.getString("path_device_map_immc") == null && (new File("/dev/block/mtdblock0")).exists()) {
-								lBundle.putString("path_device_map_immc", "/dev/block/mtdblock0");
+							if (lBundle.getString("path_device_map_immc") == null) {
+								if ((new File("/dev/block/mtdblock0")).exists()) {
+									lBundle.putString("path_device_map_immc", "/dev/block/mtdblock0");
+									
+								} else if ((new File("/dev/block/bml0!c")).exists()) {
+									lBundle.putString("path_device_map_immc", "/dev/block/bml0!c");
+								}
 							}
 							
 							break;

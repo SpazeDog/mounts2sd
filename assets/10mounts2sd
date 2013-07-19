@@ -443,11 +443,18 @@ ProcessMMC() {
         fi
     done
 
-    # The main MTD entry resides in /dev/block/mtdblock0
-    if ! Session check device_immc && $_test -e /dev/block/mtdblock0; then
-        Log v "The internal MMC was located at /dev/block/mtdblock0"
-        Session set device_immc /dev/block/mtdblock0
-        Session set device_immc_mm $($_ls -l /dev/block/mtdblock0 | $_tr -s ' ' | $_sed -ne "s/^.*[ ]\([0-9]*\),[ ]\([0-9]*\)[ ].*$/\1:\2/p")
+    if ! Session check device_immc; then
+        # The main MTD entry resides in /dev/block/mtdblock0
+        if $_test -e /dev/block/mtdblock0; then
+            Log v "The internal MMC was located at /dev/block/mtdblock0"
+            Session set device_immc /dev/block/mtdblock0
+            Session set device_immc_mm $($_ls -l /dev/block/mtdblock0 | $_tr -s ' ' | $_sed -ne "s/^.*[ ]\([0-9]*\),[ ]\([0-9]*\)[ ].*$/\1:\2/p")
+
+        elif $_test -e /dev/block/bml0!c; then
+            Log v "The internal MMC was located at /dev/block/bml0!c"
+            Session set device_immc /dev/block/bml0!c
+            Session set device_immc_mm $($_ls -l /dev/block/bml0!c | $_tr -s ' ' | $_sed -ne "s/^.*[ ]\([0-9]*\),[ ]\([0-9]*\)[ ].*$/\1:\2/p")
+        fi
     fi
 
     for mmcPartition in system data cache; do
