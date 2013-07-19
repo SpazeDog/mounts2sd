@@ -204,7 +204,7 @@ public class FragmentTabOverview extends Fragment {
     			mViews.get("immc").put("readahead", view.findViewById(R.id.option_immc_item_readahead));
     		}
     		
-    		if (deviceSetup.path_device_scheduler_emmc() == null) {
+    		if (deviceSetup.path_device_scheduler_immc() == null) {
     			Utils.removeView(view.findViewById(R.id.option_immc_item_scheduler), false);
     			
     		} else {
