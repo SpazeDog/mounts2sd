@@ -324,7 +324,7 @@ ProcessEnviroment() {
     done
 
     log -p e -t Mounts2SD "$lMessage"
-    echo "$lMessage" >> /data/m2sd.fallback.log
+    echo "E/$lMessage" >> /data/m2sd.fallback.log
 
     return 1
 }
