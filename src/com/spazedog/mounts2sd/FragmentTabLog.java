@@ -87,8 +87,8 @@ public class FragmentTabLog extends Fragment {
     		TableRow row = (TableRow) inflater.inflate(R.layout.inflate_log_item, table, false);
     		String[] parts = mLog[i].split("/", 2);
     		
-    		((TextView) row.getChildAt(0)).setText( parts[0] );
-    		((TextView) row.getChildAt(1)).setText( parts[1] );
+    		((TextView) row.getChildAt(0)).setText( parts.length > 1 ? parts[0] : "?" );
+    		((TextView) row.getChildAt(1)).setText( parts.length > 1 ? parts[1] : parts[0] );
     		
     		if ((bool = !bool)) {
     			row.setBackgroundColor( color1 );
