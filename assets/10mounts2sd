@@ -206,7 +206,7 @@ ProcessEnviroment() {
         case "$?" in
             "0")
                 # This is a compatibillity test which will check to see if the current busybox will work with this script. This test is based on a lot of different reported issues that has been gattered over a long period of time, and it has proven to fetch any busybox version that will cause problems.
-                if $lBusybox test "52223abccbcf00eb3c81300545d63126" != "`( $lBusybox [ 1 -eq 0 ] || $lBusybox [ 0 -eq 1 ] ) && $lBusybox echo no || $lBusybox echo 'remove this part okay:bla=no-4' | $lBusybox grep -e '.*bla=no-[1-9]*' | $lBusybox sed -e 's/^remove //' | $lBusybox awk '{print $3}' | $lBusybox cut -d ':' -f1 | md5sum | $lBusybox awk '{print $1}'`"; then
+                if $lBusybox test "52223abccbcf00eb3c81300545d63126" != "`( $lBusybox [ 1 -eq 0 ] || $lBusybox [ 0 -eq 1 ] ) && $lBusybox echo no || $lBusybox echo 'remove this part okay:bla=no-4' | $lBusybox grep -e '.*bla=no-[1-9]*' | $lBusybox sed -e 's/^remove //' | $lBusybox awk '{print $3}' | $lBusybox cut -d ':' -f1 | $lBusybox md5sum | $lBusybox awk '{print $1}'`"; then
                     # Do NOT break here. We might have more busybox paths to search
                     lMessage="The current busybox is outdated!"
 
