@@ -340,31 +340,32 @@ public class Preferences {
 							
 							if (lBundle.getString("location_storage_sdext") == null || (stat = Shell.connection.filesystem.statDisk("/data/" + looper[i])) != null) {
 								Boolean status = lBundle.getString("location_storage_sdext") == null ? false : stat.device().equals(deviceSetup.path_device_map_sdext()) && !reversedMount;
+								Long usage;
 								
 								switch(i) {
 									case 0: 
 										lBundle.putBoolean("status_content_apps", status);
-										lBundle.putLong("usage_content_apps", Shell.connection.file.diskUsage(new String[]{"/data/app", "/data/app-private", "/data/app-asec", "/data/app-system"})); break;
+										lBundle.putLong("usage_content_apps", (usage = Shell.connection.file.diskUsage(new String[]{"/data/app", "/data/app-private", "/data/app-asec", "/data/app-system"})) == null ? 0L : usage); break;
 										
 									case 1: 
 										lBundle.putBoolean("status_content_dalvik", status);
-										lBundle.putLong("usage_content_dalvik", Shell.connection.file.diskUsage("/data/dalvik-cache")); break;
+										lBundle.putLong("usage_content_dalvik", (usage = Shell.connection.file.diskUsage("/data/dalvik-cache")) == null ? 0L : usage); break;
 										
 									case 2: 
 										lBundle.putBoolean("status_content_data", status);
-										lBundle.putLong("usage_content_data", Shell.connection.file.diskUsage(new String[]{"/data/data", "/data/user"})); break;
+										lBundle.putLong("usage_content_data", (usage = Shell.connection.file.diskUsage(new String[]{"/data/data", "/data/user"})) == null ? 0L : usage); break;
 										
 									case 3: 
 										lBundle.putBoolean("status_content_libs", status);
-										lBundle.putLong("usage_content_libs", Shell.connection.file.diskUsage("/data/app-lib")); break;
+										lBundle.putLong("usage_content_libs", (usage = Shell.connection.file.diskUsage("/data/app-lib")) == null ? 0L : usage); break;
 										
 									case 4: 
 										lBundle.putBoolean("status_content_media", status);
-										lBundle.putLong("usage_content_media", Shell.connection.file.diskUsage("/data/media")); break;
+										lBundle.putLong("usage_content_media", (usage = Shell.connection.file.diskUsage("/data/media")) == null ? 0L : usage); break;
 										
 									case 5: 
 										lBundle.putBoolean("status_content_system", status);
-										lBundle.putLong("usage_content_system", deviceSetup.paths_directory_system() == null ? 0L : Shell.connection.file.diskUsage(deviceSetup.paths_directory_system()));
+										lBundle.putLong("usage_content_system", (usage = Shell.connection.file.diskUsage(deviceSetup.paths_directory_system())) == null ? 0L : usage);
 								}
 							}
 						}
