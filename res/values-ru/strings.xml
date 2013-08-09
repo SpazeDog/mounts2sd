@@ -5,9 +5,9 @@
        - General strings
     ####################################################### -->
     <string name="app_name">Mounts2SD</string>
-    <string name="app_settings">Application Settings</string>
+    <string name="app_settings">Настройки</string>
     
-    <string name="size_structure">%1$s of %2$s</string>
+    <string name="size_structure">%1$s из %2$s</string>
     
     <string name="status_unknown">Unknown</string>
     <string name="status_disabled">Disabled</string>
@@ -44,10 +44,10 @@
     <string name="selector_journal_name_enable">Enable</string>
     <string name="selector_journal_name_disable">Disable</string>
     <string name="selector_filesystem_name_auto">Auto Detect</string>
-    <string name="selector_zram_name_disabled">Disabled</string>
-    <string name="selector_swappiness_name_low">Low</string>
-    <string name="selector_swappiness_name_medium">Medium</string>
-    <string name="selector_swappiness_name_high">High</string>
+    <string name="selector_zram_name_disabled">Отключено</string>
+    <string name="selector_swappiness_name_low">Редкое</string>
+    <string name="selector_swappiness_name_medium">Обычное</string>
+    <string name="selector_swappiness_name_high">Постоянное</string>
     <string name="selector_cache_name_enabled">Enabled</string>
     <string name="selector_cache_name_forced">Forced</string>
     <string name="selector_cache_name_disabled">Disabled</string>
@@ -71,22 +71,22 @@
     <!-- ######################################################
        - Toast messages used by the Log Fragment
     ####################################################### -->
-    <string name="toast_log_copied">Log file was copied to /sdcard/Mounts2SD/log.txt</string>
-    <string name="toast_log_unsuccessful">Could not copy the log file to the sdcard</string>
+    <string name="toast_log_copied">Журнал сохранен в /sdcard/Mounts2SD/log.txt</string>
+    <string name="toast_log_unsuccessful">Не удалось сохранить журнал на карту памяти</string>
 
     <!-- ######################################################
        - Used by the progress dialog when loading AsyncTask
     ####################################################### -->
     <string name="progress_load_setup">Checking device setup</string>
-    <string name="progress_load_config">Collecting device configurations</string>
+    <string name="progress_load_config">Загрузка конфигурации</string>
     <string name="progress_load_properties">Collecting script property values</string>
     
     <!-- ######################################################
        - Names for the menu entries
     ####################################################### -->
-    <string name="menu_overview_reload">Reload Status</string>
-    <string name="menu_log_save">Save log to Sdcard</string>
-    <string name="menu_controller_app_settings">Application Settings</string>
+    <string name="menu_overview_reload">Обновить</string>
+    <string name="menu_log_save">Сохранить</string><!-- XXX(skyh): better translation is "Сохранить на карту памяти", but it is too wide, and menu becomes multi-lined -->
+    <string name="menu_controller_app_settings">Настройки</string>
     
     <!-- ######################################################
        - Group names used by the Application Settings Activity
@@ -132,41 +132,41 @@
     <!-- ######################################################
        - Group names used by both Overview and Configure Fragments
     ####################################################### -->
-    <string name="option_storage_header">Storage</string>
-    <string name="option_system_header">System</string>
-    <string name="option_content_header">Content</string>
-    <string name="option_memory_header">Memory</string>
-    <string name="option_filesystem_header">File System</string>
-    <string name="option_immc_header">Internal MMC</string>
-    <string name="option_emmc_header">External MMC</string>
-    <string name="option_misc_header">Misc</string>
+    <string name="option_storage_header">Память</string>
+    <string name="option_system_header">Система</string>
+    <string name="option_content_header">Используется</string>
+    <string name="option_memory_header">Оперативная память</string>
+    <string name="option_filesystem_header">Файловая система</string>
+    <string name="option_immc_header">Встроенная память</string>
+    <string name="option_emmc_header">Внешняя память</string>
+    <string name="option_misc_header">Разное</string>
 
     <!-- ######################################################
        - Item names used by both Overview and Configure Fragments
     ####################################################### -->
-    <string name="option_storage_item_internal">Internal</string>
-    <string name="option_storage_item_external">External</string>
-    <string name="option_storage_item_cache">Cache</string>
+    <string name="option_storage_item_internal">Встроенная</string>
+    <string name="option_storage_item_external">Внешняя</string>
+    <string name="option_storage_item_cache">Кеш</string>
     
     <string name="option_system_item_threshold">Storage Threshold</string>
     
-    <string name="option_content_item_apps">Applications</string>
-    <string name="option_content_item_libs">Libraries</string>
-    <string name="option_content_item_data">Data</string>
-    <string name="option_content_item_dalvik">Dalvik Cache</string>
+    <string name="option_content_item_apps">Приложениями</string>
+    <string name="option_content_item_libs">Библиотеками</string>
+    <string name="option_content_item_data">Данными</string>
+    <string name="option_content_item_dalvik">Кешем</string>
     <string name="option_content_item_media">Media</string>
     <string name="option_content_item_system">System Content</string>
     
     <string name="option_memory_item_swap">SWAP</string>
-    <string name="option_memory_item_zram">ZRAM</string>
-    <string name="option_memory_item_swappiness">Swappiness</string>
+    <string name="option_memory_item_zram">Сжатие zRam</string>
+    <string name="option_memory_item_swappiness">Использование swap</string>
     
-    <string name="option_filesystem_item_fschk">File System Check</string>
-    <string name="option_filesystem_item_fstype">Driver</string>
-    <string name="option_filesystem_item_journal">Journal</string>
+    <string name="option_filesystem_item_fschk">Проверка</string>
+    <string name="option_filesystem_item_fstype">Драйвер</string>
+    <string name="option_filesystem_item_journal">Журнал</string>
     
-    <string name="option_mmc_item_readahead">Readahead</string>
-    <string name="option_mmc_item_scheduler">Scheduler</string>
+    <string name="option_mmc_item_readahead">Упреждение чтения</string>
+    <string name="option_mmc_item_scheduler">Планировщик</string>
     
     <string name="option_misc_item_safemode">Disable Safe mode</string>
     <string name="option_misc_item_debug">Enable Debug mode</string>
