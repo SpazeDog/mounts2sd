@@ -135,7 +135,7 @@
     <string-array name="selector_scheduler_names">
         <item>Noop</item>
         <item>Deadline</item>
-        <item>CFG</item>
+        <item>CFQ</item>
         <item>BFQ</item>
         <item>Row</item>
         <item>SIO</item>
