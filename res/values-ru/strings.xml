@@ -17,7 +17,7 @@
     <string name="status_error">Error</string>
     
     <string name="device_not_mounted">Not Mounted</string>
-    <string name="log_empty">The log file is empty</string>
+    <string name="log_empty">Журнал пуст</string>
     
     <!-- ######################################################
        - General strings
