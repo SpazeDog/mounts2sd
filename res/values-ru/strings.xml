@@ -117,8 +117,13 @@
        - Used the Tab Controller Activity to display
        - in the Message Dialog opon error
     ####################################################### -->
-    <string name="message_error_su_headline">Missing SuperUser</string>
-    <string name="message_error_su_text">The application could not optain SuperUser (root) privileges. This is needed by the application in order to check device configuration and change/safe script property files. Go to the xda-developer.com website and search how to root the device in your device specific forum section</string>
+    <string name="message_error_su_headline">Нет root-доступа</string>
+    <string name="message_error_su_text">
+        Не удалось получить права суперпользователя (root).
+        Права нужны для проверки конфигурации устройства и установки параметров загрузки.
+        Для получения дополнительной информации посетите forum.xda-developers.com (на английском языке),
+        раздел посвященный получению root-доступа на вашем устройстве.
+    </string>
 
     <string name="message_error_busybox_headline">Missing Busybox</string>
     <string name="message_error_busybox_text">The application could not locate busybox on the device. Busybox is an all-in-one binary which contains most of the system tools needed by both the application and the startup script. Please search and install busybox from Google Play Store</string>
@@ -129,9 +134,9 @@
     <!-- ######################################################
        - Button text for the Dialog
     ####################################################### -->
-    <string name="button_close">Close</string>
-    <string name="button_cancel">Cancel</string>
-    <string name="button_okay">Okay</string>
+    <string name="button_close">Выйти</string>
+    <string name="button_cancel">Отменить</string>
+    <string name="button_okay">OK</string>
     
     <!-- ######################################################
        - Group names used by both Overview and Configure Fragments
@@ -165,7 +170,7 @@
     <string name="option_memory_item_zram">Сжатие zRam</string>
     <string name="option_memory_item_swappiness">Использование swap</string>
     
-    <string name="option_filesystem_item_fschk">Проверка</string>
+    <string name="option_filesystem_item_fschk">Проверка при загрузке</string>
     <string name="option_filesystem_item_fstype">Драйвер</string>
     <string name="option_filesystem_item_journal">Журнал</string>
     
