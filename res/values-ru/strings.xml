@@ -132,8 +132,8 @@
         Busybox можно найти в Google Play.
     </string>
     
-    <string name="message_error_unknown_headline">Unknown Issue</string>
-    <string name="message_error_unknown_text">For some reason the application could not complete it\'s configuration</string>
+    <string name="message_error_unknown_headline">Неизвестная ошибка</string>
+    <string name="message_error_unknown_text">Приложению не удалось полностью выполнить процедуры конфигурации.</string>
     
     <!-- ######################################################
        - Button text for the Dialog
