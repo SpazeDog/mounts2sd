@@ -5,7 +5,7 @@
 		<ScrollView style="?settings_mainScroller">
 		    <LinearLayout style="?settings_subWrapper">
 			    <LinearLayout style="?settings_groupWrapper">
-			        <TextView style="?settings_groupHeader" android:text="Startup Script" />
+			        <TextView style="?settings_groupHeader" android:text="@string/settings_group_startup_script" />
 			        
 			        <LinearLayout style="?settings_itemWrapper">
 			            <TextView style="?content_itemNameField" android:text="Versions" />
