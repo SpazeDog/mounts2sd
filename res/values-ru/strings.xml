@@ -44,17 +44,17 @@
        - Tab for everything not providing a checkbox to select
        - the value of a script property
     ####################################################### -->
-    <string name="selector_journal_name_default">Keep Default</string>
-    <string name="selector_journal_name_enable">Enable</string>
-    <string name="selector_journal_name_disable">Disable</string>
-    <string name="selector_filesystem_name_auto">Auto Detect</string>
+    <string name="selector_journal_name_default">По-умолчанию</string>
+    <string name="selector_journal_name_enable">Включен</string>
+    <string name="selector_journal_name_disable">Выключен</string>
+    <string name="selector_filesystem_name_auto">Авто</string>
     <string name="selector_zram_name_disabled">Отключено</string>
-    <string name="selector_swappiness_name_low">Редкое</string>
-    <string name="selector_swappiness_name_medium">Обычное</string>
-    <string name="selector_swappiness_name_high">Постоянное</string>
-    <string name="selector_cache_name_enabled">Enabled</string>
-    <string name="selector_cache_name_forced">Forced</string>
-    <string name="selector_cache_name_disabled">Disabled</string>
+    <string name="selector_swappiness_name_low">редкое</string>
+    <string name="selector_swappiness_name_medium">обычное</string>
+    <string name="selector_swappiness_name_high">постоянное</string>
+    <string name="selector_cache_name_enabled">Включен</string>
+    <string name="selector_cache_name_forced">Принудительно</string>
+    <string name="selector_cache_name_disabled">Отключен</string>
     
     <string name="selector_swappiness_comment_low">Recommended</string>
     <string name="selector_swappiness_comment_medium">Linux Default</string>
@@ -65,12 +65,12 @@
     <!-- ######################################################
        - Messages returned by the method Utils.sdcardStateMessage()
     ####################################################### -->
-    <string name="sdcard_state_ro">The sdcard is mounted in read-only mode</string>
-    <string name="sdcard_state_format">The sdcard is not formated in a correct format</string>
-    <string name="sdcard_state_missing">The sdcard is not present</string>
-    <string name="sdcard_state_ums">The sdcard is corrently being shared via the USB</string>
-    <string name="sdcard_state_mount_failure">The sdcard is not mounted do to issues with the partition or the card it self</string>
-    <string name="sdcard_state_mount">The sdcard is not mounted</string>
+    <string name="sdcard_state_ro">Карат памяти смонтирована только для чтения</string>
+    <string name="sdcard_state_format">Карта памяти не отформатирована</string>
+    <string name="sdcard_state_missing">Карта памяти отсутствует</string>
+    <string name="sdcard_state_ums">Карта памяти используется через USB</string>
+    <string name="sdcard_state_mount_failure">Карта памяти либо данные на карте памяти повреждены</string>
+    <string name="sdcard_state_mount">Карта памяти не смонтирована</string>
     
     <!-- ######################################################
        - Toast messages used by the Log Fragment
@@ -81,9 +81,9 @@
     <!-- ######################################################
        - Used by the progress dialog when loading AsyncTask
     ####################################################### -->
-    <string name="progress_load_setup">Checking device setup</string>
+    <string name="progress_load_setup">Проверка устройства</string>
     <string name="progress_load_config">Загрузка конфигурации</string>
-    <string name="progress_load_properties">Collecting script property values</string>
+    <string name="progress_load_properties">Сбор параметров загрузочного скрипта</string>
     
     <!-- ######################################################
        - Names for the menu entries
@@ -108,8 +108,6 @@
     <string name="settings_style_dialog_name">Настройки для планшета</string>
     <string name="settings_style_dialog_description">Показывать настройки в виде отдельного окна</string>
     
-    <string name="settings_general_profiles_name">Allow all profiles</string>
-    <string name="settings_general_profiles_description">Allow all profiles to edit script configuration</string>
     <string name="settings_general_busybox_name">Свой busybox</string>
     <string name="settings_general_busybox_description">Использовать встроенный busybox вместо системного</string>
     
@@ -147,7 +145,7 @@
     ####################################################### -->
     <string name="option_storage_header">Память</string>
     <string name="option_system_header">Система</string>
-    <string name="option_content_header">Используется</string>
+    <string name="option_content_header">Данные</string>
     <string name="option_memory_header">Оперативная память</string>
     <string name="option_filesystem_header">Файловая система</string>
     <string name="option_immc_header">Встроенная память</string>
@@ -163,62 +161,72 @@
     
     <string name="option_system_item_threshold">Storage Threshold</string>
     
-    <string name="option_content_item_apps">Приложениями</string>
-    <string name="option_content_item_libs">Библиотеками</string>
-    <string name="option_content_item_data">Данными</string>
-    <string name="option_content_item_dalvik">Кешем</string>
-    <string name="option_content_item_media">Media</string>
-    <string name="option_content_item_system">System Content</string>
+    <string name="option_content_item_apps">Приложения</string>
+    <string name="option_content_item_libs">Библиотеки</string>
+    <string name="option_content_item_data">Данные приложений</string>
+    <string name="option_content_item_dalvik">Кеш</string>
+    <string name="option_content_item_media">Медиа</string>
+    <string name="option_content_item_system">Системные файлы</string>
     
-    <string name="option_memory_item_swap">SWAP</string>
-    <string name="option_memory_item_zram">Сжатие zRam</string>
+    <string name="option_memory_item_swap">Использовать swap</string>
+    <string name="option_memory_item_zram">zRam</string>
     <string name="option_memory_item_swappiness">Использование swap</string>
     
-    <string name="option_filesystem_item_fschk">Проверка при загрузке</string>
+    <string name="option_filesystem_item_fschk">Проверка</string>
     <string name="option_filesystem_item_fstype">Драйвер</string>
     <string name="option_filesystem_item_journal">Журнал</string>
     
     <string name="option_mmc_item_readahead">Упреждение чтения</string>
     <string name="option_mmc_item_scheduler">Планировщик</string>
     
-    <string name="option_misc_item_safemode">Disable Safe mode</string>
-    <string name="option_misc_item_debug">Enable Debug mode</string>
+    <string name="option_misc_item_safemode">Отключить безопасный режим</string>
+    <string name="option_misc_item_debug">Режим отладки</string>
     
     <!-- ######################################################
        - Item description used by the Configure Fragment
     ####################################################### -->
-    <string name="option_storage_description_cache">Move the cache partition to data or sd-ext</string>
+    <string name="option_storage_description_cache">Перенести кеш в data или sd-ext</string>
     
     <string name="option_system_description_threshold">How much space that needs to be left on data in order to install applications</string>
     
-    <string name="option_content_description_apps">Move applications to sd-ext</string>
-    <string name="option_content_description_libs">Move application libraries to sd-ext</string>
-    <string name="option_content_description_data">Move application data to sd-ext</string>
-    <string name="option_content_description_dalvik">Move dalvikvm application caches to sd-ext</string>
-    <string name="option_content_description_media">Move internal storage (/data/media) to sd-ext</string>
-    <string name="option_content_description_system">Move all data stored system files to sd-ext</string>
+    <string name="option_content_description_apps">Перенести приложения на sd-ext</string>
+    <string name="option_content_description_libs">Перенести библиотеки на sd-ext</string>
+    <string name="option_content_description_data">Перенести данные приложений на sd-ext</string>
+    <string name="option_content_description_dalvik">Перенести кеш Dalvik VM на sd-ext</string>
+    <string name="option_content_description_media">Перенести медиа /data/media на sd-ext</string>
+    <string name="option_content_description_system">Перенести все сохраненные системные файлы на sd-ext</string>
     
-    <string name="option_memory_description_swap">Enable SWAP (3\'rd sdcard partition)</string>
-    <string name="option_memory_description_zram">Enable ZRAM (Small memory stored SWAP partition for indexing)</string>
-    <string name="option_memory_description_swappiness">Set how aggressive the wapping should be</string>
+    <string name="option_memory_description_swap">На третьем разделе карты памяти</string>
+    <string name="option_memory_description_zram">Часть оперативной памяти отводится под сжатый swap раздел</string>
+    <string name="option_memory_description_swappiness"></string>
     
-    <string name="option_filesystem_description_fschk">Run a file system check on sd-ext during boot</string>
-    <string name="option_filesystem_description_fstype">Select file system type to mount sd-ext as</string>
-    <string name="option_filesystem_description_journal">Change the journal settings on sd-ext during boot</string>
+    <string name="option_filesystem_description_fschk">Поиск и устранение ошибок при загрузке</string>
+    <string name="option_filesystem_description_fstype"></string>
+    <string name="option_filesystem_description_journal"></string>
     
-    <string name="option_misc_description_safemode">Don\'t allow the upstart script to go into safe-mode (Enables a work-around for improper init.d implementations)</string>
-    <string name="option_misc_description_debug">Get a more detailed log entry from the upstart script</string>
+    <string name="option_misc_description_safemode">
+        Не позволять загрузочному скрипту переходить в безопасный режим. Поможет избежать некоторых ошибок при неправильном конфигурировании init.d
+    </string>
+    <string name="option_misc_description_debug">Более подробный вывод диагностических сообщений от загрузочного скрипта</string>
     
-    <string name="option_mmc_description_readahead">Set the MMC readahead</string>
-    <string name="option_mmc_description_scheduler">Set the MMC scheduler</string>
+    <string name="option_mmc_description_readahead">Установка объема упреждения</string>
+    <string name="option_mmc_description_scheduler">Выбор планировщика памяти</string>
     
     <!-- ######################################################
        - Messages to be displayed in the infobox by the
        - Tab Controller
     ####################################################### -->
-    <string name="infobox_safemode">The script is currently running in Safe-Mode. You can disable this mode in the configure tab!</string>
-    <string name="infobox_no_sdext">Could not locate the SD-EXT partition. This should be the second partition on the external sdcard!</string>
-    <string name="infobox_no_script">There is no startup script present on your device. Go to application settings and install it!</string>
-    <string name="infobox_update_script">The current startup script is outdated. Go to application settings and update it!</string>
+    <string name="infobox_safemode">
+        Загрузочный скрипт находится в безопасном режиме. Безопасный режим можно отключить в настройках.
+    </string>
+    <string name="infobox_no_sdext">
+        Не удалось обнаружить дополнительный раздел на карте памяти. Без него ничего не получится.
+    </string>
+    <string name="infobox_no_script">
+        Загрузочный скрипт не установлен. Его можно установить в настройках.
+    </string>
+    <string name="infobox_update_script">
+        Установленный загрузочный скрипт устарел. В настройках можно установить свежую версию.
+    </string>
     
 </resources>
