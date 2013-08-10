@@ -103,15 +103,15 @@
     ####################################################### -->
     <string name="settings_style_theme_name">Ночная тема</string>
     <string name="settings_style_theme_description">Использовать темное оформление</string>
-    <string name="settings_style_layout_name">Settings Style</string>
-    <string name="settings_style_layout_description">Use the settings style globally</string>
+    <string name="settings_style_layout_name">Тема как в настройках</string>
+    <string name="settings_style_layout_description">Использовать в программе тему настроек</string>
     <string name="settings_style_dialog_name">Настройки для планшета</string>
     <string name="settings_style_dialog_description">Показывать настройки в виде отдельного окна</string>
     
     <string name="settings_general_profiles_name">Allow all profiles</string>
     <string name="settings_general_profiles_description">Allow all profiles to edit script configuration</string>
-    <string name="settings_general_busybox_name">Use built-in busybox</string>
-    <string name="settings_general_busybox_description">Use the applications built-in busybox binary</string>
+    <string name="settings_general_busybox_name">Свой busybox</string>
+    <string name="settings_general_busybox_description">Использовать встроенный busybox вместо системного</string>
     
     <!-- ######################################################
        - Used the Tab Controller Activity to display
