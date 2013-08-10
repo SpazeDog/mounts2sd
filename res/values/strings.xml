@@ -22,6 +22,9 @@
        - General strings
     ####################################################### -->
     <string name="settings_group_startup_script">Startup Script</string>
+    <string name="settings_script_versions">Versions</string>
+    <string name="settings_script_version_installed">Installed</string>
+    <string name="settings_script_version_bundled">Bundled</string>
     <string name="settings_btn_script_update">Update Startup Script</string>
     <string name="settings_btn_script_remove">Remove Startup Script</string>
     <string name="settings_btn_script_install">Install Startup Script</string>

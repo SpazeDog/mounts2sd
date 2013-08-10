@@ -23,6 +23,9 @@
        - General strings
     ####################################################### -->
     <string name="settings_group_startup_script">Загрузочный скрипт</string>
+    <string name="settings_script_versions">Версия</string>
+    <string name="settings_script_version_installed">Установлена</string>
+    <string name="settings_script_version_bundled">Текущая</string>
     <string name="settings_btn_script_update">Обновить</string>
     <string name="settings_btn_script_remove">Удалить</string>
     <string name="settings_btn_script_install">Установить</string>
