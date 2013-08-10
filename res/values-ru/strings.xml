@@ -34,10 +34,10 @@
        - Used in Application Settings when handling internal
        - busybox and the upstart script in AsyncTask
     ####################################################### -->
-    <string name="resource_copying_to_disk">Copying %1$s from resources into %2$s</string>
-    <string name="resource_deleting_from_disk">Removing %1$s from %2$s</string>
-    <string name="resource_copy_to_disk_failed">Failed to copy %1$s to %2$s</string>
-    <string name="resource_delete_from_disk_failed">Failed to remove %1$s from %2$s</string>
+    <string name="resource_copying_to_disk">Копирование %1$s из ресурсов проложения в %2$s</string>
+    <string name="resource_deleting_from_disk">Удаление %1$s из %2$s</string>
+    <string name="resource_copy_to_disk_failed">Не удалось скопировать %1$s в %2$s</string>
+    <string name="resource_delete_from_disk_failed">Не удалось удалить %1$s из %2$s</string>
     
     <!-- ######################################################
        - Names and Comments for Selectors. Used in the Configure
