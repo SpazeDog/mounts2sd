@@ -21,6 +21,10 @@
     <!-- ######################################################
        - General strings
     ####################################################### -->
+    <string name="settings_group_startup_script">Startup Script</string>
+    <string name="settings_script_versions">Versions</string>
+    <string name="settings_script_version_installed">Installed</string>
+    <string name="settings_script_version_bundled">Bundled</string>
     <string name="settings_btn_script_update">Update Startup Script</string>
     <string name="settings_btn_script_remove">Remove Startup Script</string>
     <string name="settings_btn_script_install">Install Startup Script</string>
@@ -113,7 +117,7 @@
        - in the Message Dialog opon error
     ####################################################### -->
     <string name="message_error_su_headline">Missing SuperUser</string>
-    <string name="message_error_su_text">The application could not optain SuperUser (root) privileges. This is needed by the application in order to check device configuration and change/safe script property files. Go to the xda-developer.com website and search how to root the device in your device specific forum section</string>
+    <string name="message_error_su_text">The application could not optain SuperUser (root) privileges. This is needed by the application in order to check device configuration and change/safe script property files. Go to the forum.xda-developers.com website and search how to root the device in your device specific forum section</string>
 
     <string name="message_error_busybox_headline">Missing Busybox</string>
     <string name="message_error_busybox_text">The application could not locate busybox on the device. Busybox is an all-in-one binary which contains most of the system tools needed by both the application and the startup script. Please search and install busybox from Google Play Store</string>
