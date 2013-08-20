@@ -132,7 +132,7 @@ ListFolderInfo() {
         local lFilePartGroup
 
         for lFile in /*.rc; do
-            $_grep 'mkdir' $lFile | $_grep -v '#' | $_tr -s ' ' | while read lFilePartType lFilePartPath lFilePartPerm lFilePartUser lFilePartGroup; do
+            $_grep -e '^[ \t]*mkdir' $lFile | $_tr -s ' ' | while read lFilePartType lFilePartPath lFilePartPerm lFilePartUser lFilePartGroup; do
                 if ! $_test -z "$lFilePartUser" && ! $_test -z "$lFilePartGroup"; then
                     $_echo "$lFilePartPath $lFilePartPerm $lFilePartUser $lFilePartGroup" >> $iDirTmp/function.list_folder_info.tmp.1
                 fi
@@ -179,7 +179,7 @@ ListExports() {
 
     if ! $_test -f $iDirTmp/function.list_exports.tmp; then
         for lFile in /*.rc; do
-            $_grep 'export' $lFile | $_grep -v '#' | $_tr -s ' ' | while read lFilePartExport lFilePartName lFilePartValue; do
+            $_grep -e '^[ \t]*export' $lFile | $_tr -s ' ' | while read lFilePartExport lFilePartName lFilePartValue; do
                 if ! $_test -z "$lFilePartExport"; then
                     $_echo "$lFilePartName $lFilePartValue" >> $iDirTmp/function.list_exports.tmp
                 fi
