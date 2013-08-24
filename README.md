@@ -19,6 +19,7 @@ Table of content
 * [System Applications](https://github.com/SpazeDog/mounts2sd#system-applications)
 * [Script Properties](https://github.com/SpazeDog/mounts2sd#script-properties)
 * [Root (SuperUser) permissions](https://github.com/SpazeDog/mounts2sd#root-superuser-permissions)
+* [Configurations and Current State](https://github.com/SpazeDog/mounts2sd#configurations-and-current-state)
 * [Screen Shots](https://github.com/SpazeDog/mounts2sd#screen-shots)
 
 Script Features
@@ -198,6 +199,23 @@ Having root enabled on your device can be a great thing. It enables applications
 Normal processes like applications and such, are not allowed to view or change any file or folder stored in /data which is not owned by the process itself. This means that in order for the script to move content not owned by Mounts2SD from /data to sd-ext, it needs to do so using root. 
 
 Most of the application can do without root, however, calculating how much space each /data folder uses (Displayed in the app), needs root permissions as the app is not allowed access to any /data sub folder, not even to calculate the size of the content within. It also needs root to list the current value of the storge threshold, as this value is stored in a database file which is not accessable for regular applications. And last, it needs root in order to write configurations to the script property files located in /data/property, as this folder also is not accessable for regular applications. So most of the application root usage, is used to collect specific information. The only changes made as root, is to the scripts own property files. 
+
+Configurations and Current State
+--------------------------------
+Besides the Log Viewer, Mounts2SD has two Tabs/Screens. One of them is used to display the current state `(Overview)` and the other is used to change the scripts setup `(Configure)`. 
+
+The current state means all of the current values used by the device at the moment, like which folder are linked from sd-ext to data, what file system type that sd-ext is currently mounted as, 
+the current value of the storage threshold and so on. Mounts2SD uses a live overview, which means that it scans the device and collect all of the data used to display the overview. It does NOT, 
+like the older versions and most other sd-ext applications, display the values that was set by the script. So if something has been changed since Mounts2SD's upstart script did it's work, this is the values displayed in the application. 
+
+So if you ever find discrepancies between the current state displayed in the overview tab and your setup from the configure tab, it can be a result of many things. 
+
+1. You have another script or application that has changed one or more values after Mounts2SD was executed at boot. 
+2. If there is discrepancies in options like Storage Threshold or File System Check, it can be a result of a broken binary. The threshold for an example uses the sqlite3 binary, which is depended on a few libraries that some dev's forget to include in their ROM.
+3. Discrepancies in the content options like apps, data, dalvik-cache etc. can be a result of an issue while linking the folders or moving the content from one partition to another. The second is properly due to a low storage. Mounts2SD will not move content to a partition unless is has the capacity to store it. It would result in data loss. 
+4. File system types is an option that can produce confusion among people. In the configure tab, you can set what kind of file system you would like to mount sd-ext as. The overview tab (if you check the title), does not display the file system type. It displays the file system driver being used. Drivers like Ext4 is backward compatible, and many ROM's do not include the Ext2 or Ext3 drivers because of this. So the Ext4 driver could be used on all 3 types. Also, if you select a wrong file system type, like Fat32 for a Ext4 file system, the mount will fail and Mounts2SD will switch to auto detection which will change the file system driver to Ext4. In this case the two tabs will once again not match.
+
+If you find discrepancies between the current state and your setup, the best thing to do is check the log. If the discrepancies was a result of an error, the log will contain details about it that could explain why. 
 
 Screen Shots
 ------------
