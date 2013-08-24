@@ -21,7 +21,7 @@
     <!-- ######################################################
        - General strings
     ####################################################### -->
-    <string name="settings_btn_script_update">Mettre à jour du script de démarrage</string>
+    <string name="settings_btn_script_update">Mettre à jour le script de démarrage</string>
     <string name="settings_btn_script_remove">Supprimer le script de démarrage</string>
     <string name="settings_btn_script_install">Installer le script de démarrage</string>
     
@@ -61,9 +61,9 @@
        - Messages returned by the method Utils.sdcardStateMessage()
     ####################################################### -->
     <string name="sdcard_state_ro">La carte SD est montée en lecture seule</string>
-    <string name="sdcard_state_format">La carte SD n\'est pas formatté dans un format correct</string>
+    <string name="sdcard_state_format">La carte SD n\'est pas formatée dans un format correct</string>
     <string name="sdcard_state_missing">La carte SD est absente</string>
-    <string name="sdcard_state_ums">La carte SD est actuellement partagé par USB</string>
+    <string name="sdcard_state_ums">La carte SD est actuellement partagée par USB</string>
     <string name="sdcard_state_mount_failure">La carte SD n\'est pas montée à cause de la partition ou de la carte elle-même</string>
     <string name="sdcard_state_mount">La carte SD n\'est pas montée</string>
     
@@ -98,9 +98,9 @@
     ####################################################### -->
     <string name="settings_style_theme_name">Thème sombre</string>
     <string name="settings_style_theme_description">Utiliser le thème sombre plutôt que le clair par défaut</string>
-    <string name="settings_style_layout_name">Paramètre de l\'apparence</string>
+    <string name="settings_style_layout_name">Paramètre d\'apparence</string>
     <string name="settings_style_layout_description">Définir globalement le thème</string>
-    <string name="settings_style_dialog_name">Paramètre pour tablette</string>
+    <string name="settings_style_dialog_name">Paramètre de tablette</string>
     <string name="settings_style_dialog_description">Utiliser les fenêtres de dialogue par les réglages de l\'application</string>
     
     <string name="settings_general_profiles_name">Autoriser tous les profils</string>
@@ -116,7 +116,7 @@
     <string name="message_error_su_text">L\'application ne peut obtenir les privilèges SuperUser (root). Ceux-ci sont requis par l\'application pour vérifier la configuration matérielle et modifier/sauvegarder les fichiers de configuration du script. Rendez-vous sur sur le site xda-developper.com pour trouver comment rooter votre matériel depuis son forum dédié</string>
 
     <string name="message_error_busybox_headline">Busybox manquant</string>
-    <string name="message_error_busybox_text">L\'application ne peut trouver busybox sur votre matériel. Busybox est une application toute-en-un qui contient la plupart des outils systèmes nécessaires à l\'application et au script de démarrage. Merci de rechercher et installer busybox depuis le Google Play Store</string>
+    <string name="message_error_busybox_text">L\'application ne peut trouver busybox sur votre matériel. Busybox est une application tout-en-un qui contient la plupart des outils systèmes nécessaires à l\'application et au script de démarrage. Merci de rechercher et installer busybox depuis le Google Play Store</string>
     
     <string name="message_error_unknown_headline">Problème inconnu</string>
     <string name="message_error_unknown_text">Pour une quelconque raison l\'application ne peut finir sa configuration</string>
@@ -135,9 +135,9 @@
     <string name="option_system_header">Système</string>
     <string name="option_content_header">Contenu</string>
     <string name="option_memory_header">Mémoire</string>
-    <string name="option_filesystem_header">Système de fichiers</string><!-- Missing translation -->
-    <string name="option_immc_header">Internal MMC</string><!-- Missing translation -->
-    <string name="option_emmc_header">External MMC</string><!-- Missing translation -->
+    <string name="option_filesystem_header">Système de fichiers</string>
+    <string name="option_immc_header">MMC interne</string>
+    <string name="option_emmc_header">MMC externe</string>
     <string name="option_misc_header">Divers</string>
 
     <!-- ######################################################
@@ -158,16 +158,16 @@
     
     <string name="option_memory_item_swap">SWAP</string>
     <string name="option_memory_item_zram">ZRAM</string>
-    <string name="option_memory_item_swappiness">Swappiness</string><!-- Missing translation -->
+    <string name="option_memory_item_swappiness">Swappiness</string>
     
-    <string name="option_filesystem_item_fschk">Vérification du système de fichier</string>
+    <string name="option_filesystem_item_fschk">Vérification du système de fichiers</string>
     <string name="option_filesystem_item_fstype">Pilote</string>
     <string name="option_filesystem_item_journal">Journalisation</string>
     
-    <string name="option_mmc_item_readahead">Readahead</string><!-- Missing translation -->
-    <string name="option_mmc_item_scheduler">Scheduler</string><!-- Missing translation -->
+    <string name="option_mmc_item_readahead">Readahead</string>
+    <string name="option_mmc_item_scheduler">Planificateur</string>
     
-    <string name="option_misc_item_safemode">Disable Safe mode</string><!-- Missing translation -->
+    <string name="option_misc_item_safemode">Désactiver le mode sécurité</string>
     <string name="option_misc_item_debug">Activer le mode débogage</string>
     
     <!-- ######################################################
@@ -185,25 +185,25 @@
     <string name="option_content_description_system">Déplacer toutes données système stockées vers sd-ext</string>
     
     <string name="option_memory_description_swap">Activer le SWAP (3ème partition de la carte SD)</string>
-    <string name="option_memory_description_zram">Activer ZRAM (Small memory stored SWAP partition for indexing)</string><!-- Missing translation -->
-    <string name="option_memory_description_swappiness">Définir l\'aggressivité du swap</string>
+    <string name="option_memory_description_zram">Activer le ZRAM (Petite partie de la mémoire utilisée comme SWAP compressé)</string>
+    <string name="option_memory_description_swappiness">Définir l\'agressivité du swap</string>
     
     <string name="option_filesystem_description_fschk">Exécuter une vérification du système de fichiers au démarrage</string>
-    <string name="option_filesystem_description_fstype">Select file system type to mount sd-ext as</string><!-- Missing translation -->
+    <string name="option_filesystem_description_fstype">Définir le type du système de fichiers pour monter sd-ext</string>
     <string name="option_filesystem_description_journal">Définir le réglage de journalisation au démarrage</string>
     
     <string name="option_misc_description_safemode">De pas autoriser le script de démarrage à s\'exécuter en mode sécurité (active un contournement pour les implémentations incorrectes d\'init.d)</string>
     <string name="option_misc_description_debug">Récupérer des entrées du journal plus détaillées du script de démarrage</string>
     
-    <string name="option_mmc_description_readahead">Set the MMC readahead</string><!-- Missing translation -->
-    <string name="option_mmc_description_scheduler">Set the MMC scheduler</string><!-- Missing translation -->
+    <string name="option_mmc_description_readahead">Définir readahead du MMC</string>
+    <string name="option_mmc_description_scheduler">Définir le planificateur du MMC</string>
     
     <!-- ######################################################
        - Messages to be displayed in the infobox by the
        - Tab Controller
     ####################################################### -->
     <string name="infobox_safemode">Le script s\'exécute en mode sécurité. Vous pouvez désactiver ce mode depuis l\'onglet paramètres !</string>
-    <string name="infobox_no_sdext">Impossible de trouver la partiion SD-EXT. Elle devrait être la seconde partition de la carte SD externe !</string>
+    <string name="infobox_no_sdext">Impossible de trouver la partition SD-EXT. Elle devrait être la seconde partition de la carte SD externe !</string>
     <string name="infobox_no_script">Aucun script de démarrage n\'est présent sur votre matériel. Allez dans les réglages de l\'application et installez-le !</string>
     <string name="infobox_update_script">L\'actuel script de démarrage est dépassé. Allez dans les réglages de l\'application et mettez-le à jour !</string>
     
