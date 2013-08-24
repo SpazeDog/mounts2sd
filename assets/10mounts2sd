@@ -632,6 +632,14 @@ ProcessContent() {
             $_echo 1 > $iDirSdext/lost+found/delete
         fi
 
+        # Revert Link2SD app placement
+        for lPath in /data $iDirSdext; do
+            if $_ls -v $lPath | $_grep -qe "\.apk$"; then
+                Log i "Located APK's in the root of $lPath. Moving them into $lPath/app"
+                $_mv -f $lPath/*.apk $lPath/app/
+            fi
+        done
+
         Log v "Preparing to move content between /data and $iDirSdext"
 
         # This is a fix for fast booting devices using the init.d service implementation. They some times boot up before an sd-ext script is done moving the content and attaching the folders
