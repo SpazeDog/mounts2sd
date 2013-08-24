@@ -61,10 +61,10 @@
        - Messages returned by the method Utils.sdcardStateMessage()
     ####################################################### -->
     <string name="sdcard_state_ro">The sdcard is mounted in read-only mode</string>
-    <string name="sdcard_state_format">The sdcard is not formated in a correct format</string>
+    <string name="sdcard_state_format">The sdcard is not formatted in a correct format</string>
     <string name="sdcard_state_missing">The sdcard is not present</string>
-    <string name="sdcard_state_ums">The sdcard is corrently being shared via the USB</string>
-    <string name="sdcard_state_mount_failure">The sdcard is not mounted do to issues with the partition or the card it self</string>
+    <string name="sdcard_state_ums">The sdcard is currently being shared via the USB</string>
+    <string name="sdcard_state_mount_failure">The sdcard is not mounted due to issues with the partition or the card it self</string>
     <string name="sdcard_state_mount">The sdcard is not mounted</string>
     
     <!-- ######################################################
@@ -84,7 +84,7 @@
        - Names for the menu entries
     ####################################################### -->
     <string name="menu_overview_reload">Reload Status</string>
-    <string name="menu_log_save">Save log to Sdcard</string>
+    <string name="menu_log_save">Save log to sdcard</string>
     <string name="menu_controller_app_settings">Application Settings</string>
     
     <!-- ######################################################
@@ -113,7 +113,7 @@
        - in the Message Dialog opon error
     ####################################################### -->
     <string name="message_error_su_headline">Missing SuperUser</string>
-    <string name="message_error_su_text">The application could not optain SuperUser (root) privileges. This is needed by the application in order to check device configuration and change/safe script property files. Go to the xda-developer.com website and search how to root the device in your device specific forum section</string>
+    <string name="message_error_su_text">The application could not obtain SuperUser (root) privileges. This is needed by the application in order to check device configuration and change/safe script property files. Go to the xda-developer.com website and search how to root the device in your device specific forum section</string>
 
     <string name="message_error_busybox_headline">Missing Busybox</string>
     <string name="message_error_busybox_text">The application could not locate busybox on the device. Busybox is an all-in-one binary which contains most of the system tools needed by both the application and the startup script. Please search and install busybox from Google Play Store</string>
@@ -186,7 +186,7 @@
     
     <string name="option_memory_description_swap">Enable SWAP (3\'rd sdcard partition)</string>
     <string name="option_memory_description_zram">Enable ZRAM (Small memory stored SWAP partition for indexing)</string>
-    <string name="option_memory_description_swappiness">Set how aggressive the wapping should be</string>
+    <string name="option_memory_description_swappiness">Set how aggressive the swapping should be</string>
     
     <string name="option_filesystem_description_fschk">Run a file system check on sd-ext during boot</string>
     <string name="option_filesystem_description_fstype">Select file system type to mount sd-ext as</string>
