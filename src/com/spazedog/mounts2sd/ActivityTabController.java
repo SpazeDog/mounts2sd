@@ -30,7 +30,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -42,7 +41,7 @@ import com.spazedog.lib.taskmanager.Daemon;
 import com.spazedog.lib.taskmanager.Task;
 import com.spazedog.mounts2sd.tools.ExtendedActivity;
 import com.spazedog.mounts2sd.tools.Preferences;
-import com.spazedog.mounts2sd.tools.Shell;
+import com.spazedog.mounts2sd.tools.Root;
 import com.spazedog.mounts2sd.tools.Utils;
 import com.spazedog.mounts2sd.tools.containers.DeviceSetup;
 import com.spazedog.mounts2sd.tools.containers.MessageItem;
@@ -211,7 +210,9 @@ public class ActivityTabController extends ExtendedActivity implements OnClickLi
 				
 				@Override
 				protected Boolean doInBackground(Context... params) {
-					if (Shell.connection.connected(true)) {
+					if (Root.isConnected()) {
+						Root.lock("TabController");
+						
 						Preferences preferences = new Preferences( (Context) params[0] );
 						
 						if (!preferences.checkDeviceSetup() || !preferences.checkDeviceConfig() || !preferences.checkDeviceProperties()) {
@@ -276,7 +277,7 @@ public class ActivityTabController extends ExtendedActivity implements OnClickLi
 		
 		if (!mAsyncResult) {
 			if (isForeground() && getSupportFragmentManager().findFragmentByTag("TabControllerDialog") == null) {
-				if (!Shell.connection.connected()) {
+				if (!Root.isConnected()) {
 					new FragmentDialog.Builder(this, "TabControllerDialog", getResources().getString(R.string.message_error_su_headline)).showMessageDialog(getResources().getString(R.string.message_error_su_text), true);
 					
 				} else if (!deviceSetup.environment_busybox()) {
@@ -458,6 +459,9 @@ public class ActivityTabController extends ExtendedActivity implements OnClickLi
 		super.onDestroy();
 		
 		if (mBackPressed) {
+			Root.unlock("TabController");
+			Root.close();
+			
 			System.exit(0);
 		}
 	}

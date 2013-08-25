@@ -56,6 +56,12 @@ public final class DeviceConfig {
 		else if (aKey.equals("usage_content_system")) return (Object) usage_content_system();
 		else if (aKey.equals("size_memory_swap")) return (Object) size_memory_swap();
 		else if (aKey.equals("size_memory_zram")) return (Object) size_memory_zram();
+		else if (aKey.equals("size_storage_data")) return (Object) size_storage_data();
+		else if (aKey.equals("size_storage_sdext")) return (Object) size_storage_sdext();
+		else if (aKey.equals("size_storage_cache")) return (Object) size_storage_cache();
+		else if (aKey.equals("usage_storage_data")) return (Object) usage_storage_data();
+		else if (aKey.equals("usage_storage_sdext")) return (Object) usage_storage_sdext();
+		else if (aKey.equals("usage_storage_cache")) return (Object) usage_storage_cache();
 		else if (aKey.equals("usage_memory_swap")) return (Object) usage_memory_swap();
 		else if (aKey.equals("usage_memory_zram")) return (Object) usage_memory_zram();
 		else if (aKey.equals("level_memory_swappiness")) return (Object) level_memory_swappiness();
@@ -64,7 +70,7 @@ public final class DeviceConfig {
 		
 		return null;
 	}
-	
+
 	public String location_storage_data() {
 		return mCached.getString("location_storage_data");
 	}
@@ -97,32 +103,32 @@ public final class DeviceConfig {
 		return mCached.getString("value_emmc_readahead");
 	}
 	
-	public Boolean status_content_apps() {
-		return mCached.getBoolean("status_content_apps", false);
+	public Integer status_content_apps() {
+		return mCached.getInteger("status_content_apps", 0);
 	}
 	
-	public Boolean status_content_dalvik() {
-		return mCached.getBoolean("status_content_dalvik", false);
+	public Integer status_content_dalvik() {
+		return mCached.getInteger("status_content_dalvik", 0);
 	}
 	
-	public Boolean status_content_data() {
-		return mCached.getBoolean("status_content_data", false);
+	public Integer status_content_data() {
+		return mCached.getInteger("status_content_data", 0);
 	}
 	
-	public Boolean status_content_libs() {
-		return mCached.getBoolean("status_content_libs", false);
+	public Integer status_content_libs() {
+		return mCached.getInteger("status_content_libs", 0);
 	}
 	
-	public Boolean status_content_media() {
-		return mCached.getBoolean("status_content_media", false);
+	public Integer status_content_media() {
+		return mCached.getInteger("status_content_media", 0);
 	}
 	
-	public Boolean status_content_system() {
-		return mCached.getBoolean("status_content_system", false);
+	public Integer status_content_system() {
+		return mCached.getInteger("status_content_system", 0);
 	}
 	
-	public Boolean status_filesystem_journal() {
-		return mCached.getBoolean("status_filesystem_journal", false);
+	public Integer status_filesystem_journal() {
+		return mCached.getInteger("status_filesystem_journal", -1);
 	}
 
 	public Long usage_content_apps() {
@@ -156,7 +162,31 @@ public final class DeviceConfig {
 	public Long size_memory_zram() {
 		return mCached.getLong("size_memory_zram", 0L);
 	}
+
+	public Long size_storage_data() {
+		return mCached.getLong("size_storage_data", 0L);
+	}
 	
+	public Long size_storage_sdext() {
+		return mCached.getLong("size_storage_sdext", 0L);
+	}
+	
+	public Long size_storage_cache() {
+		return mCached.getLong("size_storage_cache", 0L);
+	}
+
+	public Long usage_storage_data() {
+		return mCached.getLong("usage_storage_data", 0L);
+	}
+	
+	public Long usage_storage_sdext() {
+		return mCached.getLong("usage_storage_sdext", 0L);
+	}
+	
+	public Long usage_storage_cache() {
+		return mCached.getLong("usage_storage_cache", 0L);
+	}
+
 	public Long usage_memory_swap() {
 		return mCached.getLong("usage_memory_swap", 0L);
 	}

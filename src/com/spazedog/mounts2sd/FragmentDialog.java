@@ -39,11 +39,12 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.spazedog.lib.rootfw.container.MemStat;
+import com.spazedog.lib.rootfw3.RootFW;
+import com.spazedog.lib.rootfw3.extenders.MemoryExtender.MemStat;
 import com.spazedog.mounts2sd.tools.ExtendedLayout;
 import com.spazedog.mounts2sd.tools.ExtendedLayout.OnMeasure;
 import com.spazedog.mounts2sd.tools.Preferences;
-import com.spazedog.mounts2sd.tools.Shell;
+import com.spazedog.mounts2sd.tools.Root;
 import com.spazedog.mounts2sd.tools.Utils;
 import com.spazedog.mounts2sd.tools.ViewEventHandler;
 import com.spazedog.mounts2sd.tools.ViewEventHandler.ViewClickListener;
@@ -235,12 +236,18 @@ public class FragmentDialog extends DialogFragment implements OnMeasure, ViewCli
 					
 				} else if (name.equals("zram")) {
 					if (oMeminfo == null) {
-						MemStat memstat = Shell.connection.memory.usage();
+						RootFW rootfw = Root.open();
+						MemStat memstat = rootfw.memory().getUsage();
 						oMeminfo = 0D;
 						
 						if (memstat != null) {
 							oMeminfo = memstat.memTotal().doubleValue();
+							
+						} else {
+							oMeminfo = 0D;
 						}
+						
+						Root.close();
 					}
 					
 					lSelectorComments[i] = Utils.convertPrifix((oMeminfo * (Double.parseDouble(lSelectorValues[i]) / 100)));

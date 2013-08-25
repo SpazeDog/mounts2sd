@@ -38,8 +38,9 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.spazedog.lib.rootfw.container.Data;
-import com.spazedog.mounts2sd.tools.Shell;
+import com.spazedog.lib.rootfw3.RootFW;
+import com.spazedog.lib.rootfw3.extenders.FileExtender.FileData;
+import com.spazedog.mounts2sd.tools.Root;
 import com.spazedog.mounts2sd.tools.Utils;
 import com.spazedog.mounts2sd.tools.interfaces.TabController;
 
@@ -60,22 +61,25 @@ public class FragmentTabLog extends Fragment {
     	TableLayout table = (TableLayout) view.findViewById(R.id.log_table);
     	
     	if (savedInstanceState == null || (mLog = savedInstanceState.getStringArray("mLog")) == null) {
-    		Data data = Shell.connection.file.read("/tmp/log.txt");
+    		RootFW rootfw = Root.open();
+    		FileData data = rootfw.file("/tmp/log.txt").read();
     		
     		if (data == null) {
-    			data = Shell.connection.file.read("/data/m2sd.fallback.log");
+    			data = rootfw.file("/data/m2sd.fallback.log").read();
     			
     			if (data != null) {
-    				mLog = data.raw();
+    				mLog = data.getArray();
     			}
     			
     		} else {
-    			mLog = data.raw();
+    			mLog = data.getArray();
     		}
     		
     		if (mLog == null || mLog.length == 0) {
     			mLog = new String[]{"I/" + getResources().getString(R.string.log_empty)};
     		}
+    		
+    		Root.close();
     	}
 
     	Boolean bool = false;

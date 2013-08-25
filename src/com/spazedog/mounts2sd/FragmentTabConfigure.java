@@ -31,9 +31,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.spazedog.lib.rootfw.container.Data;
+import com.spazedog.lib.rootfw3.RootFW;
+import com.spazedog.lib.rootfw3.extenders.FileExtender.FileData;
 import com.spazedog.mounts2sd.tools.Preferences;
-import com.spazedog.mounts2sd.tools.Shell;
+import com.spazedog.mounts2sd.tools.Root;
 import com.spazedog.mounts2sd.tools.ViewEventHandler;
 import com.spazedog.mounts2sd.tools.ViewEventHandler.ViewClickListener;
 import com.spazedog.mounts2sd.tools.containers.DeviceProperties;
@@ -296,9 +297,10 @@ public class FragmentTabConfigure extends Fragment implements ViewClickListener,
 					
 				case R.id.option_immc_item_scheduler: 
 				case R.id.option_emmc_item_scheduler: 
+					RootFW rootfw = Root.open();
 					DeviceSetup deviceSetup = mPreferences.deviceSetup();
 					String file = id == R.id.option_immc_item_scheduler ? deviceSetup.path_device_scheduler_immc() : deviceSetup.path_device_scheduler_emmc();
-					String content = Shell.connection.file.readLine(file);
+					String content = rootfw.file(file).readOneLine();
 					String[] parts = null;
 					
 					if (content != null) {
@@ -311,14 +313,17 @@ public class FragmentTabConfigure extends Fragment implements ViewClickListener,
 						}
 					}
 					
+					Root.close();
+					
 					mEnabledValues.put(id, parts); break;
 					
 				case R.id.option_filesystem_item_fstype:
-					Data data = Shell.connection.file.read("/proc/filesystems");
+					rootfw = Root.open();
+					FileData data = rootfw.file("/proc/filesystems").read();
 					ArrayList<String> filesystems = new ArrayList<String>();
 					
 					if (data != null) {
-						String[] lines = data.raw();
+						String[] lines = data.getArray();
 
 						filesystems.add("auto");
 						
@@ -328,6 +333,8 @@ public class FragmentTabConfigure extends Fragment implements ViewClickListener,
 							}
 						}
 					}
+					
+					Root.close();
 					
 					mEnabledValues.put(id, filesystems.size() > 0 ? filesystems.toArray(new String[filesystems.size()]) : null); break;
 					

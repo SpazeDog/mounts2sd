@@ -19,9 +19,9 @@
 
 package com.spazedog.mounts2sd.tools;
 
-import java.io.File;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import android.annotation.TargetApi;
@@ -33,16 +33,17 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.os.UserManager;
+import android.text.TextUtils;
 import android.util.Log;
 
-import com.spazedog.lib.rootfw.container.Data;
-import com.spazedog.lib.rootfw.container.DiskStat;
-import com.spazedog.lib.rootfw.container.FileStat;
-import com.spazedog.lib.rootfw.container.FstabEntry;
-import com.spazedog.lib.rootfw.container.ShellResult;
-import com.spazedog.lib.rootfw.container.SwapStat;
+import com.spazedog.lib.rootfw3.RootFW;
+import com.spazedog.lib.rootfw3.extenders.FileExtender;
+import com.spazedog.lib.rootfw3.extenders.FileExtender.FileStat;
+import com.spazedog.lib.rootfw3.extenders.FilesystemExtender.DiskStat;
+import com.spazedog.lib.rootfw3.extenders.FilesystemExtender.MountStat;
+import com.spazedog.lib.rootfw3.extenders.MemoryExtender.SwapStat;
+import com.spazedog.lib.rootfw3.extenders.ShellExtender.ShellResult;
 import com.spazedog.mounts2sd.R;
 import com.spazedog.mounts2sd.tools.containers.ApplicationSettings;
 import com.spazedog.mounts2sd.tools.containers.DeviceConfig;
@@ -132,76 +133,75 @@ public class Preferences {
 		return mDeviceProperties;
 	}
 	
-	public Boolean loadDeviceSetup(Boolean aForce) {
+	public Boolean loadDeviceSetup(Boolean forceCheck) {
 		synchronized(oLock) {
-			if (!checkDeviceSetup() || aForce) {
-				Bundle lBundle = new Bundle();
+			if (!checkDeviceSetup() || forceCheck) {
+				Bundle setupData = new Bundle();
+				RootFW rootfw = Root.open();
 				
 				if (settings().use_builtin_busybox()) {
 					String pathBusybox = mContext.getResources().getString(R.string.config_path_busybox);
+					FileExtender.File busyboxFile = rootfw.file(pathBusybox);
 					
-					if (!(new File(pathBusybox)).isFile()) {
-						Shell.connection.file.copyResource(mContext, "busybox", pathBusybox, "0777", "0", "0");
+					if (!busyboxFile.exists()) {
+						busyboxFile.extractFromResource(mContext, "busybox", "0777", "0", "0");
 					}
 				}
 				
-				if (Shell.connection.binary.exists("busybox")) {
-					lBundle.putBoolean("environment_busybox", true);
+				if (rootfw.busybox().exists()) {
+					String[] loopContainer;
+					FileExtender.File scriptFile = rootfw.file( mContext.getResources().getString(R.string.config_path_script) );
 					
-					String[] looper;
-					String scriptPath = mContext.getResources().getString(R.string.config_path_script);
-					
-					if ((new File(scriptPath)).isFile()) {
-						lBundle.putBoolean("environment_startup_script", true);
+					if (scriptFile.exists()) {
+						String scriptId = scriptFile.readOneMatch("@id");
+						String scriptVersion = scriptFile.readOneMatch("@version");
 						
-						Data id = Shell.connection.file.grep(scriptPath, "@id", true);
-						Data version = Shell.connection.file.grep(scriptPath, "@version", true);
+						setupData.putBoolean("environment_startup_script", true);
 						
-						if (id != null) {
-							lBundle.putInt("id_startup_script", Integer.valueOf( id.line().substring( id.line().lastIndexOf(" ") + 1 ) ));
-						}
+						try {
+							if (scriptId != null) 
+								setupData.putInt("id_startup_script", Integer.valueOf( scriptId.trim().substring( scriptId.trim().lastIndexOf(" ")+1 ) ));
+							
+						} catch (Throwable e) {}
 						
-						if (version != null) {
-							lBundle.putString("version_startup_script", version.line().substring( version.line().lastIndexOf(" ") + 1 ) );
-						}
+						if (scriptVersion != null) 
+							setupData.putString("version_startup_script", scriptVersion.substring( scriptVersion.lastIndexOf(" ") + 1 ));
 					}
 					
-					for (int i=0; i < (looper = new String[]{"/system/xbin/busybox", "/system/bin/busybox", "/system/sbin/busybox", "/sbin/busybox"}).length; i++) {
-						if ((new File(looper[i])).isFile()) {
-							lBundle.putBoolean("environment_multiple_binaries", true); break;
+					for (int i=0; i < (loopContainer = new String[]{"/system/xbin/busybox", "/system/bin/busybox", "/system/sbin/busybox", "/sbin/busybox"}).length; i++) {
+						if (rootfw.file(loopContainer[i]).exists()) {
+							setupData.putBoolean("environment_multiple_binaries", true); break;
 						}
 					}
 					
 					for (int i=0; i < 10; i++) {
-						String mmcType = Shell.connection.file.readLine("/sys/block/mmcblk" + i + "/device/type");
+						FileExtender.File mmcTypeFile = rootfw.file("/sys/block/mmcblk" + i + "/device/type");
 						
-						if (mmcType != null) {
+						if (mmcTypeFile.exists()) {
+							String mmcType = mmcTypeFile.readOneLine();
+							
 							if ("MMC".equals(mmcType)) {
-								lBundle.putString("path_device_map_immc", "/dev/block/mmcblk" + i);
+								setupData.putString("path_device_map_immc", "/dev/block/mmcblk" + i);
 								
 							} else if ("SD".equals(mmcType)) {
-								lBundle.putString("path_device_map_emmc", "/dev/block/mmcblk" + i);
+								setupData.putString("path_device_map_emmc", "/dev/block/mmcblk" + i);
 								
-								for (int x=2; x < 4; x++) {
-									if ((new File("/dev/block/mmcblk" + i + "p" + x)).exists()) {
-										switch(x) {
-											case 2: 
-												lBundle.putString("path_device_map_sdext", "/dev/block/mmcblk" + i + "p" + x); 
-												lBundle.putString("type_device_sdext", Shell.connection.filesystem.getType(lBundle.getString("path_device_map_sdext"))); break;
-												
-											case 3: lBundle.putString("path_device_map_swap", "/dev/block/mmcblk" + i + "p" + x);
-										}
-									}
+								if (rootfw.file("/dev/block/mmcblk" + i + "p2").exists()) {
+									setupData.putString("path_device_map_sdext", "/dev/block/mmcblk" + i + "p2"); 
+									setupData.putString("type_device_sdext", rootfw.filesystem("/dev/block/mmcblk" + i + "p2").fsType(true));
 								}
+								
+								if (rootfw.file("/dev/block/mmcblk" + i + "p3").exists())
+									setupData.putString("path_device_map_swap", "/dev/block/mmcblk" + i + "p3");
 							}
 							
 						} else {
-							if (lBundle.getString("path_device_map_immc") == null) {
-								if ((new File("/dev/block/mtdblock0")).exists()) {
-									lBundle.putString("path_device_map_immc", "/dev/block/mtdblock0");
+							if (setupData.getString("path_device_map_immc") == null) {
+								if (rootfw.file("/dev/block/mtdblock0").exists()) {
+									setupData.putString("path_device_map_immc", "/dev/block/mtdblock0");
 									
-								} else if ((new File("/dev/block/bml0!c")).exists()) {
-									lBundle.putString("path_device_map_immc", "/dev/block/bml0!c");
+								} else if (rootfw.file("/dev/block/mtdblock0").exists()) {
+									setupData.putString("path_device_map_immc", "/dev/block/bml0!c");
 								}
 							}
 							
@@ -209,85 +209,84 @@ public class Preferences {
 						}
 					}
 					
-					for (int i=0; i < (looper = new String[]{"/data", "/cache"}).length; i++) {
-						FstabEntry fstab = Shell.connection.filesystem.statFstab(looper[i]);
-						String device = null;
+					for (int i=0; i < (loopContainer = new String[]{"/data", "/cache"}).length; i++) {
+						MountStat stat = rootfw.filesystem(loopContainer[i]).statFstab();
 						
-						if (fstab != null) {
-							device = fstab.device();
-							
-						} else {
-							DiskStat diskstat = Shell.connection.filesystem.statDisk(looper[i]);
-							
-							if (diskstat != null) {
-								device = diskstat.device();
-							}
+						/* Since the first stat is taken from various init.rc and fstab files,
+						 * it could have located a wrong device. It should not be possible, 
+						 * but let's makes sure just in case by checking the device existence. 
+						 * It is quite important that we do get an existing device for both cache and especially data. 
+						 */
+						if (stat == null || !rootfw.file(stat.device()).exists()) {
+							stat = rootfw.filesystem(loopContainer[i]).statMount();
 						}
-	
-						switch(i) {
-							case 0: lBundle.putString("path_device_map_data", device); break;
-							case 1: lBundle.putString("path_device_map_cache", device);
-						}
+						
+						setupData.putString(i == 0 ? "path_device_map_data" : "path_device_map_cache", stat.device());
 					}
 					
-					for (int i=0; i < (looper = new String[]{lBundle.getString("path_device_map_immc"), lBundle.getString("path_device_map_emmc")}).length; i++) {
-						if (looper[i] != null) {
-							FileStat filestat = Shell.connection.file.stat(looper[i]);
+					for (int i=0; i < (loopContainer = new String[]{setupData.getString("path_device_map_immc"), setupData.getString("path_device_map_emmc")}).length; i++) {
+						if (loopContainer[i] != null) {
+							FileStat stat = rootfw.file(loopContainer[i]).getDetails();
 							
-							if (filestat != null) {
-								String lReadaheadFile = "/sys/devices/virtual/bdi/" + filestat.mm() + "/read_ahead_kb";
-								String lSchedulerFile = "/sys/block/" + looper[i].substring(looper[i].lastIndexOf("/") + 1) + "/queue/scheduler";
+							if (stat != null) {
+								String readaheadPath = "/sys/devices/virtual/bdi/" + stat.mm() + "/read_ahead_kb";
+								String schedulerPath = "/sys/block/" + loopContainer[i].substring(loopContainer[i].lastIndexOf("/") + 1) + "/queue/scheduler";
 								
-								switch(i) { 
-									case 0: 
-										lBundle.putString("path_device_readahead_immc", (new File(lReadaheadFile)).exists() ? lReadaheadFile : null);
-										lBundle.putString("path_device_scheduler_immc", (new File(lSchedulerFile)).exists() ? lSchedulerFile : null); break;
-										
-									case 1: 
-										lBundle.putString("path_device_readahead_emmc", (new File(lReadaheadFile)).exists() ? lReadaheadFile : null);
-										lBundle.putString("path_device_scheduler_emmc", (new File(lSchedulerFile)).exists() ? lSchedulerFile : null);
-								}
+								setupData.putString(i == 0 ? "path_device_readahead_immc" : "path_device_readahead_emmc", (rootfw.file(readaheadPath).exists() ? readaheadPath : null));
+								setupData.putString(i == 0 ? "path_device_scheduler_immc" : "path_device_scheduler_emmc", (rootfw.file(schedulerPath).exists() ? schedulerPath : null));
 							}
 						}
 					}
 					
-					for (int i=0; i < (looper = new String[]{"/dev/block/zram0", "/system/lib/modules/zram.ko", "/system/lib/modules/ramzswap.ko", "/dev/block/ramzswap0"}).length; i++) {
-						if ((new File(looper[i])).exists()) {
-							lBundle.putString("path_device_map_zram", i < 2 ? "/dev/block/zram0" : (Shell.connection.binary.exists("rzscontrol") ? "/dev/block/ramzswap0" : null)); break;
+					for (int i=0; i < (loopContainer = new String[]{"/dev/block/zram0", "/system/lib/modules/zram.ko", "/system/lib/modules/ramzswap.ko", "/dev/block/ramzswap0"}).length; i++) {
+						if (rootfw.file(loopContainer[i]).exists()) {
+							setupData.putString("path_device_map_zram", i < 2 ? "/dev/block/zram0" : (rootfw.binary("rzscontrol").exists() ? "/dev/block/ramzswap0" : null));
 						}
 					}
 					
-					for (int i=0; i < (looper = new String[]{"tune2fs", "sqlite3", "e2fsck"}).length; i++) {
-						lBundle.putBoolean("support_binary_" + looper[i], Shell.connection.binary.exists(looper[i]));
+					for (int i=0; i < (loopContainer = new String[]{"tune2fs", "sqlite3", "e2fsck"}).length; i++) {
+						setupData.putBoolean("support_binary_" + loopContainer[i], rootfw.binary(loopContainer[i]).exists());
 					}
 					
-					for (int i=0; i < (looper = Shell.connection.file.list("/system")).length; i++) {
-						if ((new File("/data/" + looper[i] + "_s")).isDirectory()) {
-							lBundle.putString("paths_directory_system", (lBundle.containsKey("paths_directory_system") ? lBundle.getString("paths_directory_system") + "," : "") + looper[i] + "_s");
+					if ((loopContainer = rootfw.file("/system").getList()) != null) {
+						List<String> systemDirs = new ArrayList<String>();
+						
+						for (int i=0; i < loopContainer.length; i++) {
+							if (!loopContainer[i].equals(".") && !loopContainer[i].equals("..") && rootfw.file("/data/" + loopContainer[i] + "_s").isDirectory()) {
+								systemDirs.add(loopContainer[i] + "_s");
+							}
+						}
+						
+						if (systemDirs.size() > 0) {
+							setupData.putString("paths_directory_system", TextUtils.join(",", systemDirs));
 						}
 					}
 					
-					lBundle.putBoolean("support_option_swap", (new File("/proc/swaps")).exists() && lBundle.getString("path_device_map_swap") != null);
-					lBundle.putBoolean("support_option_zram", (new File("/proc/swaps")).exists() && lBundle.getString("path_device_map_zram") != null);
-					lBundle.putBoolean("support_directory_library", (new File("/data/app-lib")).isDirectory());
-					lBundle.putBoolean("support_directory_user", (new File("/data/user")).isDirectory());
-					lBundle.putBoolean("support_directory_media", (new File("/data/media")).isDirectory());
-					lBundle.putBoolean("support_directory_system", lBundle.getString("paths_directory_system") != null);
-					lBundle.putBoolean("support_directory_cmdalvik", (new File("/cache/dalvik-cache")).isDirectory() && !"1".equals(Shell.connection.shell.execute("getprop dalvik.vm.dexopt-data-only").output().toString(true)));
-					lBundle.putBoolean("support_device_mtd", (new File("/proc/mtd")).exists());
-					
-					lBundle.putString("init_implementation", "service".equals( Shell.connection.file.readLine( mContext.getResources().getString(R.string.config_dir_tmp) + "/init.type" ) ) ? "service" : "internal");
-					lBundle.putBoolean("safemode", "1".equals( Shell.connection.file.readLine( mContext.getResources().getString(R.string.config_dir_tmp) + "/safemode.result" ) ) ? true : false);
+					setupData.putBoolean("environment_busybox", true);
+					setupData.putBoolean("support_option_swap", rootfw.file("/proc/swaps").exists() && setupData.getString("path_device_map_swap") != null);
+					setupData.putBoolean("support_option_zram", rootfw.file("/proc/swaps").exists() && setupData.getString("path_device_map_zram") != null);
+					setupData.putBoolean("support_directory_library", rootfw.file("/data/app-lib").isDirectory());
+					setupData.putBoolean("support_directory_user", rootfw.file("/data/user").isDirectory());
+					setupData.putBoolean("support_directory_media", rootfw.file("/data/media").isDirectory());
+					setupData.putBoolean("support_directory_system", setupData.getString("paths_directory_system") != null);
+					setupData.putBoolean("support_directory_cmdalvik", rootfw.file("/cache/dalvik-cache").isDirectory() && !"1".equals(rootfw.property().get("dalvik.vm.dexopt-data-only")));
+					setupData.putBoolean("support_device_mtd", rootfw.file("/proc/mtd").exists());
+					setupData.putBoolean("safemode", "1".equals(rootfw.file(mContext.getResources().getString(R.string.config_dir_tmp) + "/safemode.result").readOneLine()) ? true : false);
+					setupData.putString("init_implementation", "service".equals(rootfw.file(mContext.getResources().getString(R.string.config_dir_tmp) + "/init.type").readOneLine()) ? "service" : "internal");
 					
 					cached().putBoolean("DeviceSetup.Loaded", true);
 					
-					cached("DeviceSetup").putAll(lBundle);
+					cached("DeviceSetup").putAll(setupData);
+					
+					Root.close();
 					
 					return true;
 					
 				} else {
 					cached("DeviceSetup").putBoolean("environment_busybox", false);
 				}
+				
+				Root.close();
 				
 			} else {
 				return true;
@@ -297,150 +296,221 @@ public class Preferences {
 		}
 	}
 
-	public boolean loadDeviceConfig(Boolean aForce) {
+	public boolean loadDeviceConfig(Boolean forceCheck) {
 		synchronized(oLock) {
 			if (checkDeviceSetup()) {
-				if (!checkDeviceConfig() || aForce) {
-					Bundle lBundle = new Bundle();
-					
+				if (!checkDeviceConfig() || forceCheck) {
+					Bundle configData = new Bundle();
+					RootFW rootfw = Root.open();
 					DeviceSetup deviceSetup = deviceSetup();
-					String[] looper;
-					Boolean reversedMount = false;
+					String[] loopContainer;
 					
-					for (int i=0; i < (looper = new String[]{mContext.getResources().getString(R.string.config_dir_sdext), "/data", "/cache"}).length; i++) {
-						/* We cannot just use stat.location() as we cannot trust the order in which devices are located in the /proc/mounts version
-						 * available to app processes. Android does not provide the original version, but a re-structured one. For an example
-						 * you could end up getting /sd-ext/dalvik-cache as the sd-ext mount location, because this has been placed before /sd-ext in /proc/mounts.
-						 * So we will have to investigate a little bit in order to locate the correct locations. 
-						 */
-						DiskStat stat = Shell.connection.filesystem.statDisk(looper[i]);
+					String sdextLocation = mContext.getResources().getString(R.string.config_dir_sdext);
+					DiskStat stat = rootfw.filesystem("/data").statDisk();
+					
+					if (stat != null) {
+						String sdextDevice = deviceSetup.path_device_map_data().equals( stat.device() ) ? deviceSetup.path_device_map_sdext() : deviceSetup.path_device_map_data();
 						
-						if (stat != null) {
-							switch(i) {
-								case 0: 
-									/* M2SD no longer support reversing the mount points, but if this app was just installed, another script might be loaded that does */
-									lBundle.putString("location_storage_sdext", stat.device().equals(deviceSetup.path_device_map_data()) ? "/data" : 
-										/* We cannot be sure that sd-ext is mounted at /sd-ext. Some scripts uses alternative locations */
-										Shell.connection.filesystem.checkMount(deviceSetup.path_device_map_sdext()) ? mContext.getResources().getString(R.string.config_dir_sdext) : null); break;
+						configData.putString(deviceSetup.path_device_map_data().equals( stat.device() ) ? 
+								"location_storage_data" : "location_storage_sdext", "/data");
+						
+						configData.putLong(deviceSetup.path_device_map_data().equals( stat.device() ) ? 
+								"size_storage_data" : "size_storage_sdext", stat.size());
+						
+						configData.putLong(deviceSetup.path_device_map_data().equals( stat.device() ) ? 
+								"usage_storage_data" : "usage_storage_sdext", stat.usage());
+						
+						if (sdextDevice != null && (sdextDevice.equals( deviceSetup.path_device_map_data() ) || rootfw.filesystem(sdextDevice).isMounted())) {
+							stat = rootfw.filesystem(sdextLocation).statDisk();
+							
+							/* For some reason, some Android versions makes a restructured copy of /proc/mounts for application processes. 
+							 * This means that some times, the mount order has been altered so we no longer know which location was mounted at first (Original location), 
+							 * when working with --bind mounted locations. So we could end up getting for an example /sd-ext/dalvik-cache as the sd-ext location. 
+							 * And since some script also uses alternative location for sd-ext, like Link2SD which uses /data/sdext, we can't just check if the device is mounted 
+							 * and then assume it's on /sd-ext. So if the device is mounted but not on /sd-ext, we make a second mount location on /sd-ext that we can use to access sd-ext
+							 * no mater where it is originally located (Our own little entry point). 
+							 */
+							if (stat == null || !stat.device().equals(sdextDevice)) {
+								rootfw.filesystem("/").addMount(new String[]{"remount", "rw"});
+								rootfw.file("/sd-ext").createDirectory();
+								rootfw.filesystem("/").addMount(new String[]{"remount", "ro"});
+								
+								/* Toolbox mostly does not allow double mounting of a device. 
+								 * So if we do not have busybox available, we need a fallback. 
+								 * We cannot always trust an app process version of /proc/mounts, 
+								 * but it is better than nothing. 
+								 */
+								if(!rootfw.filesystem(sdextDevice).addMount(sdextLocation)) {
+									try {
+										sdextLocation = rootfw.filesystem(sdextDevice).statMount().location();
 										
-								case 1: 
-									lBundle.putString("location_storage_data", (reversedMount = stat.device().equals(deviceSetup.path_device_map_sdext())) ? mContext.getResources().getString(R.string.config_dir_sdext) : "/data"); break;
-									
-								case 2: 
-									lBundle.putString("location_storage_cache", stat.device().equals(deviceSetup.path_device_map_sdext()) ? 
-											mContext.getResources().getString(R.string.config_dir_sdext) + "/cache" : 
-												stat.device().equals(deviceSetup.path_device_map_data()) ? "/data/cache" : "/cache");
+									} catch(Throwable e) {}
+								}
+								
+								stat = rootfw.filesystem(sdextLocation).statDisk();
 							}
+							
+							if (stat != null) {
+								configData.putString(deviceSetup.path_device_map_data().equals( stat.device() ) ? 
+										"location_storage_data" : "location_storage_sdext", sdextLocation);
+								
+								configData.putLong(deviceSetup.path_device_map_data().equals( stat.device() ) ? 
+										"size_storage_data" : "size_storage_sdext", stat.size());
+								
+								configData.putLong(deviceSetup.path_device_map_data().equals( stat.device() ) ? 
+										"usage_storage_data" : "usage_storage_sdext", stat.usage());
+							}
+						}
+					}
+					
+					if ((stat = rootfw.filesystem("/cache").statDisk()) != null) {
+						configData.putString("location_storage_cache", stat.device().equals(deviceSetup.path_device_map_sdext()) ? 
+								configData.getString("location_storage_sdext") + "/cache" : 
+									stat.device().equals(deviceSetup.path_device_map_data()) ? 
+											configData.getString("location_storage_data") + "/cache" : "/cache");
+						
+						configData.putLong("size_storage_cache", stat.size());
+						configData.putLong("usage_storage_cache", stat.usage());
+					}
+					
+					List<String[]> mountLooper = new ArrayList<String[]>();
+					
+					mountLooper.add(new String[]{"apps", "app", "app-private", "app-asec", "app-system"});
+					mountLooper.add(new String[]{"dalvik", "dalvik-cache"});
+					mountLooper.add(deviceSetup.support_directory_user() ? new String[]{"data", "data", "user"} : new String[]{"data", "data"});
+					
+					if (deviceSetup.support_directory_library()) {
+						mountLooper.add(new String[]{"libs", "app-lib"});
+					}
+					
+					if (deviceSetup.support_directory_media()) {
+						mountLooper.add(new String[]{"media", "media"});
+					}
+					
+					if (deviceSetup.support_directory_system()) {
+						String[] sysDirectories = deviceSetup.paths_directory_system();
+						
+						if (sysDirectories != null) {
+							String[] sysList = new String[ sysDirectories.length ];
+							
+							sysList[0] = "system";
+							
+							for (int i=0; i < sysDirectories.length; i++) {
+								sysList[i+1] = sysDirectories[i];
+							}
+							
+							mountLooper.add(sysList);
+						}
+					}
+					
+					for (int i=0; i < mountLooper.size(); i++) {
+						String[] curOption = mountLooper.get(i);
+						Integer curState = null;
+						Long curUSage = 0L;
+						
+						for (int x=1; x < curOption.length; x++) {
+							if (deviceSetup.path_device_map_sdext() != null && configData.getString("location_storage_sdext") != null) {
+								DiskStat curStat = rootfw.filesystem("/data/" + curOption[x]).statDisk();
+								
+								if (curStat != null) {
+									if (curState == null || curState >= 0) {
+										curState = deviceSetup.path_device_map_data().equals(curStat.device()) ? 
+												(curState == null || curState == 0 ? 0 : -1) : 
+													(curState == null || curState == 1 ? 1 : -1);
+									}
+								}
+								
+							} else {
+								curState = 0;
+							}
+							
+							curUSage += rootfw.file("/data/" + curOption[x]).fileSize();
+						}
+						
+						configData.putInt("status_content_" + curOption[0], curState);
+						configData.putLong("usage_content_" + curOption[0], curUSage);
+					}
+					
+					if (deviceSetup.path_device_map_sdext() != null) {
+						if (deviceSetup.support_binary_e2fsck()) {
+							String result = rootfw.file("/tmp/e2fsck.result").readOneLine();
+							
+							if (result != null) {
+								try {
+									configData.putInt("level_filesystem_fschk", Integer.parseInt(result));
+									
+								} catch(Throwable e) {}
+							}
+						}
+						
+						if (deviceSetup.support_binary_tune2fs() && "ext4".equals(rootfw.filesystem(deviceSetup.path_device_map_sdext()).fsType(true))) {
+							ShellResult result = rootfw.shell().run("tune2fs -l '" + deviceSetup.path_device_map_sdext() + "'");
+							
+							configData.putInt("status_filesystem_journal", result.wasSuccessful() ? 
+									( result.getString().contains("has_journal") ? 1 : 0 ) : 
+										-1);
+						}
+					}
+					
+					if (configData.getString("location_storage_sdext") != null) {
+						MountStat mountStat = rootfw.filesystem(deviceSetup.path_device_map_sdext()).statMount();
+						
+						if (mountStat != null) {
+							configData.putString("type_filesystem_driver", mountStat.fstype());
 						}
 					}
 
-					for (int i=0; i < (looper = new String[]{"app", "dalvik-cache", (deviceSetup.support_directory_user() ? "user" : "data"), (deviceSetup.support_directory_library() ? "app-lib" : null), (deviceSetup.support_directory_media() ? "media" : null), (deviceSetup.support_directory_system() ? deviceSetup.paths_directory_system()[0] : null)}).length; i++) {
-						if (looper[i] != null) {
-							DiskStat stat = null;
-							
-							if (lBundle.getString("location_storage_sdext") == null || (stat = Shell.connection.filesystem.statDisk("/data/" + looper[i])) != null) {
-								Boolean status = lBundle.getString("location_storage_sdext") == null ? false : stat.device().equals(deviceSetup.path_device_map_sdext()) && !reversedMount;
-								Long usage;
-								
-								switch(i) {
-									case 0: 
-										lBundle.putBoolean("status_content_apps", status);
-										lBundle.putLong("usage_content_apps", (usage = Shell.connection.file.diskUsage(new String[]{"/data/app", "/data/app-private", "/data/app-asec", "/data/app-system"})) == null ? 0L : usage); break;
-										
-									case 1: 
-										lBundle.putBoolean("status_content_dalvik", status);
-										lBundle.putLong("usage_content_dalvik", (usage = Shell.connection.file.diskUsage("/data/dalvik-cache")) == null ? 0L : usage); break;
-										
-									case 2: 
-										lBundle.putBoolean("status_content_data", status);
-										lBundle.putLong("usage_content_data", (usage = Shell.connection.file.diskUsage(new String[]{"/data/data", "/data/user"})) == null ? 0L : usage); break;
-										
-									case 3: 
-										lBundle.putBoolean("status_content_libs", status);
-										lBundle.putLong("usage_content_libs", (usage = Shell.connection.file.diskUsage("/data/app-lib")) == null ? 0L : usage); break;
-										
-									case 4: 
-										lBundle.putBoolean("status_content_media", status);
-										lBundle.putLong("usage_content_media", (usage = Shell.connection.file.diskUsage("/data/media")) == null ? 0L : usage); break;
-										
-									case 5: 
-										lBundle.putBoolean("status_content_system", status);
-										lBundle.putLong("usage_content_system", (usage = Shell.connection.file.diskUsage(deviceSetup.paths_directory_system())) == null ? 0L : usage);
-								}
-							}
-						}
-					}
+					for (int i=0; i < (loopContainer = new String[]{deviceSetup.path_device_scheduler_immc(), deviceSetup.path_device_scheduler_emmc(), deviceSetup.path_device_readahead_immc(), deviceSetup.path_device_readahead_emmc()}).length; i++) {
+						String line;
 						
-					if (deviceSetup.path_device_map_sdext() != null) {
-						if (deviceSetup.support_binary_e2fsck()) {
-							String iResult = Shell.connection.file.readLine("/tmp/e2fsck.result");
-							lBundle.putInt("level_filesystem_fschk", iResult != null ? Integer.parseInt(iResult) : -1);
-						}
-						
-						if (deviceSetup.support_binary_tune2fs() && "ext4".equals(deviceSetup.type_device_sdext())) {
-							ShellResult result = Shell.connection.shell.execute("tune2fs -l " + deviceSetup.path_device_map_sdext());
-							
-							if (result != null && result.code() == 0) {
-								lBundle.putBoolean("status_filesystem_journal", result.output().toString().contains("has_journal"));
-							}
-						}
-					}
-					
-					if (lBundle.getString("location_storage_sdext") != null) {
-						try {
-							lBundle.putString("type_filesystem_driver", Shell.connection.filesystem.statMount(deviceSetup.path_device_map_sdext()).fstype());
-							
-						} catch (Throwable e) {}
-					}
-					
-					for (int i=0; i < (looper = new String[]{deviceSetup.path_device_scheduler_immc(), deviceSetup.path_device_scheduler_emmc(), deviceSetup.path_device_readahead_immc(), deviceSetup.path_device_readahead_emmc()}).length; i++) {
-						if (looper[i] != null) {
-							String lLine = Shell.connection.file.readLine(looper[i]);
-							
-							if (lLine != null) {
-								switch(i) {
-									case 0: lBundle.putString("value_immc_scheduler", lLine.substring(lLine.indexOf("[")+1, lLine.lastIndexOf("]"))); break;
-									case 1: lBundle.putString("value_emmc_scheduler", lLine.substring(lLine.indexOf("[")+1, lLine.lastIndexOf("]"))); break;
-									case 2: lBundle.putString("value_immc_readahead", lLine); break;
-									case 3: lBundle.putString("value_emmc_readahead", lLine);
-								}
+						if (loopContainer[i] != null && (line = rootfw.file(loopContainer[i]).readOneLine()) != null) {
+							switch(i) {
+								case 0: configData.putString("value_immc_scheduler", line.substring(line.indexOf("[")+1, line.lastIndexOf("]"))); break;
+								case 1: configData.putString("value_emmc_scheduler", line.substring(line.indexOf("[")+1, line.lastIndexOf("]"))); break;
+								case 2: configData.putString("value_immc_readahead", line); break;
+								case 3: configData.putString("value_emmc_readahead", line);
 							}
 						}
 					}
 					
 					if (deviceSetup.support_option_swap()) {
-						ArrayList<SwapStat> stat = Shell.connection.memory.swaps();
+						SwapStat[] swapList = rootfw.memory().listSwaps();
 						
-						if (stat != null) {
-							for (int i=0; i < stat.size(); i++) {
-								if (deviceSetup.path_device_map_swap() != null && stat.get(i).device().equals(deviceSetup.path_device_map_swap())) {
-									lBundle.putLong("size_memory_swap", stat.get(i).size());
-									lBundle.putLong("usage_memory_swap", stat.get(i).usage());
+						if (swapList != null) {
+							for (int i=0; i < swapList.length; i++) {
+								if (deviceSetup.support_option_swap() && swapList[i].device().equals(deviceSetup.path_device_map_swap())) {
+									configData.putLong("size_memory_swap", swapList[i].size());
+									configData.putLong("usage_memory_swap", swapList[i].usage());
 									
-								} else if (deviceSetup.support_option_zram() && stat.get(i).device().equals(deviceSetup.path_device_map_zram())) {
-									lBundle.putLong("size_memory_zram", stat.get(i).size());
-									lBundle.putLong("usage_memory_zram", stat.get(i).usage());
+								} else if (deviceSetup.support_option_zram() && swapList[i].device().equals(deviceSetup.path_device_map_zram())) {
+									configData.putLong("size_memory_zram", swapList[i].size());
+									configData.putLong("usage_memory_zram", swapList[i].usage());
 								}
 							}
 						}
 						
-						lBundle.putInt("level_memory_swappiness", Integer.parseInt(Shell.connection.file.readLine("/proc/sys/vm/swappiness")));
+						try {
+							configData.putInt("level_memory_swappiness", Integer.parseInt( rootfw.file("/proc/sys/vm/swappiness").readOneLine() ));
+							
+						} catch(Throwable e) {}
 					}
 					
 					if (deviceSetup.support_binary_sqlite3()) {
-						ShellResult result = Shell.connection.shell.execute("sqlite3 /data/data/com.android.providers.settings/databases/settings.db \"select value from secure where name = 'sys_storage_threshold_percentage'\"");
+						ShellResult result = rootfw.shell().run("sqlite3 /data/data/com.android.providers.settings/databases/settings.db \"select value from secure where name = 'sys_storage_threshold_percentage'\"");
 						
-						if (result != null && result.code() == 0 && result.output().length() > 0) {
-							Double threshold = Double.parseDouble( result.output().line() ) / 100;
-							Double size = Utils.getDiskTotal("/data") * threshold;
-							
-							lBundle.putLong("size_storage_threshold", size.longValue());
+						if (result.wasSuccessful()) {
+							try {
+								configData.putLong("size_storage_threshold", ((Double) (((Long) configData.getLong("size_storage_data")).doubleValue() * (Double.parseDouble( result.getLine() ) / 100))).longValue());
+								
+							} catch(Throwable e) {}
 						}
 					}
-					
+
 					cached().putBoolean("DeviceConfig.Loaded", true);
 					
-					cached("DeviceConfig").putAll(lBundle);
+					cached("DeviceConfig").putAll(configData);
+					
+					Root.close();
 					
 					return true;
 					
@@ -453,66 +523,69 @@ public class Preferences {
 		}
 	}
 	
-	public boolean loadDeviceProperties(Boolean aForce) {
+	public boolean loadDeviceProperties(Boolean forceCheck) {
 		synchronized(oLock) {
 			if (checkDeviceSetup()) {
-				if (!checkDeviceProperties() || aForce) {
-					Bundle lBundle = new Bundle();
-					
+				if (!checkDeviceProperties() || forceCheck) {
+					RootFW rootfw = Root.open();
+					Bundle propData = new Bundle();
 					DeviceSetup deviceSetup = deviceSetup();
 					String dirProperty = mContext.getResources().getString(R.string.config_dir_properties);
-					String[] looper = new String[]{"move_apps", "move_dalvik", "move_data", "move_libs", "move_media", "move_system", "enable_cache", "enable_swap", "enable_sdext_journal", "enable_debug", "set_swap_level", "set_sdext_fstype", "run_sdext_fschk", "set_storage_threshold", "set_zram_compression", "set_emmc_readahead", "set_emmc_scheduler", "set_immc_readahead", "set_immc_scheduler", "disable_safemode"};
+					String[] loopContainer = new String[]{"move_apps", "move_dalvik", "move_data", "move_libs", "move_media", "move_system", "enable_cache", "enable_swap", "enable_sdext_journal", "enable_debug", "set_swap_level", "set_sdext_fstype", "run_sdext_fschk", "set_storage_threshold", "set_zram_compression", "set_emmc_readahead", "set_emmc_scheduler", "set_immc_readahead", "set_immc_scheduler", "disable_safemode"};
 					
-					for (int i=0; i < looper.length; i++) {
-						String lLine = Shell.connection.file.readLine(dirProperty + "/m2sd." + looper[i]);
+					for (int i=0; i < loopContainer.length; i++) {
+						FileExtender.File propFile = rootfw.file(dirProperty + "/m2sd." + loopContainer[i]);
+						String value = propFile.readOneLine();
 						
-						if (lLine == null) {
-							if (looper[i].equals("move_apps") || looper[i].equals("disable_safemode")) {
-								lLine = "1";
+						if (value == null) {
+							if (loopContainer[i].equals("move_apps") || loopContainer[i].equals("disable_safemode")) {
+								value = "1";
 								
-							} else if (looper[i].equals("enable_swap")) {
-								lLine = (deviceSetup.path_device_map_swap() != null && deviceSetup.support_option_swap()) ? "1" : "0";
+							} else if (loopContainer[i].equals("enable_swap")) {
+								value = (deviceSetup.path_device_map_swap() != null && deviceSetup.support_option_swap()) ? "1" : "0";
 								
-							} else if (looper[i].equals("enable_sdext_journal")) {
-								lLine = deviceSetup.support_binary_tune2fs() ? "2" : "1";
+							} else if (loopContainer[i].equals("enable_sdext_journal")) {
+								value = deviceSetup.support_binary_tune2fs() ? "2" : "1";
 								
-							} else if (looper[i].equals("set_sdext_fstype")) {
-								lLine = Shell.connection.filesystem.typeSupported("ext4") ? "ext4" : "auto";
+							} else if (loopContainer[i].equals("set_sdext_fstype")) {
+								value = rootfw.filesystem().hasTypeSupport("ext4") ? "ext4" : "auto";
 								
-							} else if (looper[i].equals("run_sdext_fschk")) {
-								lLine = deviceSetup.support_binary_e2fsck() ? "1" : "0";
+							} else if (loopContainer[i].equals("run_sdext_fschk")) {
+								value = deviceSetup.support_binary_e2fsck() ? "1" : "0";
 								
-							} else if (looper[i].equals("set_storage_threshold")) {
-								lLine = deviceSetup.support_binary_sqlite3() ? "1" : "0";
+							} else if (loopContainer[i].equals("set_storage_threshold")) {
+								value = deviceSetup.support_binary_sqlite3() ? "1" : "0";
 								
-							} else if (looper[i].equals("set_zram_compression")) {
-								lLine = deviceSetup.support_option_zram() ? "18" : "0";
+							} else if (loopContainer[i].equals("set_zram_compression")) {
+								value = deviceSetup.support_option_zram() ? "18" : "0";
 								
-							} else if (looper[i].equals("set_emmc_readahead")) {
-								lLine = "512";
+							} else if (loopContainer[i].equals("set_emmc_readahead")) {
+								value = "512";
 								
-							} else if (looper[i].equals("set_emmc_scheduler")) {
-								lLine = "cfq";
+							} else if (loopContainer[i].equals("set_emmc_scheduler")) {
+								value = "cfq";
 								
-							} else if (looper[i].equals("set_immc_readahead")) {
-								lLine = deviceSetup.support_device_mtd() ? "4" : "128";
+							} else if (loopContainer[i].equals("set_immc_readahead")) {
+								value = deviceSetup.support_device_mtd() ? "4" : "128";
 								
-							} else if (looper[i].equals("set_immc_scheduler")) {
-								lLine = deviceSetup.support_device_mtd() ? "deadline" : "cfq";
+							} else if (loopContainer[i].equals("set_immc_scheduler")) {
+								value = deviceSetup.support_device_mtd() ? "deadline" : "cfq";
 								
 							} else {
-								lLine = "0";
+								value = "0";
 							}
-							
-							Shell.connection.file.write(dirProperty + "/m2sd." + looper[i], lLine);
+
+							propFile.write(value);
 						}
-						
-						lBundle.putString(looper[i], lLine);
+
+						propData.putString(loopContainer[i], value);
 					}
 					
 					cached().putBoolean("DeviceProperties.Loaded", true);
 
-					cached("DeviceProperties").putAll(lBundle);
+					cached("DeviceProperties").putAll(propData);
+					
+					Root.close();
 					
 					return true;
 					
@@ -530,12 +603,15 @@ public class Preferences {
 			DeviceProperties deviceProperties = deviceProperties();
 			
 			if (deviceProperties != null && deviceProperties.hasUpdated()) {
+				RootFW rootfw = Root.open();
 				String dirProperty = mContext.getResources().getString(R.string.config_dir_properties);
 				String name;
 				
 				while ((name = deviceProperties.nextUpdated()) != null) {
-					Shell.connection.file.write(dirProperty + "/m2sd." + name, "" + cached("DeviceProperties").getString(name));
+					rootfw.file(dirProperty + "/m2sd." + name).write("" + cached("DeviceProperties").getString(name));
 				}
+				
+				Root.close();
 			}
 		}
 	}
@@ -574,22 +650,23 @@ public class Preferences {
 		SharedPreferences preferences = mContext.getSharedPreferences("cache", 0x00000000);
 		
 		if (!oCacheChecked) {
+			RootFW rootfw = Root.open();
 			String appid = mContext.getResources().getString(R.string.config_application_id);
-
-			if (!Shell.connection.file.check("/tmp/application.lock", "e") || !appid.equals("" + preferences.getInt("android.appId", 0))) {
+			
+			if (!rootfw.file("/tmp/application.lock").exists() || !appid.equals("" + preferences.getInt("android.appId", 0))) {
 				Editor edit = preferences.edit();
 				
 				edit.clear();
 				edit.putInt("android.appId", Integer.parseInt(appid));
 				edit.commit();
 				
-				Shell.connection.filesystem.mount("/", new String[]{"remount", "rw"});
-				if (!Shell.connection.file.check("/tmp", "d")) {
-					Shell.connection.file.create("/tmp");
-				}
-				Shell.connection.file.write("/tmp/application.lock", "1");
-				Shell.connection.filesystem.mount("/", new String[]{"remount", "ro"});
+				rootfw.filesystem("/").addMount(new String[]{"remount", "rw"});
+				rootfw.file("/tmp").createDirectory();
+				rootfw.file("/tmp/application.lock").write("1");
+				rootfw.filesystem("/").addMount(new String[]{"remount", "ro"});
 			}
+			
+			Root.close();
 			
 			oCacheChecked = true;
 		}

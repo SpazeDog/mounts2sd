@@ -38,7 +38,6 @@ import android.widget.TextView;
 
 import com.spazedog.lib.taskmanager.Task;
 import com.spazedog.mounts2sd.tools.Preferences;
-import com.spazedog.mounts2sd.tools.Shell;
 import com.spazedog.mounts2sd.tools.Utils;
 import com.spazedog.mounts2sd.tools.containers.DeviceConfig;
 import com.spazedog.mounts2sd.tools.containers.DeviceSetup;
@@ -246,7 +245,7 @@ public class FragmentTabOverview extends Fragment {
 						String mount = (String) deviceConfig.find("location_" + group + "_" + name);
 						
 						((TextView) views.get(name).findViewById(R.id.item_value)).setText(mount != null ? mount : getResources().getString(R.string.device_not_mounted));
-						((TextView) views.get(name).findViewById(R.id.item_value_extra)).setText( String.format(getResources().getString(R.string.size_structure), Utils.convertPrifix(Utils.getDiskUsage((String) deviceConfig.find("location_" + group + "_" + name))), Utils.convertPrifix(Utils.getDiskTotal((String) deviceConfig.find("location_" + group + "_" + name))) ));
+						((TextView) views.get(name).findViewById(R.id.item_value_extra)).setText( String.format(getResources().getString(R.string.size_structure), Utils.convertPrifix( ((Long) deviceConfig.find("usage_" + group + "_" + name)).doubleValue() ), Utils.convertPrifix( ((Long) deviceConfig.find("size_" + group + "_" + name)).doubleValue()) ));
 						
 					} else if (group.equals("system")) {
 						((TextView) views.get(name).findViewById(R.id.item_value)).setText( 
@@ -255,7 +254,7 @@ public class FragmentTabOverview extends Fragment {
 						);
 						
 					} else if (group.equals("content")) {
-						((ImageView) views.get(name).findViewById(R.id.item_icon)).setSelected((Boolean) deviceConfig.find("status_" + group + "_" + name));
+						((ImageView) views.get(name).findViewById(R.id.item_icon)).setSelected(((Integer) deviceConfig.find("status_" + group + "_" + name)) == 1);
 						((TextView) views.get(name).findViewById(R.id.item_value_extra)).setText( Utils.convertPrifix( ((Long) deviceConfig.find("usage_" + group + "_" + name)).doubleValue() ) );
 						
 					} else if (group.equals("memory") && name.equals("swappiness")) {
@@ -280,7 +279,7 @@ public class FragmentTabOverview extends Fragment {
 						
 					}  else if (group.equals("filesystem") && name.equals("journal")) {
 						((TextView) views.get(name).findViewById(R.id.item_value)).setText(
-								(Boolean) deviceConfig.find("status_" + group + "_" + name) ? R.string.status_enabled : R.string.status_disabled);
+								((Integer) deviceConfig.find("status_" + group + "_" + name)) == 1 ? R.string.status_enabled : R.string.status_disabled);
 						
 					} else if (group.equals("filesystem")) {
 						((TextView) views.get(name).findViewById(R.id.item_value)).setText( mPreferences.getSelectorValue("filesystem", (String) deviceConfig.find("type_" + group + "_" + name)) );
@@ -303,11 +302,7 @@ public class FragmentTabOverview extends Fragment {
 			
 			@Override
 			protected Boolean doInBackground(Context... params) {
-				if (Shell.connection.connected(true)) {
-					return new Preferences( (Context) params[0] ).loadDeviceConfig(true);
-				}
-				
-				return false;
+				return new Preferences( (Context) params[0] ).loadDeviceConfig(true);
 			}
 			
 			@Override
