@@ -97,6 +97,18 @@ public class Preferences {
 		return mApplicationSettings;
 	}
 	
+	public Boolean loadAll(Boolean forceCheck) {
+		return loadDeviceSetup(forceCheck) && 
+				loadDeviceConfig(forceCheck) && 
+					loadDeviceProperties(forceCheck);
+	}
+	
+	public Boolean checkAll() {
+		return checkDeviceSetup() && 
+				checkDeviceConfig() && 
+					checkDeviceProperties();
+	}
+	
 	public Boolean checkDeviceSetup() {
 		return cached().getBoolean("DeviceSetup.Loaded", false);
 	}
@@ -273,6 +285,11 @@ public class Preferences {
 					setupData.putBoolean("support_device_mtd", rootfw.file("/proc/mtd").exists());
 					setupData.putBoolean("safemode", "1".equals(rootfw.file(mContext.getResources().getString(R.string.config_dir_tmp) + "/safemode.result").readOneLine()) ? true : false);
 					setupData.putString("init_implementation", "service".equals(rootfw.file(mContext.getResources().getString(R.string.config_dir_tmp) + "/init.type").readOneLine()) ? "service" : "internal");
+					
+					try {
+						setupData.putInt("log_level", Integer.parseInt( rootfw.file(mContext.getResources().getString(R.string.config_dir_tmp) + "/log.level").readOneLine() ));
+						
+					} catch (Throwable e) {}
 					
 					cached().putBoolean("DeviceSetup.Loaded", true);
 					

@@ -64,6 +64,7 @@ public final class DeviceSetup {
 		else if (aKey.equals("environment_startup_script")) return (Object) environment_startup_script();
 		else if (aKey.equals("id_startup_script")) return (Object) id_startup_script();
 		else if (aKey.equals("version_startup_script")) return (Object) version_startup_script();
+		else if (aKey.equals("log_level")) return (Object) log_level();
 		
 		return null;
 	}
@@ -196,5 +197,9 @@ public final class DeviceSetup {
 	
 	public String version_startup_script() {
 		return mCached.getString("version_startup_script");
+	}
+	
+	public Integer log_level() {
+		return mCached.getInteger("log_level", 0);
 	}
 }
