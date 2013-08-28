@@ -254,8 +254,17 @@ public class FragmentTabOverview extends Fragment {
 						);
 						
 					} else if (group.equals("content")) {
-						((ImageView) views.get(name).findViewById(R.id.item_icon)).setSelected(((Integer) deviceConfig.find("status_" + group + "_" + name)) == 1);
+						Integer state = (Integer) deviceConfig.find("status_" + group + "_" + name);
+						
+						((ImageView) views.get(name).findViewById(R.id.item_icon)).setEnabled(state >= 0);
+						((ImageView) views.get(name).findViewById(R.id.item_icon)).setSelected(state == 1);
+						
 						((TextView) views.get(name).findViewById(R.id.item_value_extra)).setText( Utils.convertPrifix( ((Long) deviceConfig.find("usage_" + group + "_" + name)).doubleValue() ) );
+						
+						if (state < 0) {
+							((TextView) views.get(name).findViewById(R.id.item_message)).setText( getResources().getString(R.string.option_message_mount_mismatch) );
+							views.get(name).findViewById(R.id.item_message).setVisibility(View.VISIBLE);
+						}
 						
 					} else if (group.equals("memory") && name.equals("swappiness")) {
 						((TextView) views.get(name).findViewById(R.id.item_value)).setText( mPreferences.getSelectorValue("swappiness", ""+deviceConfig.find("level_" + group + "_" + name)) );
