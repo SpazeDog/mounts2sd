@@ -19,7 +19,7 @@
 
 package com.spazedog.mounts2sd.tools;
 
-import java.util.ArrayList;
+import java.lang.ref.WeakReference;
 
 import android.content.Context;
 import android.os.Environment;
@@ -28,7 +28,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.spazedog.mounts2sd.R;
-import com.spazedog.mounts2sd.tools.containers.MessageItem;
 
 public class Utils {
 	
@@ -95,47 +94,32 @@ public class Utils {
 	}
 	
 	public static class Relay {
-		public static class Message {
-			public static final ArrayList<String> mActions = new ArrayList<String>();
-			public static final ArrayList<MessageItem> mMessages = new ArrayList<MessageItem>();
+		public static interface MessageReceiver {
+			public abstract void onMessageReceive(String tag, String message, Message visibilityController);
+			public abstract void onMessageRemove(String tag, Boolean retainState);
+		}
+		
+		public static abstract class Message {
+			private static WeakReference<MessageReceiver> mReceiver;
 			
-			public static final Object mMessageLock = new Object();
-			public static final Object mActionLock = new Object();
-			
-			public static void add(MessageItem item) {
-				synchronized (mMessageLock) {
-					mMessages.add(item);
+			public static void add(String tag, String message, Message visibilityController) {
+				if (mReceiver != null && mReceiver.get() != null) {
+					mReceiver.get().onMessageReceive(tag, message, visibilityController);
 				}
 			}
 			
-			public static void remove(String tag) {
-				synchronized (mActionLock) {
-					mActions.add(tag);
+			public static void remove(String tag, Boolean retainState) {
+				if (mReceiver != null && mReceiver.get() != null) {
+					mReceiver.get().onMessageRemove(tag, retainState);
 				}
 			}
 			
-			public static Boolean pending() {
-				return mMessages.size() > 0 || mActions.size() > 0;
+			public static void setReceiver(MessageReceiver receiver) {
+				mReceiver = new WeakReference<MessageReceiver>(receiver);
 			}
 			
-			public static MessageItem nextMessage() {
-				synchronized (mMessageLock) {
-					while (mMessages.size() > 0) {
-						return mMessages.remove(0);
-					}
-					
-					return null;
-				}
-			}
-			
-			public static String nextAction() {
-				synchronized (mActionLock) {
-					while (mActions.size() > 0) {
-						return mActions.remove(0);
-					}
-					
-					return null;
-				}
+			public Boolean onVisibilityChange(Context context, Integer tabId, Boolean visible) {
+				return true;
 			}
 		}
 	}
@@ -160,7 +144,6 @@ public class Utils {
 
 	    } else if (sdcardStatus.equals(Environment.MEDIA_UNMOUNTED)) {
 	    	return context.getResources().getString(R.string.sdcard_state_mount);
-
 	    }
 
 	    return null;

@@ -43,13 +43,15 @@ import com.spazedog.mounts2sd.tools.ExtendedActivity;
 import com.spazedog.mounts2sd.tools.Preferences;
 import com.spazedog.mounts2sd.tools.Root;
 import com.spazedog.mounts2sd.tools.Utils;
+import com.spazedog.mounts2sd.tools.Utils.Relay.Message;
+import com.spazedog.mounts2sd.tools.Utils.Relay.MessageReceiver;
 import com.spazedog.mounts2sd.tools.containers.DeviceSetup;
 import com.spazedog.mounts2sd.tools.containers.MessageItem;
 import com.spazedog.mounts2sd.tools.interfaces.DialogListener;
 import com.spazedog.mounts2sd.tools.interfaces.DialogMessageResponse;
 import com.spazedog.mounts2sd.tools.interfaces.TabController;
 
-public class ActivityTabController extends ExtendedActivity implements OnClickListener, DialogListener, DialogMessageResponse, TabController {
+public class ActivityTabController extends ExtendedActivity implements OnClickListener, DialogListener, DialogMessageResponse, TabController, MessageReceiver {
 
 	private ProgressDialog mProgressDialog;
 
@@ -65,11 +67,9 @@ public class ActivityTabController extends ExtendedActivity implements OnClickLi
 		mFragments.put( (mCurFragment = R.id.tab_fragment_overview), null);
 	}
 
-	private Map<String, MessageItem> mInfoBoxes = new HashMap<String, MessageItem>();
+	private Map<String, Message> mInfoBoxes = new HashMap<String, Message>();
 	
 	private Preferences mPreferences;
-	
-	private Boolean mDaemonCreated = false;
 	
 	private Boolean mBackPressed = false;
 
@@ -86,7 +86,6 @@ public class ActivityTabController extends ExtendedActivity implements OnClickLi
 			mAsyncProcessing = savedInstanceState.getBoolean("mAsyncProcessing");
 			mAsyncFinished = savedInstanceState.getBoolean("mAsyncFinished");
 			mAsyncResult = savedInstanceState.getBoolean("mAsyncResult");
-			mDaemonCreated = savedInstanceState.getBoolean("mDaemonCreated");
 		}
 		
 		setContentView(R.layout.activity_tab_controller);
@@ -109,29 +108,7 @@ public class ActivityTabController extends ExtendedActivity implements OnClickLi
 			findViewById(id).setOnClickListener(this);
 		}
 		
-		if (!mDaemonCreated) {
-			try {
-				mDaemonCreated = true;
-				
-				new Daemon<Void, Void>(this, "InfoBox") {
-					@Override
-					protected void doInBackground(Void... params) {
-						if (Utils.Relay.Message.pending()) {
-							sendToReceiver(null);
-						}
-					}
-					
-					@Override
-					protected void receiver(Void result) {
-						if (getActivityObject() != null) {
-							((ActivityTabController) getActivityObject()).handleMessageRelay();
-						}
-					}
-					
-				}.setTimeout(1000).start();
-				
-			} catch (IllegalStateException e) {}
-		}
+		Utils.Relay.Message.setReceiver(this);
 	}
 	
 	@Override
@@ -158,7 +135,6 @@ public class ActivityTabController extends ExtendedActivity implements OnClickLi
 		savedInstanceState.putBoolean("mAsyncProcessing", mAsyncProcessing);
 		savedInstanceState.putBoolean("mAsyncFinished", mAsyncFinished);
 		savedInstanceState.putBoolean("mAsyncResult", mAsyncResult);
-		savedInstanceState.putBoolean("mDaemonCreated", mDaemonCreated);
 
 		super.onSaveInstanceState(savedInstanceState);
 	}
@@ -292,7 +268,7 @@ public class ActivityTabController extends ExtendedActivity implements OnClickLi
 			switchTabFragment(mCurFragment);
 			
 			if (deviceSetup.safemode()) {
-				Utils.Relay.Message.add(new MessageItem("save-mode", getResources().getString(R.string.infobox_safemode)) {
+				Utils.Relay.Message.add("save-mode", getResources().getString(R.string.infobox_safemode), new Message() {
 					@Override
 					public Boolean onVisibilityChange(Context context, Integer tabId, Boolean visible) {
 						return tabId != R.id.tab_fragment_log;
@@ -301,7 +277,7 @@ public class ActivityTabController extends ExtendedActivity implements OnClickLi
 			}
 			
 			if (deviceSetup.path_device_map_sdext() == null) {
-				Utils.Relay.Message.add(new MessageItem("no-sdext", getResources().getString(R.string.infobox_no_sdext)) {
+				Utils.Relay.Message.add("no-sdext", getResources().getString(R.string.infobox_no_sdext), new Message() {
 					@Override
 					public Boolean onVisibilityChange(Context context, Integer tabId, Boolean visible) {
 						return tabId == R.id.tab_fragment_configure;
@@ -310,11 +286,11 @@ public class ActivityTabController extends ExtendedActivity implements OnClickLi
 			}
 			
 			if (!deviceSetup.environment_startup_script()) {
-				Utils.Relay.Message.add(new MessageItem("no-script", getResources().getString(R.string.infobox_no_script)) {
+				Utils.Relay.Message.add("no-script", getResources().getString(R.string.infobox_no_script), new Message() {
 					@Override
 					public Boolean onVisibilityChange(Context context, Integer tabId, Boolean visible) {
 						if ((new Preferences(context)).deviceSetup().environment_startup_script()) {
-							Utils.Relay.Message.remove("no-script"); return false;
+							Utils.Relay.Message.remove("no-script", false); return false;
 						}
 						
 						return tabId == R.id.tab_fragment_configure;
@@ -322,13 +298,13 @@ public class ActivityTabController extends ExtendedActivity implements OnClickLi
 				});
 				
 			} else if (!getResources().getString(R.string.config_script_id).equals( "" + mPreferences.deviceSetup().id_startup_script() )) {
-				Utils.Relay.Message.add(new MessageItem("update-script", getResources().getString(R.string.infobox_update_script)) {
+				Utils.Relay.Message.add("update-script", getResources().getString(R.string.infobox_update_script), new Message() {
 					@Override
 					public Boolean onVisibilityChange(Context context, Integer tabId, Boolean visible) {
 						DeviceSetup setup = new Preferences(context).deviceSetup();
 						
 						if (setup.environment_startup_script() && context.getResources().getString(R.string.config_script_id).equals( "" + setup.id_startup_script() )) {
-							Utils.Relay.Message.remove("update-script"); return false;
+							Utils.Relay.Message.remove("update-script", false); return false;
 						}
 						
 						return tabId != R.id.tab_fragment_log;
@@ -392,56 +368,23 @@ public class ActivityTabController extends ExtendedActivity implements OnClickLi
 		}
 	}
 	
-	private void handleMessageRelay() {
-		if (mPreferences != null) {
-			MessageItem item;
-			String actionTag;
-			
-			ViewGroup container = (ViewGroup) findViewById(R.id.placeholder);
-			
-			while ((item = Utils.Relay.Message.nextMessage()) != null) {
-				if (!mInfoBoxes.containsKey(item.tag())) {
-					TextView view = (TextView) getLayoutInflater().inflate(R.layout.inflate_info_box, container, false);
-					view.setText(item.message());
-					view.setTag(item.tag());
-					
-					container.addView(view);
-					
-					mInfoBoxes.put(item.tag(), item);
-				}
-			}
-			
-			while ((actionTag = Utils.Relay.Message.nextAction()) != null) {
-				if (mInfoBoxes.containsKey(actionTag)) {
-					TextView view = (TextView) container.findViewWithTag(actionTag);
-					
-					if (view != null) {
-						container.removeView(view);
-						
-						mInfoBoxes.remove(actionTag);
-					}
-				}
-			}
-			
-			handleMessageVisibility();
-		}
-	}
-	
 	private void handleMessageVisibility() {
 		Integer count = 0;
 		ViewGroup container = (ViewGroup) findViewById(R.id.placeholder);
 		
 		for (String tag : mInfoBoxes.keySet()) {
-			TextView view = (TextView) container.findViewWithTag(tag);
-			
-			if (view != null) {
-				Boolean status = mInfoBoxes.get(tag).onVisibilityChange((Context) this, mCurFragment, view.isShown());
+			if (mInfoBoxes.get(tag) != null) {
+				TextView view = (TextView) container.findViewWithTag(tag);
 				
-				if (status) {
-					view.setVisibility(View.VISIBLE); count += 1;
+				if (view != null) {
+					Boolean status = mInfoBoxes.get(tag).onVisibilityChange((Context) this, mCurFragment, view.isShown());
 					
-				} else {
-					view.setVisibility(View.GONE);
+					if (status) {
+						view.setVisibility(View.VISIBLE); count += 1;
+						
+					} else {
+						view.setVisibility(View.GONE);
+					}
 				}
 			}
 		}
@@ -471,5 +414,49 @@ public class ActivityTabController extends ExtendedActivity implements OnClickLi
 		mBackPressed = true;
 		
 		finish();
+	}
+
+	@Override
+	public void onMessageReceive(String tag, String message, Message visibilityController) {
+		if (!mInfoBoxes.containsKey(tag) && !mPreferences.cached("infobox").getBoolean("retain_" + tag)) {
+			ViewGroup viewGroup = (ViewGroup) findViewById(R.id.placeholder);
+			
+			if (viewGroup != null) {
+				TextView view = (TextView) getLayoutInflater().inflate(R.layout.inflate_info_box, viewGroup, false);
+				view.setText(message);
+				view.setTag(tag);
+				
+				viewGroup.addView(view);
+				
+				mInfoBoxes.put(tag, visibilityController);
+				
+				if (visibilityController != null) {
+					view.setVisibility(View.GONE);
+					
+					handleMessageVisibility();
+				}
+			}
+		}
+	}
+
+	@Override
+	public void onMessageRemove(String tag, Boolean retainState) {
+		if (mInfoBoxes.containsKey(tag)) {
+			ViewGroup viewGroup = (ViewGroup) findViewById(R.id.placeholder);
+			
+			if (viewGroup != null) {
+				View view = ((ViewGroup) findViewById(R.id.placeholder)).findViewWithTag(tag);
+				
+				if (view != null) {
+					viewGroup.removeView(view);
+				}
+			}
+			
+			if (retainState) {
+				mPreferences.cached("infobox").putBoolean("retain_" + tag, true);
+			}
+			
+			mInfoBoxes.remove(tag);
+		}
 	}
 }
