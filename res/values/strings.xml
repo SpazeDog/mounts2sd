@@ -199,6 +199,14 @@
     <string name="option_mmc_description_scheduler">Set the MMC scheduler</string>
     
     <!-- ######################################################
+       - Item messages used for warnings in the Overview Fragment
+    ####################################################### -->
+    <string name="option_message_mount_mismatch">One or more directories within this option, has not been moved or linked. Check available space on the obesite partition or view the log for further details.</string>
+    <string name="option_message_fschk_warning">The file system check found one or more problems with the sd-ext partition. All of the problems has been corrected.</string>
+    <string name="option_message_fschk_error">The file system check found one or more problems with the sd-ext partition. It was not possible to correct these problems. </string>
+    
+    
+    <!-- ######################################################
        - Messages to be displayed in the infobox by the
        - Tab Controller
     ####################################################### -->
@@ -206,5 +214,12 @@
     <string name="infobox_no_sdext">Could not locate the SD-EXT partition. This should be the second partition on the external sdcard!</string>
     <string name="infobox_no_script">There is no startup script present on your device. Go to application settings and install it!</string>
     <string name="infobox_update_script">The current startup script is outdated. Go to application settings and update it!</string>
+    <string name="infobox_safemode">The log contains one or more Errors/Warnings. Checkout the Log Viewer for further details!</string>
+    
+    <!-- ######################################################
+       - Messages to be displayed in the notification
+    ####################################################### -->
+    <string name="notify_no_config">Could not load the application configurations</string>
+    <string name="notify_log_details">An Error/Warning was detected in the log</string>
     
 </resources>
