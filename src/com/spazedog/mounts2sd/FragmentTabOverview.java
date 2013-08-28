@@ -281,10 +281,20 @@ public class FragmentTabOverview extends Fragment {
 						((TextView) views.get(name).findViewById(R.id.item_value)).setText( mPreferences.getSelectorValue(name, (String) deviceConfig.find("value_" + group + "_" + name)) );
 						
 					} else if (group.equals("filesystem") && name.equals("fschk")) {
+						Integer state = (Integer) deviceConfig.find("level_" + group + "_" + name);
+						
 						((TextView) views.get(name).findViewById(R.id.item_value)).setText(
-								(Integer) deviceConfig.find("level_" + group + "_" + name) < 0 ? R.string.status_disabled : 
-									(Integer) deviceConfig.find("level_" + group + "_" + name) == 0 ? R.string.status_okay : 
-										(Integer) deviceConfig.find("level_" + group + "_" + name) < 5 ? R.string.status_warning : R.string.status_error);
+								state < 0 ? R.string.status_disabled : 
+									state == 0 ? R.string.status_okay : 
+										state < 5 ? R.string.status_warning : R.string.status_error);
+						
+						if (state > 0) {
+							((TextView) views.get(name).findViewById(R.id.item_message)).setText( state < 5 ? 
+									getResources().getString(R.string.option_message_fschk_warning) : 
+										getResources().getString(R.string.option_message_fschk_error) );
+							
+							views.get(name).findViewById(R.id.item_message).setVisibility(View.VISIBLE);
+						}
 						
 					}  else if (group.equals("filesystem") && name.equals("journal")) {
 						((TextView) views.get(name).findViewById(R.id.item_value)).setText(

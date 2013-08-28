@@ -152,6 +152,7 @@
                 <TextView style="?content_itemNameField_inline" android:layout_weight="1" android:id="@+id/item_name" android:text="@string/option_filesystem_item_fschk" />
                 <TextView style="?content_itemValueField_inline" android:id="@+id/item_value" />
             </LinearLayout>
+            <TextView style="?content_itemDescription" android:id="@+id/item_message" android:visibility="gone" />
         </LinearLayout>
         
         <View style="?content_itemDivider" android:id="@+id/item_divider" />
