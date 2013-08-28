@@ -199,6 +199,14 @@
     <string name="option_mmc_description_scheduler">Définir le planificateur du MMC</string>
     
     <!-- ######################################################
+       - Item messages used for warnings in the Overview Fragment
+    ####################################################### -->
+    <string name="option_message_mount_mismatch">Un ou plusieurs dossiers liés à cette option n\'ont pas été déplacés ou liés. Vérifiez la place disponible sur la partition opposée ou consultez le journal pour de plus amples détails.</string>
+    <string name="option_message_fschk_warning">La vérification du système de fichiers a trouvé un ou plusieurs problèmes avec la partition SD. Tous les problèmes ont été corrigés.</string>
+    <string name="option_message_fschk_error">La vérification du système de fichiers a trouvé un ou plusieurs problèmes avec la partition SD. Impossible de tous les corriger. </string>
+    
+	
+    <!-- ######################################################
        - Messages to be displayed in the infobox by the
        - Tab Controller
     ####################################################### -->
@@ -206,5 +214,12 @@
     <string name="infobox_no_sdext">Impossible de trouver la partition SD-EXT. Elle devrait être la seconde partition de la carte SD externe !</string>
     <string name="infobox_no_script">Aucun script de démarrage n\'est présent sur votre matériel. Allez dans les réglages de l\'application et installez-le !</string>
     <string name="infobox_update_script">L\'actuel script de démarrage est dépassé. Allez dans les réglages de l\'application et mettez-le à jour !</string>
+    <string name="infobox_errors">Le journal contient une ou plusieurs erreurs/alertes. Consultez le journal pour plus de détails !</string>
+    
+    <!-- ######################################################
+       - Messages to be displayed in the notification
+    ####################################################### -->
+    <string name="notify_no_config">Impossible de charger les configurations de l\'application</string>
+    <string name="notify_log_details">Une erreur/alerte a été relevée dans le journal</string>
     
 </resources>
