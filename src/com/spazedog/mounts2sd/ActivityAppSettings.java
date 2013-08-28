@@ -238,11 +238,12 @@ public class ActivityAppSettings extends ExtendedActivity implements OnMeasure, 
 				Boolean remove = new File(mFilePath).isFile();
 				Boolean status = true;
 				RootFW rootfw = Root.open();
+				FileExtender.File busyboxFile = rootfw.file(mFilePath);
 				
 				if (remove) {
 					publishProgress(2);
 					
-					if(!rootfw.file(mFilePath).remove()) {
+					if(!busyboxFile.remove()) {
 						mErrorMessage = String.format(((Context) params[0]).getResources().getString(R.string.resource_delete_from_disk_failed), "busybox", mFilePath);
 						status = false;
 					}
@@ -250,7 +251,7 @@ public class ActivityAppSettings extends ExtendedActivity implements OnMeasure, 
 				} else {
 					publishProgress(1);
 					
-					if (!rootfw.file(mFilePath).extractFromResource((Context) params[0], "busybox", "0777", "0", "0")) {
+					if (!busyboxFile.remove() || !rootfw.file(mFilePath).extractFromResource((Context) params[0], "busybox", "0777", "0", "0")) {
 						mErrorMessage = String.format(((Context) params[0]).getResources().getString(R.string.resource_copy_to_disk_failed), "busybox", mFilePath);
 						status = false;
 					}
@@ -337,13 +338,15 @@ public class ActivityAppSettings extends ExtendedActivity implements OnMeasure, 
 					publishProgress(1);
 					
 					if (!scriptFile.exists()) {
-						if (rootfw.file("/data/local/a2sd_cleanup").extractFromResource((Context) params[0], "a2sd_cleanup", "0775", "0", "0")) {
-							rootfw.shell("/data/local/a2sd_cleanup");
-							rootfw.file("/data/local/a2sd_cleanup").remove();
+						FileExtender.File cleanupFile = rootfw.file("/data/local/a2sd_cleanup");
+						
+						if (cleanupFile.remove() && cleanupFile.extractFromResource((Context) params[0], "a2sd_cleanup", "0775", "0", "0")) {
+							rootfw.shell( cleanupFile.getAbsolutePath() );
+							cleanupFile.remove();
 						}
 					}
 					
-					if(scriptFile.extractFromResource((Context) params[0], "10mounts2sd", "0775", "0", "0")) {
+					if(scriptFile.remove() && scriptFile.extractFromResource((Context) params[0], "10mounts2sd", "0775", "0", "0")) {
 						status = true;
 					}
 				}
