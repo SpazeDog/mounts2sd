@@ -1,13 +1,25 @@
 #!/system/bin/sh
 
-a2sd="/etc/init.d/10diskManager.rc /etc/init.d/03sdcard /etc/init.d/*2sd /etc/init.d/*2sdx /etc/init.d/*2ext /etc/init.d/*2s /etc/init.d/*2x /etc/init.d/*swap /etc/init.d/*internal /etc/init.d/*internalsd /etc/init.d/*mountdl /etc/init.d/*mountext /etc/init.d/*mountsd /etc/init.d/*cache"
-
 if busybox test ! -d /system/etc/init.d; then
     busybox mkdir /system/etc/init.d
 fi
 
-# Remove anything sd-ext related
-for lScript in $a2sd; do
+for lScript in \
+        /system/etc/init.d/10diskManager.rc \
+        /system/etc/init.d/03sdcard \
+        /system/etc/init.d/*2sd \
+        /system/etc/init.d/*2sdx \
+        /system/etc/init.d/*2ext \
+        /system/etc/init.d/*2s \
+        /system/etc/init.d/*2x \
+        /system/etc/init.d/*swap \
+        /system/etc/init.d/*internal \
+        /system/etc/init.d/*internalsd \
+        /system/etc/init.d/*mountdl \
+        /system/etc/init.d/*mountext \
+        /system/etc/init.d/*mountsd \
+        /system/etc/init.d/*cache
+do
     if busybox test -e $lScript; then
         busybox rm -rf $lScript
     fi
@@ -25,7 +37,7 @@ done
 # Also remove any Link2SD related mounts in /system/etc/install-recovery.sh
 if busybox test -f /system/etc/install-recovery.sh; then
     cat /system/etc/install-recovery.sh | while read line; do
-        if ! busybox echo $line | busybox grep -q '/data/sdext'; then
+        if ! busybox echo $line | busybox grep -q '/data/sdext' && ! busybox echo $line | busybox grep -q '/dev/block/mmcblk'; then
             busybox echo $line >> /system/etc/install-recovery.sh.tmp
         fi
     done
@@ -41,7 +53,8 @@ fi
 
 # Add a work-around for the ramdisk built-in DTa2sd
 if busybox test -f /system/etc/init.d/dtapp; then
-busybox cat << EOF>/system/etc/init.d/dtapp
+busybox rm -rf /system/etc/init.d/dtapp
+busybox cat << EOF>/system/etc/init.d/00dtapp-disabler
 #!/system/bin/bash
 /sbin/busybox umount /system/sd
 EOF
