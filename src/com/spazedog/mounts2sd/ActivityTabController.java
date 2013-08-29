@@ -268,7 +268,7 @@ public class ActivityTabController extends ExtendedActivity implements OnClickLi
 			switchTabFragment(mCurFragment);
 			
 			if (deviceSetup.log_level() > 1) {
-				Utils.Relay.Message.add("log-details", getResources().getString(R.string.infobox_safemode), new Message() {
+				Utils.Relay.Message.add("log-details", getResources().getString(R.string.infobox_errors), new Message() {
 					@Override
 					public Boolean onVisibilityChange(Context context, Integer tabId, Boolean visible) {
 						if (tabId == R.id.tab_fragment_log) {
