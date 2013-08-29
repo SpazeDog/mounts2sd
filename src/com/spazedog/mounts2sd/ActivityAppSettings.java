@@ -318,8 +318,13 @@ public class ActivityAppSettings extends ExtendedActivity implements OnMeasure, 
 			
 			@Override
 			protected Boolean doInBackground(Context... params) {
+				/* 
+				 * TODO: Clean up this mess 
+				 */
+				
 				RootFW rootfw = Root.open();
 				FileExtender.File scriptFile = rootfw.file( mFilePath = ((Context) params[0]).getResources().getString(R.string.config_path_script) );
+				FileExtender.File runnerFile = rootfw.file(((Context) params[0]).getResources().getString(R.string.config_path_runner));
 				Preferences pref = new Preferences((Context) params[0]);
 				Boolean status = false;
 				Boolean remove = !pref.deviceSetup().environment_startup_script() ? false : 
@@ -330,7 +335,7 @@ public class ActivityAppSettings extends ExtendedActivity implements OnMeasure, 
 				if (remove) {
 					publishProgress(2);
 					
-					if(scriptFile.remove()) {
+					if(scriptFile.remove() && runnerFile.remove()) {
 						status = true;
 					}
 					
@@ -346,7 +351,9 @@ public class ActivityAppSettings extends ExtendedActivity implements OnMeasure, 
 						}
 					}
 					
-					if(scriptFile.remove() && scriptFile.extractFromResource((Context) params[0], "10mounts2sd", "0775", "0", "0")) {
+					if((scriptFile.remove() && scriptFile.extractFromResource((Context) params[0], "mounts2sd.sh", "0775", "0", "0")) && 
+							(runnerFile.remove() && runnerFile.extractFromResource((Context) params[0], "10mounts2sd-runner", "0775", "0", "0"))) {
+						
 						status = true;
 					}
 				}

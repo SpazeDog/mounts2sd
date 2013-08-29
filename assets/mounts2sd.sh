@@ -21,6 +21,9 @@
 # along with Mounts2SD. If not, see <http://www.gnu.org/licenses/>
 #####
 
+export iShell="$1"
+export iBusybox="$2"
+
 export iLogName=Mounts2SD
 export iDirTmp=/tmp
 export iDirSdext=/sd-ext
@@ -28,6 +31,7 @@ export iDirProperty=/data/property
 export iTimestamp=$(date "+%s")
 
 export iEnviroment=false
+export iSimpleExport=false
 
 # ===========================================================================================
 # -------------------------------------------------------------------------------------------
@@ -197,38 +201,45 @@ ListExports() {
 # prepare the script properties and more... 
 # 
 ProcessEnviroment() {
-    local lBusybox
-    local lMessage="Could not locate busybox!"
+    local lMessage
 
-    for lBusybox in /data/local/busybox /system/xbin/busybox /system/bin/busybox /system/sbin/busybox /sbin/busybox; do
-        $lBusybox test true > /dev/null 2>&1
+    case "$iBusybox" in
+        "")  
+            lMessage="You need to have busybox installed on this device in order to run Mounts2SD!"
+        ;;
 
-        case "$?" in
-            "0")
+        *) 
+            if $iBusybox test true > /dev/null 2>&1; then
                 # This is a compatibillity test which will check to see if the current busybox will work with this script. This test is based on a lot of different reported issues that has been gattered over a long period of time, and it has proven to fetch any busybox version that will cause problems.
-                if $lBusybox test "52223abccbcf00eb3c81300545d63126" != "`( $lBusybox [ 1 -eq 0 ] || $lBusybox [ 0 -eq 1 ] ) && $lBusybox echo no || $lBusybox echo 'remove this part okay:bla=no-4' | $lBusybox grep -e '.*bla=no-[1-9]*' | $lBusybox sed -e 's/^remove //' | $lBusybox awk '{print $3}' | $lBusybox cut -d ':' -f1 | $lBusybox md5sum | $lBusybox awk '{print $1}'`"; then
+                if $iBusybox test "52223abccbcf00eb3c81300545d63126" != "`( $iBusybox [ 1 -eq 0 ] || $iBusybox [ 0 -eq 1 ] ) && $iBusybox echo no || $iBusybox echo 'remove this part okay:bla=no-4' | $iBusybox grep -e '.*bla=no-[1-9]*' | $iBusybox sed -e 's/^remove //' | $iBusybox awk '{print $3}' | $iBusybox cut -d ':' -f1 | $iBusybox md5sum | $iBusybox awk '{print $1}'`"; then
                     # Do NOT break here. We might have more busybox paths to search
                     lMessage="The current busybox is outdated!"
 
-                elif $lBusybox test "`$lBusybox id | $lBusybox sed -ne "s/^uid=\([0-9]*\)[^0-9].*$/\1/p"`" != "0"; then
+                elif $iBusybox test "`$iBusybox id | $iBusybox sed -ne "s/^uid=\([0-9]*\)[^0-9].*$/\1/p"`" != "0"; then
                     lMessage="The script has been invoked without super user permissions!"; break
 
                 else
+                    # Check whether we need eval or not to export variables
+                    export $(echo iSimpleExport)=true
+
                     # We need to save the current state for later usage. We will add them to our session storage later
-                    local lModRoot=$($lBusybox grep ' / ' /proc/mounts | $lBusybox sed 's/.*[ ,]\(r[ow]\)[ ,].*/\1/') && $lBusybox mount -o remount,rw /
-                    local lModSystem=$($lBusybox grep ' /system ' /proc/mounts | $lBusybox sed 's/.*[ ,]\(r[ow]\)[ ,].*/\1/') && $lBusybox mount -o remount,rw /system
+                    local lModRoot=$($iBusybox grep ' / ' /proc/mounts | $iBusybox sed 's/.*[ ,]\(r[ow]\)[ ,].*/\1/') && $iBusybox mount -o remount,rw /
+                    local lModSystem=$($iBusybox grep ' /system ' /proc/mounts | $iBusybox sed 's/.*[ ,]\(r[ow]\)[ ,].*/\1/') && $iBusybox mount -o remount,rw /system
 
                     # This is needed by devices including 'mksh'.
                     # If this is missing, the below error will be thrown when piping output to 'read' or 'cat'
                     # Error = can't create temporary file /sqlite_stmt_journals/mksh.(random): No such file or directory
-                    $lBusybox test ! -d /sqlite_stmt_journals && $lBusybox mkdir /sqlite_stmt_journals
+                    $iBusybox test ! -d /sqlite_stmt_journals && $iBusybox mkdir /sqlite_stmt_journals
 
                     # We need this directory before preparing anything
-                    $lBusybox test ! -d $iDirTmp && ( $lBusybox mkdir -p $iDirTmp || $lBusybox mkdir $iDirTmp )
+                    $iBusybox test ! -d $iDirTmp && ( $iBusybox mkdir -p $iDirTmp || $iBusybox mkdir $iDirTmp )
 
                     # This has not yet been created when we call 'ListCommands'
-                    export _cat="$lBusybox cat"
-                    export _echo="$lBusybox echo"
+                    export _cat="$iBusybox cat"
+                    export _echo="$iBusybox echo"
+
+                    # This has not yet been created when we call 'ExportVar'
+                    export _test="$iBusybox test"
 
                     local lCommand
                     local lType
@@ -239,28 +250,30 @@ ProcessEnviroment() {
                                 # The -h will make sure that the command does not end up with an un-ending sub-process
                                 /system/bin/toolbox "$lCommand" -h > /dev/null 2>&1
 
-                                if $lBusybox test $? -ne 255; then
-                                    eval export "_$lCommand=\"/system/bin/toolbox $lCommand\""
+                                if $iBusybox test $? -ne 255; then
+                                    ExportVar _$lCommand "/system/bin/toolbox $lCommand"
 
-                                elif $lBusybox which "$lCommand" > /dev/null; then
-                                    eval export "_$lCommand=\"$($lBusybox which $lCommand)\""
+                                elif $iBusybox which "$lCommand" > /dev/null; then
+                                    ExportVar _$lCommand $($iBusybox which $lCommand)
+
                                 else
-                                    eval export "_$lCommand=\"$lBusybox $lCommand\""
+                                    ExportVar _$lCommand "$iBusybox $lCommand"
                                 fi
                             ;;
 
                             "binary")
-                                if $lBusybox which "$lCommand" > /dev/null; then
-                                    eval export "_$lCommand=\"$($lBusybox which $lCommand)\""
+                                if $iBusybox which "$lCommand" > /dev/null; then
+                                    ExportVar _$lCommand $($iBusybox which $lCommand)
+
                                 else
-                                    if $lBusybox test ! -z "`$lBusybox --list | $lBusybox grep -e "^$lCommand$"`"; then
-                                        eval export "_$lCommand=\"$lBusybox $lCommand\""
+                                    if $iBusybox test ! -z "`$iBusybox --list | $iBusybox grep -e "^$lCommand$"`"; then
+                                        ExportVar _$lCommand "$iBusybox $lCommand"
                                     fi
                                 fi
                             ;;
 
                             *)
-                                eval export "_$lCommand=\"$lBusybox $lCommand\""
+                                ExportVar _$lCommand "$iBusybox $lCommand"
                             ;;
                         esac
 
@@ -273,7 +286,7 @@ ProcessEnviroment() {
                         # Some binaries like sqlite3 and so, needs a path variable to it's library files in order to work.
                         # Some init.d implementations like CM's internal sysinit does not provide anything other than PATH in /system/bin/sysinit, 
                         # and Android's init system does not parse these along when using the "exec" from within init.rc
-                        eval export "$lExportName=\"$lExportValue\""
+                        ExportVar $lExportName "$lExportValue"
 
                     done < $(ListExports)
 
@@ -313,15 +326,16 @@ ProcessEnviroment() {
 
                     # This should be at the top, but for obvious reasons it can't
                     Log v "Setting up the script enviroment"
-                    Log d "Using the busybox binary located at $lBusybox"
+                    Log d "Using the shell environment '$iShell'"
+                    Log d "Using the busybox binary located at $iBusybox"
 
                     $_rm -rf /data/m2sd.fallback.log 2> /dev/null
 
                     export iEnviroment=true && return 0
                 fi
-            ;;
-        esac
-    done
+            fi
+        ;;
+    esac
 
     log -p e -t Mounts2SD "$lMessage"
     echo "E/$lMessage" >> /data/m2sd.fallback.log
@@ -1108,6 +1122,31 @@ ProcessSubShell() {
 
 # ===========================================================================================
 # -------------------------------------------------------------------------------------------
+# Some shells will not except a simple (export $lName="$lValue"), while other shells
+# has problems exporting variables using eval. 
+# 
+ExportVar() {
+    local lName=$1
+    local lValue="$2"
+
+    if $iSimpleExport; then
+        export $lName="$lValue"
+
+        if $_test -z "$lValue"; then
+            unset $lName
+        fi
+
+    else
+        eval export "$lName=\"$lValue\""
+
+        if $_test -z "$lValue"; then
+            eval unset \$lName
+        fi
+    fi
+}
+
+# ===========================================================================================
+# -------------------------------------------------------------------------------------------
 # This function can check whether a folder is defined in one of the init.rc files. 
 # It is used to check certain options which is not available in all Android versions or custom ROM's.
 # Things like CM's /cache/dalvik-cache, Android 4.x's /data/app-lib or Android 4.2+ /data/user
@@ -1157,12 +1196,12 @@ Session() {
 
     case "$lAction" in
         "set") 
-            eval export "mem_${lName}=\"$lValue\""
+            ExportVar mem_${lName} "$lValue"
         ;;
 
         "get")
             if $_test -z "$lValue" || Session check $lName; then
-                eval $($_echo "$_echo \"\$mem_${lName}\"")
+                echo $(eval echo \$mem_${lName})
 
             else
                 $_echo $lValue
@@ -1170,11 +1209,16 @@ Session() {
         ;;
 
         "unset")
-            eval unset "mem_${lName}"
+            ExportVar mem_${lName}
         ;;
 
         "check") 
-            eval $($_echo "$_test \${mem_${lName}+defined} && return 0 || return 1")
+            if eval $_test \${mem_${lName}+defined}; then
+                return 0
+
+            else
+                return 1
+            fi
         ;;
     esac
 }

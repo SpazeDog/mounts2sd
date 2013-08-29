@@ -11,7 +11,8 @@
     <string name="config_dir_properties" translatable="false">/data/property</string>
     
     <string name="config_path_busybox" translatable="false">/data/local/busybox</string>
-    <string name="config_path_script" translatable="false">/system/etc/init.d/10mounts2sd</string>
+    <string name="config_path_script" translatable="false">/system/etc/mounts2sd.sh</string>
+    <string name="config_path_runner" translatable="false">/system/etc/init.d/10mounts2sd-runner</string>
     
     <string name="config_screen_type" translatable="false">normal</string>
 </resources>

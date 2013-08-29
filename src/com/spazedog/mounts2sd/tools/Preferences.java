@@ -164,7 +164,7 @@ public class Preferences {
 					String[] loopContainer;
 					FileExtender.File scriptFile = rootfw.file( mContext.getResources().getString(R.string.config_path_script) );
 					
-					if (scriptFile.exists()) {
+					if (scriptFile.exists() && rootfw.file( mContext.getResources().getString(R.string.config_path_runner) ).exists()) {
 						String scriptId = scriptFile.readOneMatch("@id");
 						String scriptVersion = scriptFile.readOneMatch("@version");
 						

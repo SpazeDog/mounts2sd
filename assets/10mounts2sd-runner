@@ -1,0 +1,11 @@
+#!/system/bin/sh
+
+while :; do
+    for lBusybox in /data/local/busybox /system/xbin/busybox /system/bin/busybox /system/sbin/busybox /sbin/busybox; do
+        if $lBusybox test true 2> /dev/null; then
+            $lBusybox sh /system/etc/mounts2sd.sh "$lBusybox sh" $lBusybox; break 2
+        fi
+    done
+
+    /system/bin/sh /system/etc/mounts2sd.sh /system/bin/sh; break
+done
