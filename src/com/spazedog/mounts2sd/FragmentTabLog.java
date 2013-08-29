@@ -62,7 +62,7 @@ public class FragmentTabLog extends Fragment {
     	
     	if (savedInstanceState == null || (mLog = savedInstanceState.getStringArray("mLog")) == null) {
     		RootFW rootfw = Root.open();
-    		FileData data = rootfw.file("/tmp/log.txt").read();
+    		FileData data = rootfw.file(getResources().getString(R.string.config_dir_tmp) + "/log.txt").read();
     		
     		if (data == null) {
     			data = rootfw.file("/data/m2sd.fallback.log").read();

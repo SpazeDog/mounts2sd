@@ -6,7 +6,7 @@
     <string name="config_script_id" translatable="false">2013082801</string>
     <string name="config_script_version" translatable="false">6.0.2</string>
     
-    <string name="config_dir_tmp" translatable="false">/tmp</string>
+    <string name="config_dir_tmp" translatable="false">/mounts2sd-tmp</string>
     <string name="config_dir_sdext" translatable="false">/sd-ext</string>
     <string name="config_dir_properties" translatable="false">/data/property</string>
     

@@ -450,7 +450,7 @@ public class Preferences {
 					
 					if (deviceSetup.path_device_map_sdext() != null) {
 						if (deviceSetup.support_binary_e2fsck()) {
-							String result = rootfw.file("/tmp/e2fsck.result").readOneLine();
+							String result = rootfw.file(mContext.getResources().getString(R.string.config_dir_tmp) + "/e2fsck.result").readOneLine();
 							
 							if (result != null) {
 								try {
@@ -667,10 +667,11 @@ public class Preferences {
 		SharedPreferences preferences = mContext.getSharedPreferences("cache", 0x00000000);
 		
 		if (!oCacheChecked) {
+			String tmpDir = mContext.getResources().getString(R.string.config_dir_tmp);
 			RootFW rootfw = Root.open();
 			String appid = mContext.getResources().getString(R.string.config_application_id);
 			
-			if (!rootfw.file("/tmp/application.lock").exists() || !appid.equals("" + preferences.getInt("android.appId", 0))) {
+			if (!rootfw.file(tmpDir + "/application.lock").exists() || !appid.equals("" + preferences.getInt("android.appId", 0))) {
 				Editor edit = preferences.edit();
 				
 				edit.clear();
@@ -678,8 +679,8 @@ public class Preferences {
 				edit.commit();
 				
 				rootfw.filesystem("/").addMount(new String[]{"remount", "rw"});
-				rootfw.file("/tmp").createDirectory();
-				rootfw.file("/tmp/application.lock").write("1");
+				rootfw.file(tmpDir).createDirectory();
+				rootfw.file(tmpDir + "/application.lock").write("1");
 				rootfw.filesystem("/").addMount(new String[]{"remount", "ro"});
 			}
 			

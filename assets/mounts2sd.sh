@@ -25,7 +25,7 @@ export iShell="$1"
 export iBusybox="$2"
 
 export iLogName=Mounts2SD
-export iDirTmp=/tmp
+export iDirTmp=/mounts2sd-tmp
 export iDirSdext=/sd-ext
 export iDirProperty=/data/property
 export iTimestamp=$(date "+%s")
