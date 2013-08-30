@@ -218,122 +218,136 @@ ProcessEnviroment() {
                     lMessage="The current busybox is outdated!"
 
                 elif $iBusybox test "`$iBusybox id | $iBusybox sed -ne "s/^uid=\([0-9]*\)[^0-9].*$/\1/p"`" != "0"; then
-                    lMessage="The script has been invoked without super user permissions!"; break
+                    lMessage="The script has been invoked without super user permissions!"
 
                 else
                     # Check whether we need eval or not to export variables
                     export $(echo iSimpleExport)=true
 
-                    # We need to save the current state for later usage. We will add them to our session storage later
-                    local lModRoot=$($iBusybox grep ' / ' /proc/mounts | $iBusybox sed 's/.*[ ,]\(r[ow]\)[ ,].*/\1/') && $iBusybox mount -o remount,rw /
-                    local lModSystem=$($iBusybox grep ' /system ' /proc/mounts | $iBusybox sed 's/.*[ ,]\(r[ow]\)[ ,].*/\1/') && $iBusybox mount -o remount,rw /system
+                    Session set test_session test
 
-                    # This is needed by devices including 'mksh'.
-                    # If this is missing, the below error will be thrown when piping output to 'read' or 'cat'
-                    # Error = can't create temporary file /sqlite_stmt_journals/mksh.(random): No such file or directory
-                    $iBusybox test ! -d /sqlite_stmt_journals && $iBusybox mkdir /sqlite_stmt_journals
+                    if $iBusybox test "$(Session get test_session)" = "test"; then
+                        lMessage="The device shell environment does not support dynamic variables!"
 
-                    # We need this directory before preparing anything
-                    $iBusybox test ! -d $iDirTmp && ( $iBusybox mkdir -p $iDirTmp || $iBusybox mkdir $iDirTmp )
+                    else
+                        # We need to save the current state for later usage. We will add them to our session storage later
+                        local lModRoot=$($iBusybox grep ' / ' /proc/mounts | $iBusybox sed 's/.*[ ,]\(r[ow]\)[ ,].*/\1/') && $iBusybox mount -o remount,rw /
+                        local lModSystem=$($iBusybox grep ' /system ' /proc/mounts | $iBusybox sed 's/.*[ ,]\(r[ow]\)[ ,].*/\1/') && $iBusybox mount -o remount,rw /system
 
-                    # This has not yet been created when we call 'ListCommands'
-                    export _cat="$iBusybox cat"
-                    export _echo="$iBusybox echo"
+                        # This is needed by devices including 'mksh'.
+                        # If this is missing, the below error will be thrown when piping output to 'read' or 'cat'
+                        # Error = can't create temporary file /sqlite_stmt_journals/mksh.(random): No such file or directory
+                        $iBusybox test ! -d /sqlite_stmt_journals && $iBusybox mkdir /sqlite_stmt_journals
 
-                    # This has not yet been created when we call 'ExportVar'
-                    export _test="$iBusybox test"
+                        # We need this directory before preparing anything
+                        $iBusybox test ! -d $iDirTmp && ( $iBusybox mkdir -p $iDirTmp || $iBusybox mkdir $iDirTmp )
 
-                    local lCommand
-                    local lType
+                        # This has not yet been created when we call 'ListCommands'
+                        export _cat="$iBusybox cat"
+                        export _echo="$iBusybox echo"
 
-                    while read lCommand lType; do
-                        case "$lType" in
-                            "toolbox")
-                                # The -h will make sure that the command does not end up with an un-ending sub-process
-                                /system/bin/toolbox "$lCommand" -h > /dev/null 2>&1
+                        # This has not yet been created when we call 'ExportVar'
+                        export _test="$iBusybox test"
 
-                                if $iBusybox test $? -ne 255; then
-                                    ExportVar _$lCommand "/system/bin/toolbox $lCommand"
+                        local lCommand
+                        local lType
 
-                                elif $iBusybox which "$lCommand" > /dev/null; then
-                                    ExportVar _$lCommand $($iBusybox which $lCommand)
+                        while read lCommand lType; do
+                            case "$lType" in
+                                "toolbox")
+                                    # The -h will make sure that the command does not end up with an un-ending sub-process
+                                    /system/bin/toolbox "$lCommand" -h > /dev/null 2>&1
 
-                                else
-                                    ExportVar _$lCommand "$iBusybox $lCommand"
-                                fi
-                            ;;
+                                    if $iBusybox test $? -ne 255; then
+                                        ExportVar _$lCommand "/system/bin/toolbox $lCommand"
 
-                            "binary")
-                                if $iBusybox which "$lCommand" > /dev/null; then
-                                    ExportVar _$lCommand $($iBusybox which $lCommand)
+                                    elif $iBusybox which "$lCommand" > /dev/null; then
+                                        ExportVar _$lCommand $($iBusybox which $lCommand)
 
-                                else
-                                    if $iBusybox test ! -z "`$iBusybox --list | $iBusybox grep -e "^$lCommand$"`"; then
+                                    else
                                         ExportVar _$lCommand "$iBusybox $lCommand"
                                     fi
+                                ;;
+
+                                "binary")
+                                    if $iBusybox which "$lCommand" > /dev/null; then
+                                        ExportVar _$lCommand $($iBusybox which $lCommand)
+
+                                    else
+                                        if $iBusybox test ! -z "`$iBusybox --list | $iBusybox grep -e "^$lCommand$"`"; then
+                                            ExportVar _$lCommand "$iBusybox $lCommand"
+                                        fi
+                                    fi
+                                ;;
+
+                                *)
+                                    ExportVar _$lCommand "$iBusybox $lCommand"
+                                ;;
+                            esac
+
+                        done < $(ListCommands)
+
+                        local lExportName
+                        local lExportValue
+
+                        while read lExportName lExportValue; do
+                            # Some binaries like sqlite3 and so, needs a path variable to it's library files in order to work.
+                            # Some init.d implementations like CM's internal sysinit does not provide anything other than PATH in /system/bin/sysinit, 
+                            # and Android's init system does not parse these along when using the "exec" from within init.rc
+                            ExportVar $lExportName "$lExportValue"
+
+                        done < $(ListExports)
+
+                        # Make sure that this was created by init
+                        TouchDir --skip-existing --user 0 --group 0 --mod 0700 $iDirProperty
+
+                        # We will also be needing this
+                        TouchDir --skip-existing --user 1000 --group 1000 --mod 0771 $iDirSdext
+
+                        Session set modRoot $lModRoot
+                        Session set modSystem $lModSystem
+
+                        # This should be at the top, but for obvious reasons it can't
+                        Log v "Setting up the script enviroment"
+                        Log v "Using the shell environment '$iShell'"
+                        Log v "Using the busybox binary located at '$iBusybox'"
+
+                        $_rm -rf /data/m2sd.fallback.log 2> /dev/null
+
+                        local lPropName
+                        local lPropValue
+
+                        # Since script version 6.x, R-Mount is no longer available. This below code is used as backward compatibility with updating from older versions
+                        if $_test -e $iDirProperty/m2sd.enable_reversed_mount && $_test "`$_cat $iDirProperty/m2sd.enable_reversed_mount`" = "1"; then
+                            Log i "Found old reversed mount option which is no longer supported. Correcting an conflicts"
+
+                            $_rm -rf $iDirProperty/m2sd.enable_reversed_mount
+
+                            for lPropName in move_apps move_dalvik move_data; do
+                                if $_test -e $iDirProperty/m2sd.$lPropName; then
+                                    lPropValue=$($_test "`$_cat $iDirProperty/m2sd.$lPropName`" = "1" && $_echo 0 || $_echo 1)
+                                    $_echo $lPropValue > $iDirProperty/m2sd.$lPropName
                                 fi
-                            ;;
-
-                            *)
-                                ExportVar _$lCommand "$iBusybox $lCommand"
-                            ;;
-                        esac
-
-                    done < $(ListCommands)
-
-                    local lExportName
-                    local lExportValue
-
-                    while read lExportName lExportValue; do
-                        # Some binaries like sqlite3 and so, needs a path variable to it's library files in order to work.
-                        # Some init.d implementations like CM's internal sysinit does not provide anything other than PATH in /system/bin/sysinit, 
-                        # and Android's init system does not parse these along when using the "exec" from within init.rc
-                        ExportVar $lExportName "$lExportValue"
-
-                    done < $(ListExports)
-
-                    # Make sure that this was created by init
-                    TouchDir --skip-existing --user 0 --group 0 --mod 0700 $iDirProperty
-
-                    # We will also be needing this
-                    TouchDir --skip-existing --user 1000 --group 1000 --mod 0771 $iDirSdext
-
-                    Session set modRoot $lModRoot
-                    Session set modSystem $lModSystem
-
-                    local lPropName
-                    local lPropValue
-
-                    # Since script version 6.x, R-Mount is no longer available. This below code is used as backward compatibility with updating from older versions
-                    if $_test -e $iDirProperty/m2sd.enable_reversed_mount && $_test "`$_cat $iDirProperty/m2sd.enable_reversed_mount`" = "1"; then
-                        $_rm -rf $iDirProperty/m2sd.enable_reversed_mount
-
-                        for lPropName in move_apps move_dalvik move_data; do
-                            if $_test -e $iDirProperty/m2sd.$lPropName; then
-                                lPropValue=$($_test "`$_cat $iDirProperty/m2sd.$lPropName`" = "1" && $_echo 0 || $_echo 1)
-                                $_echo $lPropValue > $iDirProperty/m2sd.$lPropName
-                            fi
-                        done
-                    fi
-
-                    # Make sure that all the properties exist and add them all to our session system so that we don't have to re-open files all the time
-                    while read lPropName lPropValue; do
-                        if ! $_test -e $iDirProperty/m2sd.$lPropName; then
-                            $_echo $lPropValue > $iDirProperty/m2sd.$lPropName
+                            done
                         fi
 
-                        Session set prop_$lPropName $($_cat $iDirProperty/m2sd.$lPropName)
+                        # Make sure that all the properties exist and add them all to our session system so that we don't have to re-open files all the time
+                        while read lPropName lPropValue; do
+                            if ! $_test -e $iDirProperty/m2sd.$lPropName; then
+                                Log v "Creating missing property '$iDirProperty/m2sd.$lPropName'"
+                                $_echo $lPropValue > $iDirProperty/m2sd.$lPropName
 
-                    done < $(ListProperties)
+                            elif $_test -z "`$_cat $iDirProperty/m2sd.$lPropName`"; then
+                                Log i "The property '$iDirProperty/m2sd.$lPropName' contains empty value. Resetting it to default value '$lPropValue'"
+                                $_echo $lPropValue > $iDirProperty/m2sd.$lPropName
+                            fi
 
-                    # This should be at the top, but for obvious reasons it can't
-                    Log v "Setting up the script enviroment"
-                    Log d "Using the shell environment '$iShell'"
-                    Log d "Using the busybox binary located at $iBusybox"
+                            Session set prop_$lPropName $($_cat $iDirProperty/m2sd.$lPropName)
 
-                    $_rm -rf /data/m2sd.fallback.log 2> /dev/null
+                        done < $(ListProperties)
 
-                    export iEnviroment=true && return 0
+                        export iEnviroment=true && return 0
+                    fi
                 fi
             fi
         ;;
@@ -427,7 +441,7 @@ ProcessMMC() {
 
             case "$mmcType" in
                 "SD")
-                    Log v "The external MMC was located at $mmcDevice"
+                    Log v "The external MMC was located at '$mmcDevice'"
 
                     Session set device_emmc $mmcDevice
                     Session set device_emmc_mm $mmcDeviceMM
@@ -436,12 +450,12 @@ ProcessMMC() {
                         if $_test -b ${mmcDevice}p$i; then
                             case "$i" in
                                 "2")
-                                    Log v "Located the sd-ext partition at ${mmcDevice}p$i"
+                                    Log v "Located the sd-ext partition at '${mmcDevice}p$i'"
                                     Session set device_sdext ${mmcDevice}p$i
                                 ;;
 
                                 "3")
-                                    Log v "Located the SWAP partition at ${mmcDevice}p$i"
+                                    Log v "Located the SWAP partition at '${mmcDevice}p$i'"
                                     Session set device_swap ${mmcDevice}p$i
                                 ;;
                             esac
@@ -450,7 +464,7 @@ ProcessMMC() {
                 ;;
 
                 "MMC")
-                    Log v "The internal MMC was located at $mmcDevice"
+                    Log v "The internal MMC was located at '$mmcDevice'"
 
                     Session set device_immc $mmcDevice
                     Session set device_immc_mm $mmcDeviceMM
@@ -462,12 +476,12 @@ ProcessMMC() {
     if ! Session check device_immc; then
         # The main MTD entry resides in /dev/block/mtdblock0
         if $_test -e /dev/block/mtdblock0; then
-            Log v "The internal MMC was located at /dev/block/mtdblock0"
+            Log v "The internal MMC was located at '/dev/block/mtdblock0'"
             Session set device_immc /dev/block/mtdblock0
             Session set device_immc_mm $($_ls -l /dev/block/mtdblock0 | $_tr -s ' ' | $_sed -ne "s/^.*[ ]\([0-9]*\),[ ]\([0-9]*\)[ ].*$/\1:\2/p")
 
         elif $_test -e /dev/block/bml0!c; then
-            Log v "The internal MMC was located at /dev/block/bml0!c"
+            Log v "The internal MMC was located at '/dev/block/bml0!c'"
             Session set device_immc /dev/block/bml0!c
             Session set device_immc_mm $($_ls -l /dev/block/bml0!c | $_tr -s ' ' | $_sed -ne "s/^.*[ ]\([0-9]*\),[ ]\([0-9]*\)[ ].*$/\1:\2/p")
         fi
@@ -477,7 +491,7 @@ ProcessMMC() {
         mmcDevice=$($_grep '/dev/' /proc/mounts | $_grep " /$mmcPartition " | $_awk '{print $1}')
 
         if $_test -b $mmcDevice; then
-            Log v "Located the $mmcPartition partition at $mmcDevice"
+            Log v "Located the '$mmcPartition' partition at '$mmcDevice'"
             Session set device_$mmcPartition $mmcDevice
         fi
     done
@@ -498,12 +512,12 @@ ProcessMMC() {
             if $_test -e $mmcDeviceMM; then
                 lReadahead=$(Session get prop_set_${mmcDevice}_readahead)
 
-                Log v "Setting readahead on $lDevice to ${lReadahead}kb"
+                Log v "Setting readahead on '$lDevice' to '${lReadahead}kb'"
                 $_echo $lReadahead > $mmcDeviceMM
                 $_chmod 0444 $mmcDeviceMM
 
             else
-                Log w "Could not change readahead on $lDevice. Device was not found!"
+                Log w "Could not change readahead on '$lDevice'. Device was not found!"
             fi
 
             lDeviceScheduler=/sys/block/$($_basename $lDevice)/queue/scheduler
@@ -512,21 +526,21 @@ ProcessMMC() {
                 lScheduler=$(Session get prop_set_${mmcDevice}_scheduler)
 
                 if $_grep -q $lScheduler $lDeviceScheduler; then
-                    Log v "Setting scheduler on $lDevice to $lScheduler"
+                    Log v "Setting scheduler on '$lDevice' to '$lScheduler'"
                     $_echo $lScheduler > $lDeviceScheduler
                     $_chmod 0444 $lDeviceScheduler
 
                 else
-                    Log w "Could not change scheduler on $lDevice. The scheduler type $lScheduler is not supported!"
+                    Log w "Could not change scheduler on '$lDevice'. The scheduler type '$lScheduler' is not supported!"
                 fi
 
             else
-                Log w "Could not change scheduler on $lDevice. Device was not found!"
+                Log w "Could not change scheduler on '$lDevice'. Device was not found!"
             fi
         fi
 
         if $_test "$mmcDevice" != "immc" && $_test "$mmcDevice" != "emmc"; then
-            Log v "Setting optimized mount parameters on $lDevice"
+            Log v "Setting optimized mount parameters on '$lDevice'"
             $_mount -o remount,noatime,nodiratime,relatime /$mmcDevice
         fi
     done
@@ -546,30 +560,30 @@ ProcessStorage() {
         local lStatus
 
         if $_grep -q "$lDevice" /proc/mounts; then
-            Log i "The device $lDevice has already been mounted. Unmounting in order to proceed"
+            Log i "The device '$lDevice' has already been mounted. Unmounting in order to proceed"
             DetachMount $lDevice
         fi 
 
         if $_test $(Session get prop_run_sdext_fschk 0) -eq 1; then
             if ! $_test -z "$_e2fsck"; then
-                Log v "Running a file system check on $lDevice"
+                Log v "Running a file system check on '$lDevice'"
                 lShellError=$($_e2fsck -y -D $lDevice 2>&1); lStatus=$?
 
                 if $_test $lStatus -gt 0 && $_test $lStatus -lt 4; then
-                    Log i "Error detected while checking $lDevice. Auto correction was performed!"
+                    Log i "Error detected while checking '$lDevice'. Auto correction was performed!"
 
                 elif $_test $lStatus -gt 0; then
-                    Log w "Error detected while checking $lDevice. Everything was left uncorrected!"
+                    Log w "Error detected while checking '$lDevice'. Everything was left uncorrected!"
                 fi
 
                 $_echo $lStatus > $iDirTmp/e2fsck.result
 
             else
-                Log w "Could not run a file system check on $lDevice. Missing the e2fsck binary!"
+                Log w "Could not run a file system check on '$lDevice'. Missing the e2fsck binary!"
             fi
 
         else
-            Log d "File system check is disabled. Skipping test on $lDevice"
+            Log d "File system check is disabled. Skipping test on '$lDevice'"
         fi
 
         if $_test $(Session get prop_enable_sdext_journal 0) -ne 2 && $_blkid $lDevice | $_grep -q 'TYPE="ext4"'; then
@@ -577,14 +591,14 @@ ProcessStorage() {
                 local lHasJournal=$($_tune2fs -l $lDevice | $_grep features | $_grep -q has_journal && $_echo 1 || $_echo 0)
                 local lShellError
 
-                Log v "Checking current journal status on $lDevice"
+                Log v "Checking current journal status on '$lDevice'"
 
                 if $_test "`Session get prop_enable_sdext_journal 0`" != "$lHasJournal"; then
-                    Log v "Changing journal settings on $lDevice"
+                    Log v "Changing journal settings on '$lDevice'"
                     lShellError=$($_tune2fs -O $($_test $lHasJournal -eq 1 && $_echo "^has_journal" || $_echo "has_journal") $lDevice 2>&1); lStatus=$?
 
                     if $_test $? -gt 0; then
-                        Log e "Failed while trying to change journal settings on $lDevice" "$lShellError"
+                        Log e "Failed while trying to change journal settings on '$lDevice'" "$lShellError"
                     fi
 
                 else
@@ -594,18 +608,18 @@ ProcessStorage() {
                 $_echo $lStatus > $iDirTmp/tune2fs.result
 
             else
-                Log w "Could not change journal settings on $lDevice. Missing the tune2fs binary!"
+                Log w "Could not change journal settings on '$lDevice'. Missing the tune2fs binary!"
             fi
 
         elif $_test $(Session get prop_enable_sdext_journal 0) -ne 2; then
-            Log d "The file system type on $lDevice is not ext4. Disabling journal handling on this device"
+            Log d "The file system type on '$lDevice' is not ext4. Disabling journal handling on this device"
 
         else
-            Log d "Journal handeling is disabled. Leaving journal on $lDevice as it is"
+            Log d "Journal handeling is disabled. Leaving journal on '$lDevice' as it is"
         fi
 
         if AttachMount --fstype $lFsType --options $lMountParamsFull --options $lMountParamsLimited $lDevice $iDirSdext; then
-            Log v "Checking writable state on $lDevice"
+            Log v "Checking writable state on '$lDevice'"
             $_echo 1 > $iDirSdext/WriteTest; sync
 
             # Samsung has created some pretty strange file systems which has been used on their older devices,
@@ -616,7 +630,7 @@ ProcessStorage() {
                 Session set device_sdext_status 1
 
             else
-                Log e "The $lDevice file system cannot be mounted with write permissions. Please change your file system type to something like ext(2/3/4)!"
+                Log e "The '$lDevice' file system cannot be mounted with write permissions. Please change your file system type to something like ext(2/3/4)!"
                 DetachMount $iDirSdext
             fi
         fi
@@ -640,7 +654,7 @@ ProcessContent() {
 
         # Don't delete newly created content. Wait until next boot to allow users to restore the content if needed
         if $_test -d $iDirSdext/lost+found && $_test -f $iDirSdext/lost+found/delete; then
-            Log v "Deleting old content in $iDirSdext/lost+found"
+            Log v "Deleting old content in '$iDirSdext/lost+found'"
             $_rm -rf $iDirSdext/lost+found/*
 
         elif $_ls -v $iDirSdext/lost+found | $_grep -q ""; then
@@ -651,12 +665,12 @@ ProcessContent() {
         # Revert Link2SD app placement
         for lPath in /data $iDirSdext; do
             if $_ls -v $lPath | $_grep -qe "\.apk$"; then
-                Log i "Located APK's in the root of $lPath. Moving them into $lPath/app"
+                Log i "Located APK's in the root of '$lPath'. Moving them into '$lPath/app'"
                 $_mv -f $lPath/*.apk $lPath/app/
             fi
         done
 
-        Log v "Preparing to move content between /data and $iDirSdext"
+        Log v "Preparing to move content between '/data' and '$iDirSdext'"
 
         # This is a fix for fast booting devices using the init.d service implementation. They some times boot up before an sd-ext script is done moving the content and attaching the folders
         if $_test $(Session get status_safemode 0) -eq 1; then
@@ -739,7 +753,7 @@ ProcessContent() {
 
                 if ! $_test -z "$lContentCurrent"; then
                     for lFolder in $lContentCurrent; do
-                        Log v "Checking $lSrcPath/$lFolder to see if something should be moved to $lDestPath/$lFolder"
+                        Log v "Checking '$lSrcPath/$lFolder' to see if something should be moved to '$lDestPath/$lFolder'"
 
                         if $lActionRevert; then
                             TouchDir --skip-existing /data/$lFolder
@@ -750,10 +764,10 @@ ProcessContent() {
                         if $_test -d $lSrcPath/$lFolder && $_ls -v $lSrcPath/$lFolder | $_grep -q "" && ( ! $_echo $lFolder | $_grep -q -e "^app" || $_find $lSrcPath/$lFolder -type f | $_grep -q "" ); then
                             lContSize="`$_echo $($_du -s -m $lSrcPath/$lFolder) | $_awk '{print $1}'`"
 
-                            Log d "Comparing $lSrcPath/$lFolder size of ${lContSize}MB to remaining spaze on $lDestPath of ${lDestSize}MB"
+                            Log d "Comparing '$lSrcPath/$lFolder' size of '${lContSize}MB' to remaining spaze on '$lDestPath' of '${lDestSize}MB'"
 
                             if $_test $lDestSize -gt $lContSize; then
-                                Log v "Moving $lSrcPath/$lFolder to $lDestPath/$lFolder"
+                                Log v "Moving '$lSrcPath/$lFolder' to '$lDestPath/$lFolder'"
 
                                 if $_test "$lFolder" = "dalvik-cache"; then
                                     $_rm -rf $lSrcPath/$lFolder/*
@@ -781,7 +795,7 @@ ProcessContent() {
                                 lDestSize=$(($lDestSize - $lContSize))
 
                                 if $_ls -v $lSrcPath/$lFolder | $_grep -q "" && ( ! $_echo $lFolder | $_grep -q -e "^app" || $_find $lSrcPath/$lFolder -type f | $_grep -q "" ); then
-                                    Log w "Not everything from $lSrcPath/$lFolder could be moved to $lDestPath/$lFolder"
+                                    Log w "Not everything from '$lSrcPath/$lFolder' could be moved to '$lDestPath/$lFolder'"
 
                                     # We do not delete the sd-ext folder when there is still content in it, but we do not want it to be attached to the data folder either
                                     if $lActionRevert; then
@@ -795,13 +809,13 @@ ProcessContent() {
                             else
                                 if $lContinue; then
                                     # Try again during round two
-                                    Log i "Could not move $lSrcPath/$lFolder due to low storage on $lDestPath, trying again later!"
+                                    Log i "Could not move '$lSrcPath/$lFolder' due to low storage on '$lDestPath', trying again later!"
                                     $lActionRevert && lContentRevert="$lContentRevert $lFolder" || lContentMove="$lContentMove $lFolder"
 
                                     continue
 
                                 else
-                                    Log i "Could not move $lSrcPath/$lFolder due to low storage on $lDestPath, giving up!"
+                                    Log i "Could not move '$lSrcPath/$lFolder' due to low storage on '$lDestPath', giving up!"
                                     if ! $lActionRevert; then
                                         $_rm -rf $lSrcPath/$lFolder
                                     fi
@@ -867,22 +881,22 @@ ProcessLinks() {
     done
 
     # Make sure that the device has not got the HTC S-On flag on the /system partition
-    Log d "Running an S-On protection test on /system"
+    Log d "Running an S-On protection test on '/system'"
     $_echo 1 > /system/s-off 2> /dev/null; sync
 
     if $_test -e /system/s-off; then
         $_rm -rf /system/s-off
 
-        Log v "Linking system content to the /system location"
+        Log v "Linking system content to the '/system' location"
 
         for lDataLocation in $lDirs; do
             lSystemLocation="$($_echo "$lDataLocation" | $_sed 's/\/data\/\(.*\)\(_s\|-system\)/\/system\/\1/')"
 
-            Log d "Linking content from $lDataLocation to $lSystemLocation"
+            Log d "Linking content from '$lDataLocation' to '$lSystemLocation'"
 
             for lFile in $lSystemLocation/*; do
                 if $_test -L $lFile && $_test -z "`$_readlink $lFile`"; then
-                    Log d "Removing unused link $lFile"
+                    Log d "Removing unused link '$lFile'"
                     $_rm -rf $lFile
                 fi
             done
@@ -890,7 +904,7 @@ ProcessLinks() {
             if $_test -d $lDataLocation; then
                 for lFile in $lDataLocation/*; do
                     if $_test -f $lFile && ! $_test -e $lSystemLocation/$($_basename $lFile); then
-                        Log d "Creating a link for $lFile in $lSystemLocation"
+                        Log d "Creating a link for '$lFile' in '$lSystemLocation'"
                         $_ln -s $lFile $lSystemLocation/
                     fi
                 done
@@ -898,7 +912,7 @@ ProcessLinks() {
         done
 
     else
-        Log i "The system partition is S-On protected and it is therefore not possible to link system content to the /system location!"
+        Log i "The system partition is S-On protected and it is therefore not possible to link system content to the '/system' location!"
     fi
 }
 
@@ -925,10 +939,10 @@ ProcessMemory() {
                             lDevice=/dev/block/ramzswap0 && $_rzscontrol $lDevice --disksize_kb=$(($(($lMemory * $lSize)) / 100)) --init
                         
                         elif $_test -z "$_rzscontrol"; then
-                            Log e "Could not enable $lType. Missing the rzscontrol binary!"
+                            Log e "Could not enable '$lType'. Missing the rzscontrol binary!"
 
                         else
-                            Log e "Could not enable $lType. Missing the ramzswap module!"
+                            Log e "Could not enable '$lType'. Missing the ramzswap module!"
                         fi
 
                     elif $_test -b /dev/block/zram0 || ( $_test -e /system/lib/modules/zram.ko && $_insmod /system/lib/modules/zram.ko ); then
@@ -936,7 +950,7 @@ ProcessMemory() {
                         lDevice=/dev/block/zram0 && $_mkswap $lDevice >/dev/null
 
                     else
-                        Log e "Could not enable $lType due to lack of kernel support!"
+                        Log e "Could not enable '$lType' due to lack of kernel support!"
                     fi
 
                 else
@@ -944,7 +958,7 @@ ProcessMemory() {
                 fi
 
                 if ! $_test -z "$lDevice"; then
-                    Log v "Enabling $lType on $lDevice"
+                    Log v "Enabling '$lType' on '$lDevice'"
                     lShellError=$($_swapon $lDevice 2>&1)
 
                     if $_test -e /system/bin/compcache; then
@@ -953,12 +967,12 @@ ProcessMemory() {
                     fi
 
                     if $_test $? -ne 0 || ! $_grep -q $lDevice /proc/swaps; then
-                        Log e "Failed while enabling $lType!" "$lShellError"
+                        Log e "Failed while enabling '$lType'!" "'$lShellError'"
                     fi
                 fi
 
             else
-                Log e "Could not enable $lType due to lack of kernel support!"
+                Log e "Could not enable '$lType' due to lack of kernel support!"
             fi
         fi
     done
@@ -966,7 +980,7 @@ ProcessMemory() {
     if $_test -e /proc/swaps && $_grep -q -e '^\/dev\/' /proc/swaps; then
         local lSwappiness=$(Session get prop_set_swap_level 0)
 
-        Log v "Setting swappiness to $lSwappiness"
+        Log v "Setting swappiness to '$lSwappiness'"
         $_echo $lSwappiness > /proc/sys/vm/swappiness
     fi
 }
@@ -1029,7 +1043,7 @@ ProcessCache() {
         else
             local lPaths
 
-            Log d "Internal cache (${lCacheSize}MB) is grater than both /data (${lDataSize}MB) and /sd-ext (${lSdextSize}MB). Leaving /cache as is!"
+            Log d "Internal cache (${lCacheSize}MB) is grater than both '/data' (${lDataSize}MB) and '/sd-ext' (${lSdextSize}MB). Leaving '/cache' as is!"
 
             for lPaths in $iDirSdext/cache /data/cache; do
                 if $_test -e $lPaths; then
@@ -1072,7 +1086,7 @@ ProcessSubShell() {
                                     lNewValue=$(Session get prop_set_storage_threshold)
 
                                     if $_test -z "$lValue" || $_test "$lValue" != "$lNewValue"; then
-                                        Log v "Changing storage threshold to ${lNewValue}%"
+                                        Log v "Changing storage threshold to '${lNewValue}%'"
                                         lShellError=$($_sqlite3 /data/data/com.android.providers.settings/databases/settings.db "insert into secure (name, value) VALUES('sys_storage_threshold_percentage','1')" 2>&1); lStatus=$?
 
                                         if $_test $lStatus -eq 0; then
@@ -1080,7 +1094,7 @@ ProcessSubShell() {
                                         fi
 
                                     else
-                                        Log v "Storage threshold is already set for ${lValue}%. Leaving it as is"
+                                        Log v "Storage threshold is already set for '${lValue}%'. Leaving it as is"
                                     fi
 
                                 else
@@ -1094,7 +1108,7 @@ ProcessSubShell() {
                         done
 
                     else
-                        Log e "Storage threshold could not be changed. Missing the sqlite3 binary!"
+                        Log e "Storage threshold could not be changed. Missing the 'sqlite3' binary!"
                     fi
 
                 else
@@ -1289,7 +1303,7 @@ TouchDir() {
                 continue
             fi
 
-            Log d "Retouching the directory $lDirectory with permissions $lMod and ownership ${lUser}.${lGroup}"
+            Log d "Retouching the directory '$lDirectory' with permissions '$lMod' and ownership '${lUser}.${lGroup}'"
 
             $_chmod $lMod $lDirectory
             $_chown ${lUser}.${lGroup} $lDirectory
@@ -1318,11 +1332,11 @@ AttachMount() {
         shift
     done
 
-    Log v "Attaching $lDevice to $lLocation"
+    Log v "Attaching '$lDevice' to '$lLocation'"
 
     if $_test -b $lDevice; then
         if $_test "$lFstype" != "auto" && ! $_grep $lFstype /proc/filesystems | $_grep -q -v 'nodev'; then
-            Log w "The file system type $lFstype is not supported by the kernel. Will try to attach $lDevice using auto detection!"
+            Log w "The file system type '$lFstype' is not supported by the kernel. Will try to attach '$lDevice' using auto detection!"
             lFstype=auto
         fi
 
@@ -1336,7 +1350,7 @@ AttachMount() {
         # We need to make a great deal of safe-guards in order to make sure that we get a successfull mount
         for x in $lOptions; do
             for i in $lFstype; do
-                Log d "Mounting $lDevice to $lLocation as $i with options '$x'"
+                Log d "Mounting '$lDevice' to '$lLocation' as '$i' with options '$x'"
 
                 if $_test "$x" != "none"; then
                     lShellError=$($_mount -t $i -o $x $lDevice $lLocation 2>&1)
@@ -1350,7 +1364,7 @@ AttachMount() {
                 fi
 
                 if $_test $? -gt 0; then
-                    Log d "Failed to mount $lDevice to $lLocation" "$lShellError"
+                    Log d "Failed to mount '$lDevice' to '$lLocation'" "$lShellError"
 
                 else
                     return 0
@@ -1362,14 +1376,14 @@ AttachMount() {
         lShellError=$($_mount --bind $lDevice $lLocation 2>/dev/null || $_mount -o 'bind' $lDevice $lLocation 2>&1)
 
         if $_test $? -gt 0; then
-            Log d "Failed to mount $lDevice to $lLocation" "$lShellError"
+            Log d "Failed to mount '$lDevice' to '$lLocation'" "$lShellError"
 
         else
             return 0
         fi
     fi
 
-    Log e "It was not possible to attach $lDevice to $lLocation"
+    Log e "It was not possible to attach '$lDevice' to '$lLocation'"
 
     return 1
 }
@@ -1382,19 +1396,19 @@ DetachMount() {
     local lDevice=$1
     local lShellError
 
-    Log v "Detaching $lDevice"
+    Log v "Detaching '$lDevice'"
     lShellError=$($_umount "$lDevice" 2>&1)
 
     if $_test $? -gt 0; then
-        Log d "Could not detach $lDevice, trying with force" "$lShellError"
+        Log d "Could not detach '$lDevice', trying with force" "$lShellError"
         lShellError=$($_umount -f "$lDevice" 2>&1)
 
         if $_test $? -gt 0; then
-            Log d "Could not detach $lDevice, trying lazy unmount instead" "$lShellError"
+            Log d "Could not detach '$lDevice', trying lazy unmount instead" "$lShellError"
             lShellError=$($_umount -l "$lDevice" 2>&1)
 
             if $_test $? -gt 0; then
-                Log e "It was not possible to detach $lDevice!" "$lShellError"
+                Log e "It was not possible to detach '$lDevice'!" "$lShellError"
                 
                 return 1
             fi
@@ -1414,13 +1428,13 @@ MoveMount() {
     local lDestPath=$2
     local lShellError
 
-    Log v "Moving the mount point $lSrcPath to $lDestPath"
+    Log v "Moving the mount point '$lSrcPath' to '$lDestPath'"
 
     lShellError=$($_mount --move $lSrcPath $lDestPath 2>&1)
 
     # Not all busybox versions support the move option
     if $_test $? -gt 0; then
-        Log i "Failed while trying to move the mount point $lSrcPath to $lDestPath. Trying manual procedure!" "$lShellError"
+        Log i "Failed while trying to move the mount point '$lSrcPath' to '$lDestPath'. Trying manual procedure!" "$lShellError"
 
         local lMounts="`$_grep -e '^\/dev\/' /proc/mounts | $_grep " $lSrcPath " | $_tail -n1`"
 
@@ -1434,7 +1448,7 @@ MoveMount() {
             fi
 
         else
-            Log e "Could not collect mount information on $lSrcPath!"; return 1
+            Log e "Could not collect mount information on '$lSrcPath'!"; return 1
         fi
     fi
 
