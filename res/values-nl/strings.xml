@@ -1,0 +1,225 @@
+<resources>
+    
+    <!-- ######################################################
+    - General strings
+    ####################################################### -->
+    <string name="app_name">Mounts2SD</string>
+    <string name="app_settings">Programma instellingen</string>
+    
+    <string name="size_structure">%1$s van %2$s</string>
+    
+    <string name="status_unknown">Onbekend</string>
+    <string name="status_disabled">Uitgeschakeld</string>
+    <string name="status_enabled">Ingeschakeld</string>
+    <string name="status_okay">Ok</string>
+    <string name="status_warning">Waarschuwing</string>
+    <string name="status_error">Fout</string>
+    
+    <string name="device_not_mounted">Niet gekoppeld</string>
+    <string name="log_empty">Het log bestand is leeg</string>
+    
+    <!-- ######################################################
+    - General strings
+    ####################################################### -->
+    <string name="settings_btn_script_update">Bijwerken startop script</string>
+    <string name="settings_btn_script_remove">Verwijderen startop script</string>
+    <string name="settings_btn_script_install">Installeren startop script</string>
+    
+    <!-- ######################################################
+    - Used in Application Settings when handling internal
+    - busybox and the upstart script in AsyncTask
+    ####################################################### -->
+    <string name="resource_copying_to_disk">Kopieeren %1$s van bron naar %2$s</string>
+    <string name="resource_deleting_from_disk">Verwijderen %1$s van %2$s</string>
+    <string name="resource_copy_to_disk_failed">Kan %1$s niet kopieeren naar %2$s</string>
+    <string name="resource_delete_from_disk_failed">Kan %1$s niet verwijderen van %2$s</string>
+    
+    <!-- ######################################################
+    - Names and Comments for Selectors. Used in the Configure
+    - Tab for everything not providing a checkbox to select
+    - the value of a script property
+    ####################################################### -->
+    <string name="selector_journal_name_default">Houd standaard</string>
+    <string name="selector_journal_name_enable">Schakel in</string>
+    <string name="selector_journal_name_disable">Schakel uit</string>
+    <string name="selector_filesystem_name_auto">Detecteer automatisch</string>
+    <string name="selector_zram_name_disabled">Uitgeschakeld</string>
+    <string name="selector_swappiness_name_low">Laag</string>
+    <string name="selector_swappiness_name_medium">Gemiddeld</string>
+    <string name="selector_swappiness_name_high">Hoog</string>
+    <string name="selector_cache_name_enabled">Ingeschakeld</string>
+    <string name="selector_cache_name_forced">Geforceerd</string>
+    <string name="selector_cache_name_disabled">Uitgeschakeld</string>
+    
+    <string name="selector_swappiness_comment_low">Aanbevolen</string>
+    <string name="selector_swappiness_comment_medium">Linux Standaard</string>
+    <string name="selector_swappiness_comment_high">Agressief</string>
+    <string name="selector_cache_comment_enabled">Gebruik de grootste partitie</string>
+    <string name="selector_cache_comment_forced">Gebruik sd-ext wanneer beschikbaar</string>
+    
+    <!-- ######################################################
+    - Messages returned by the method Utils.sdcardStateMessage()
+    ####################################################### -->
+    <string name="sdcard_state_ro">De SDkaart is gekoppeld in alleen lezen modus</string>
+    <string name="sdcard_state_format">De SDkaart is niet geformatteerd in het juiste formaat</string>
+    <string name="sdcard_state_missing">De SDkaart is niet aangesloten</string>
+    <string name="sdcard_state_ums">De SDkaart wordt op dit moment gedeeld via USB</string>
+    <string name="sdcard_state_mount_failure">DE SDkaart is niet gekoppeld i.v.m. partitie of kaart problemen</string>
+    <string name="sdcard_state_mount">DE SDkaart is niet gekoppeld</string>
+    
+    <!-- ######################################################
+    - Toast messages used by the Log Fragment
+    ####################################################### -->
+    <string name="toast_log_copied">Het logbestand was gekopieerd naar /sdcard/Mounts2SD/log.txt</string>
+    <string name="toast_log_unsuccessful">Kon het logbestand niet naar de SDkaart kopieeren</string>
+
+    <!-- ######################################################
+    - Used by the progress dialog when loading AsyncTask
+    ####################################################### -->
+    <string name="progress_load_setup">Controleren apparaat setup</string>
+    <string name="progress_load_config">Verzamelen apparaat configuratie</string>
+    <string name="progress_load_properties">Verzamelen eigenschappen script waardes</string>
+    
+    <!-- ######################################################
+    - Names for the menu entries
+    ####################################################### -->
+    <string name="menu_overview_reload">(Her)laden Status</string>
+    <string name="menu_log_save">Sla log op (SDkaart)</string>
+    <string name="menu_controller_app_settings">Applicatie instellingen</string>
+    
+    <!-- ######################################################
+    - Group names used by the Application Settings Activity
+    ####################################################### -->
+    <string name="settings_style_header">Applicatie Stijl</string>
+    <string name="settings_general_header">Algemeen</string>
+    
+    <!-- ######################################################
+    - Item names used by the Application Settings Activity
+    ####################################################### -->
+    <string name="settings_style_theme_name">Donker thema</string>
+    <string name="settings_style_theme_description">Gebruik donker thema in plaats van licht (Standaard)</string>
+    <string name="settings_style_layout_name">Stijl instellingen</string>
+    <string name="settings_style_layout_description">Gebruik de instellingen globaal</string>
+    <string name="settings_style_dialog_name">Tablet instellingen</string>
+    <string name="settings_style_dialog_description">Gebruik een windows achtige omgeving voor de applicatie instellingen</string>
+    
+    <string name="settings_general_profiles_name">Sta alle profielen toe</string>
+    <string name="settings_general_profiles_description">Sta alle profielen toe om dit script te configureren</string>
+    <string name="settings_general_busybox_name">Gebruik de ingebouwde busybox</string>
+    <string name="settings_general_busybox_description">Gebruik de ingebouwde busybox binary</string>
+    
+    <!-- ######################################################
+    - Used the Tab Controller Activity to display
+    - in the Message Dialog opon error
+    ####################################################### -->
+    <string name="message_error_su_headline">Kan SuperUser niet vinden</string>
+    <string name="message_error_su_text">De applicatie heeft geen SuperUser (root) toegang. Dit is nodig voor deze applicatie om dit apparaat te controleren en aanpassingen te maken in de bestanden. Ga naar de xda-developer.com website en zoek hoe je dit apparaat van root kan voorzien. Kijk hiervoor in het specifieke gedeelde van jouw apparaat</string>
+
+    <string name="message_error_busybox_headline">Kan Busybox niet vinden</string>
+    <string name="message_error_busybox_text">De applicatie kan Busybox niet vinden. Busybox is een binary welke systeem functies beschikbaar steld voor de applicatie en het startop script. Zoek en installeer busybox van de Google Play Store</string>
+    
+    <string name="message_error_unknown_headline">Onbekend probleem</string>
+    <string name="message_error_unknown_text">Om onbekende redenen kan de applicatie de configuratie niet afmaken</string>
+    
+    <!-- ######################################################
+    - Button text for the Dialog
+    ####################################################### -->
+    <string name="button_close">Sluiten</string>
+    <string name="button_cancel">Annuleren</string>
+    <string name="button_okay">Ok</string>
+    
+    <!-- ######################################################
+    - Group names used by both Overview and Configure Fragments
+    ####################################################### -->
+    <string name="option_storage_header">Opslag</string>
+    <string name="option_system_header">Systeem</string>
+    <string name="option_content_header">Inhoud</string>
+    <string name="option_memory_header">Geheugen</string>
+    <string name="option_filesystem_header">Bestandssysteem</string>
+    <string name="option_immc_header">Intern MMC</string>
+    <string name="option_emmc_header">Extern MMC</string>
+    <string name="option_misc_header">Misc</string>
+
+    <!-- ######################################################
+    - Item names used by both Overview and Configure Fragments
+    ####################################################### -->
+    <string name="option_storage_item_internal">Intern</string>
+    <string name="option_storage_item_external">Extern</string>
+    <string name="option_storage_item_cache">Cache</string>
+    
+    <string name="option_system_item_threshold">Opslag drempel</string>
+    
+    <string name="option_content_item_apps">Applicaties</string>
+    <string name="option_content_item_libs">Bibliotheek</string>
+    <string name="option_content_item_data">Data</string>
+    <string name="option_content_item_dalvik">Dalvik Cache</string>
+    <string name="option_content_item_media">Media</string>
+    <string name="option_content_item_system">Systeem inhoud</string>
+    
+    <string name="option_memory_item_swap">SWAP</string>
+    <string name="option_memory_item_zram">ZRAM</string>
+    <string name="option_memory_item_swappiness">Swappiness</string>
+    
+    <string name="option_filesystem_item_fschk">Bestandsysteem controle</string>
+    <string name="option_filesystem_item_fstype">Stuurprogramma</string>
+    <string name="option_filesystem_item_journal">Journaal</string>
+    
+    <string name="option_mmc_item_readahead">Vooruit lezen</string>
+    <string name="option_mmc_item_scheduler">Planner</string>
+    
+    <string name="option_misc_item_safemode">Schakel veilige mode uit</string>
+    <string name="option_misc_item_debug">Zet foutzoeken aan</string>
+    
+    <!-- ######################################################
+    - Item description used by the Configure Fragment
+    ####################################################### -->
+    <string name="option_storage_description_cache">Verplaats de cache partitie naar data of sd-ext</string>
+    
+    <string name="option_system_description_threshold">Hoeveel ruimte moet er vrij zijn om applicaties te installeren</string>
+    
+    <string name="option_content_description_apps">Verplaats applicaties naar sd-ext</string>
+    <string name="option_content_description_libs">Verplaats applicatie bibliotheken naar sd-ext</string>
+    <string name="option_content_description_data">Verplaats applicatie data naar sd-ext</string>
+    <string name="option_content_description_dalvik">Verplaats dalvikvm applicatie caches naar sd-ext</string>
+    <string name="option_content_description_media">Verplaats de interne opslag (/data/media) naar sd-ext</string>
+    <string name="option_content_description_system">Verplaats alle data van de systeem bestanden naar sd-ext</string>
+    
+    <string name="option_memory_description_swap">Schakel SWAP in (3\'rd SDkaart partitie)</string>
+    <string name="option_memory_description_zram">Schakel ZRAM (Klein geheugen gedeelte voor indexering)</string>
+    <string name="option_memory_description_swappiness">Hoe aggresief moet de swap gebruikt worden</string>
+    
+    <string name="option_filesystem_description_fschk">Start een bestandscontrole van sd-ext bij het opstarten</string>
+    <string name="option_filesystem_description_fstype">Selecteer het bestandstype op sd-ext mee te koppelen</string>
+    <string name="option_filesystem_description_journal">Pas de journaal instellingen aan van sd-ext bij opstarten</string>
+    
+    <string name="option_misc_description_safemode">Schakel veilige modus uit. (Schakeld een workaround in als init.d niet goed geimplementeerd is)</string>
+    <string name="option_misc_description_debug">Schakel een meer gedetailleerd log in voor het opstart script</string>
+    
+    <string name="option_mmc_description_readahead">Zet de MMC vooruit lezen</string>
+    <string name="option_mmc_description_scheduler">Zet de MMC planner</string>
+    
+    <!-- ######################################################
+    - Item messages used for warnings in the Overview Fragment
+    ####################################################### -->
+    <string name="option_message_mount_mismatch">Een of meerdere mappen uit deze optie zijn niet verplaatst of gelinkt. Controleer of er genoeg ruimte is op de bestemmings partitie of controleer het log bestand voor verdere details.</string>
+    <string name="option_message_fschk_warning">De bestands controle heeft een of meerdere problemen gevonden op de sd-ext partitie. Alle problemen zijn opgelost.</string>
+    <string name="option_message_fschk_error">De bestands controle heeft een of meerdere problemen gevonden op de sd-ext partitie. De problemen konden niet worden opgelost.</string>
+    
+    
+    <!-- ######################################################
+    - Messages to be displayed in the infobox by the
+    - Tab Controller
+    ####################################################### -->
+    <string name="infobox_safemode">Het script werkt in veilige modus. Dit kan worden uitgeschakeld in de configuratie tab!</string>
+    <string name="infobox_no_sdext">Kon de sd-ext partitie niet vinden. Dit moet de tweede partitie zijn op de externe SDkaart!</string>
+    <string name="infobox_no_script">Er is geen opstart script beschikbaar op dit apparaat. Ga naar de applicatie instellingen en installeer deze!</string>
+    <string name="infobox_update_script">Het huidige script is verouderd. Ga naar de applicatie instellingen en werk deze bij!</string>
+    <string name="infobox_errors">De log bevat fouten/waarschuwingen. Controleer dit bestand voor verdere details!</string>
+    
+    <!-- ######################################################
+    - Messages to be displayed in the notification
+    ####################################################### -->
+    <string name="notify_no_config">Kan de applicatie configuratie niet laden</string>
+    <string name="notify_log_details">De log bevat fouten/waarschuwingen</string>
+    
+</resources>
