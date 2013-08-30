@@ -155,7 +155,9 @@ public class Preferences {
 					String pathBusybox = mContext.getResources().getString(R.string.config_path_busybox);
 					FileExtender.File busyboxFile = rootfw.file(pathBusybox);
 					
-					if (!busyboxFile.exists()) {
+					if (!busyboxFile.exists() || 
+							(!mContext.getResources().getString(R.string.config_busybox_checksum).equals(busyboxFile.getChecksum()) && busyboxFile.remove())) {
+						
 						busyboxFile.extractFromResource(mContext, "busybox", "0777", "0", "0");
 					}
 				}
