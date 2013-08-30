@@ -32,6 +32,7 @@ export iTimestamp=$(date "+%s")
 
 export iEnviroment=false
 export iSimpleExport=false
+export iLogReset=false
 
 # ===========================================================================================
 # -------------------------------------------------------------------------------------------
@@ -79,6 +80,7 @@ ListCommands() {
 $_cat <<'EOF' > $iDirTmp/function.list_commands.tmp
 cat
 echo
+tee
 test
 sleep
 sed
@@ -1476,7 +1478,15 @@ Log() {
                 "v") lLevel=0; lType=V ;;
             esac
 
-            $_echo "$lType/$lMessage" >> $iDirTmp/log.txt
+            if ! $iLogReset; then
+                if $_test -f /data/local/mounts2sd.log; then
+                    $_mv -f /data/local/mounts2sd.log /data/local/mounts2sd.log.old
+                fi
+
+                export iLogReset=true
+            fi
+
+            $_echo "$lType/$lMessage" | $_tee -a $iDirTmp/log.txt >> /data/local/mounts2sd.log
 
             if $_test $lLevel -gt 0; then
                 if ! $_test -e $iDirTmp/log.level || $_test $($_cat $iDirTmp/log.level) -lt $lLevel; then
