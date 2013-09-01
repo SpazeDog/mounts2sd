@@ -5,15 +5,15 @@
 		<ScrollView style="?settings_mainScroller">
 		    <LinearLayout style="?settings_subWrapper">
 			    <LinearLayout style="?settings_groupWrapper">
-			        <TextView style="?settings_groupHeader" android:text="Startup Script" />
+			        <TextView style="?settings_groupHeader" android:text="@string/settings_script_header" />
 			        
 			        <LinearLayout style="?settings_itemWrapper">
-			            <TextView style="?content_itemNameField" android:text="Versions" />
+			            <TextView style="?content_itemNameField" android:text="@string/settings_script_versions" />
 			                
 			            <TableLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:padding="7dp">
 			                <TableRow android:layout_height="wrap_content">
-			                    <TextView android:layout_height="wrap_content" android:text="Installed" android:paddingRight="28dp" android:textAppearance="?android:attr/textAppearanceSmall" android:textStyle="bold" />
-			                    <TextView android:layout_height="wrap_content" android:text="Bundled" android:textAppearance="?android:attr/textAppearanceSmall" android:textStyle="bold" />
+			                    <TextView android:layout_height="wrap_content" android:text="@string/settings_script_installed" android:paddingRight="28dp" android:textAppearance="?android:attr/textAppearanceSmall" android:textStyle="bold" />
+			                    <TextView android:layout_height="wrap_content" android:text="@string/settings_script_bundled" android:textAppearance="?android:attr/textAppearanceSmall" android:textStyle="bold" />
 			                </TableRow>
 			                
 			                <TableRow android:layout_height="wrap_content">
