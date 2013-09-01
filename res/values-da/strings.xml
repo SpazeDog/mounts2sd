@@ -1,0 +1,231 @@
+<resources>
+    
+    <!-- ######################################################
+       - General strings
+    ####################################################### -->
+    <string name="app_name">Mounts2SD</string>
+    <string name="app_settings">Program Opsætning</string>
+    
+    <string name="size_structure">%1$s af %2$s</string>
+    
+    <string name="status_unknown">Ukendt</string>
+    <string name="status_disabled">Deaktiveret</string>
+    <string name="status_enabled">Aktiveret</string>
+    <string name="status_okay">Ok</string>
+    <string name="status_warning">Advarsel</string>
+    <string name="status_error">Fejl</string>
+    
+    <string name="device_not_mounted">Ikke monteret</string>
+    <string name="log_empty">Log filen er tom</string>
+    
+    <!-- ######################################################
+       - General strings
+    ####################################################### -->
+    <string name="tab_name_overview">Oversigt</string>
+    <string name="tab_name_configure">Konfigurer</string>
+    <string name="tab_name_log">Log</string>
+    
+    <!-- ######################################################
+       - General strings
+    ####################################################### -->
+    <string name="settings_btn_script_update">Opdater opstart script</string>
+    <string name="settings_btn_script_remove">Afinstaller opstart script</string>
+    <string name="settings_btn_script_install">Installer opstart script</string>
+    
+    <!-- ######################################################
+       - Used in Application Settings when handling internal
+       - busybox and the upstart script in AsyncTask
+    ####################################################### -->
+    <string name="resource_copying_to_disk">Kopiere %1$s fra ressourcer til %2$s</string>
+    <string name="resource_deleting_from_disk">Fjerner %1$s fra %2$s</string>
+    <string name="resource_copy_to_disk_failed">Det var ikke muligt at kopiere %1$s til %2$s</string>
+    <string name="resource_delete_from_disk_failed">Det var ikke muligt at fjerne %1$s fra %2$s</string>
+    
+    <!-- ######################################################
+       - Names and Comments for Selectors. Used in the Configure
+       - Tab for everything not providing a checkbox to select
+       - the value of a script property
+    ####################################################### -->
+    <string name="selector_journal_name_default">Behold standard</string>
+    <string name="selector_journal_name_enable">Aktiver</string>
+    <string name="selector_journal_name_disable">Deaktiver</string>
+    <string name="selector_filesystem_name_auto">Auto Detektér</string>
+    <string name="selector_zram_name_disabled">Deaktiveret</string>
+    <string name="selector_swappiness_name_low">Lav</string>
+    <string name="selector_swappiness_name_medium">Medium</string>
+    <string name="selector_swappiness_name_high">Høj</string>
+    <string name="selector_cache_name_enabled">Aktiveret</string>
+    <string name="selector_cache_name_forced">Tvunget</string>
+    <string name="selector_cache_name_disabled">Deaktiveret</string>
+    
+    <string name="selector_swappiness_comment_low">Anbefalet</string>
+    <string name="selector_swappiness_comment_medium">Linux Standard</string>
+    <string name="selector_swappiness_comment_high">Aggressivt</string>
+    <string name="selector_cache_comment_enabled">Brug den største partition</string>
+    <string name="selector_cache_comment_forced">Brug sd-ext hvis den er tilgængelig</string>
+    
+    <!-- ######################################################
+       - Messages returned by the method Utils.sdcardStateMessage()
+    ####################################################### -->
+    <string name="sdcard_state_ro">SD Kortet er monteret i read-only tilstand</string>
+    <string name="sdcard_state_format">SD Kortet er ikke monteret i et korrekt format</string>
+    <string name="sdcard_state_missing">SD Kortet er ikke tilgængeligt</string>
+    <string name="sdcard_state_ums">SD Kortet er i øjeblikket delt via USB</string>
+    <string name="sdcard_state_mount_failure">SD Kortet er ikke monteret på grund af fejl på partitionen eller kortet selv</string>
+    <string name="sdcard_state_mount">SD Kortet er ikke monteret</string>
+    
+    <!-- ######################################################
+       - Toast messages used by the Log Fragment
+    ####################################################### -->
+    <string name="toast_log_copied">Log filen blev kopieret til /sdcard/Mounts2SD/log.txt</string>
+    <string name="toast_log_unsuccessful">Kunen ikke Kopierer log filen til SD Kortet</string>
+
+    <!-- ######################################################
+       - Used by the progress dialog when loading AsyncTask
+    ####################################################### -->
+    <string name="progress_load_setup">Tjekker enheds opsætning</string>
+    <string name="progress_load_config">Indlæser enheds konfigurationer</string>
+    <string name="progress_load_properties">Indlæser script konfigurationer</string>
+    
+    <!-- ######################################################
+       - Names for the menu entries
+    ####################################################### -->
+    <string name="menu_overview_reload">Genindlæs Status</string>
+    <string name="menu_log_save">Gem log til SD Kort</string>
+    <string name="menu_controller_app_settings">Program Indstillinger</string>
+    
+    <!-- ######################################################
+       - Group names used by the Application Settings Activity
+    ####################################################### -->
+    <string name="settings_style_header">Program Layout</string>
+    <string name="settings_general_header">Generelt</string>
+    
+    <!-- ######################################################
+       - Item names used by the Application Settings Activity
+    ####################################################### -->
+    <string name="settings_style_theme_name">Mørk Tema</string>
+    <string name="settings_style_theme_description">Brug mørkt tema istedet for standard lyst</string>
+    <string name="settings_style_layout_name">Indstillings Layout</string>
+    <string name="settings_style_layout_description">Brug program indstillings layoutet globalt</string>
+    <string name="settings_style_dialog_name">Tablet Indstillinger</string>
+    <string name="settings_style_dialog_description">Brug dialog til visning af Program Indstillinger</string>
+    
+    <string name="settings_general_profiles_name">Tillad alle profiler</string>
+    <string name="settings_general_profiles_description">Tillad alle profiler/brugere at redigere script instillingerne</string>
+    <string name="settings_general_busybox_name">Brug intern busybox version</string>
+    <string name="settings_general_busybox_description">Brug den interne busybox binær istedet for systemets</string>
+    
+    <!-- ######################################################
+       - Used the Tab Controller Activity to display
+       - in the Message Dialog opon error
+    ####################################################### -->
+    <string name="message_error_su_headline">Mangler Super Bruger</string>
+    <string name="message_error_su_text">Programmet kunne ikke indhente super bruger rettigheder. Dette er nædvendigt for at programmet kan tjekke enheds opsætning og ændre i scriptets konfigurerings filer. Besøg websiden xda-developer.com og søg på hvordan super brugeren kan låses op i din enheds specifikke forum sektion</string>
+
+    <string name="message_error_busybox_headline">Mangler Busybox</string>
+    <string name="message_error_busybox_text">Programmet kunne ikke lokalisere busybox på denne enhed. Busybox er en alt-i-en binær, som indeholder de fleste af de værktøjer, som er nødvendige for både programmet or opstart scriptet. Installer vendligst busybox fra Google Play</string>
+    
+    <string name="message_error_unknown_headline">Ukendt Problem</string>
+    <string name="message_error_unknown_text">Af en eller anden årsag, kunne programmet ikke færdig gøre sin konfigurering</string>
+    
+    <!-- ######################################################
+       - Button text for the Dialog
+    ####################################################### -->
+    <string name="button_close">Luk</string>
+    <string name="button_cancel">Annuller</string>
+    <string name="button_okay">OK</string>
+    
+    <!-- ######################################################
+       - Group names used by both Overview and Configure Fragments
+    ####################################################### -->
+    <string name="option_storage_header">Lagre</string>
+    <string name="option_system_header">System</string>
+    <string name="option_content_header">Indhold</string>
+    <string name="option_memory_header">Hukommelse</string>
+    <string name="option_filesystem_header">Filsystem</string>
+    <string name="option_immc_header">Intern MMC</string>
+    <string name="option_emmc_header">Ekstern MMC</string>
+    <string name="option_misc_header">Diverse</string>
+
+    <!-- ######################################################
+       - Item names used by both Overview and Configure Fragments
+    ####################################################### -->
+    <string name="option_storage_item_internal">Intern</string>
+    <string name="option_storage_item_external">Ekstern</string>
+    <string name="option_storage_item_cache">Cache</string>
+    
+    <string name="option_system_item_threshold">Lager Tærskel</string>
+    
+    <string name="option_content_item_apps">Programmer</string>
+    <string name="option_content_item_libs">Biblioteker</string>
+    <string name="option_content_item_data">Data</string>
+    <string name="option_content_item_dalvik">Dalvik Cache</string>
+    <string name="option_content_item_media">Medier</string>
+    <string name="option_content_item_system">System Indhold</string>
+    
+    <string name="option_memory_item_swap">SWAP</string>
+    <string name="option_memory_item_zram">ZRAM</string>
+    <string name="option_memory_item_swappiness">Swappiness</string>
+    
+    <string name="option_filesystem_item_fschk">Filsystem Tjek</string>
+    <string name="option_filesystem_item_fstype">Driver</string>
+    <string name="option_filesystem_item_journal">Journal</string>
+    
+    <string name="option_mmc_item_readahead">Readahead</string>
+    <string name="option_mmc_item_scheduler">Scheduler</string>
+    
+    <string name="option_misc_item_safemode">Deaktiver fejlsikret tilstand</string>
+    <string name="option_misc_item_debug">Aktiver fejlsøgnings tilstand</string>
+    
+    <!-- ######################################################
+       - Item description used by the Configure Fragment
+    ####################################################### -->
+    <string name="option_storage_description_cache">Flyt cache partitionen til data eller sd-ext</string>
+    
+    <string name="option_system_description_threshold">Hvor meget plads der skal være tilbage på data, for at kunne installere nye programmer</string>
+    
+    <string name="option_content_description_apps">Flyt programmer sd-ext</string>
+    <string name="option_content_description_libs">Flyt program biblioteker til sd-ext</string>
+    <string name="option_content_description_data">Flyt program data til sd-ext</string>
+    <string name="option_content_description_dalvik">Flyt dalvikvm program caches til sd-ext</string>
+    <string name="option_content_description_media">Flyt interne medier (/data/media) til sd-ext</string>
+    <string name="option_content_description_system">Flyt alle data opbevarende system filer til sd-ext</string>
+    
+    <string name="option_memory_description_swap">Aktiver SWAP (3 SD Kort partition)</string>
+    <string name="option_memory_description_zram">Aktiver ZRAM (Lille hukommelses opbevaret SWAP partition til indeksering)</string>
+    <string name="option_memory_description_swappiness">Angiv swapping aggressivitet</string>
+    
+    <string name="option_filesystem_description_fschk">Kør et filsystem tjek på sd-ext under opstart</string>
+    <string name="option_filesystem_description_fstype">Vælg filsystem typen til at montere sd-ext som</string>
+    <string name="option_filesystem_description_journal">Ændre journal indstillingerne på sd-ext under opstart</string>
+    <string name="option_misc_description_safemode">Tillad ikke scriptet at starte i fejlsikret tilstand (Aktiverer en omgåelse for upassende init.d implementeringer)</string>
+    <string name="option_misc_description_debug">Få en mere detaljeret log fra opstart scriptet</string>
+    
+    <string name="option_mmc_description_readahead">Angiv MMC readahead</string>
+    <string name="option_mmc_description_scheduler">Angiv MMC scheduler</string>
+    
+    <!-- ######################################################
+       - Item messages used for warnings in the Overview Fragment
+    ####################################################### -->
+    <string name="option_message_mount_mismatch">En eller flere mapper i denne indstilling, er ikke blevet flyttet eller linket. Tjek den tilgængelige plads på den modsatte partition, eller se loggen for yderligere detaljer.</string>
+    <string name="option_message_fschk_warning">Filsystem tjekket fandt en eller flere problemer med sd-ext partitionen. Alle problemer er blevet korrigeret.</string>
+    <string name="option_message_fschk_error">Filsystem tjekket fandt en eller flere problemer med sd-ext partitionen. Det var ikke muligt at korrigere disse problemer. </string>
+    
+    
+    <!-- ######################################################
+       - Messages to be displayed in the infobox by the
+       - Tab Controller
+    ####################################################### -->
+    <string name="infobox_safemode">Scriptet kører i øjeblikket i fejlsikret tilstand. Du kan deaktivere denne tilstand i fanen Konfigurer!</string>
+    <string name="infobox_no_sdext">Kunne ikke lokalisere SD-EXT partitionen. Dette bør være den anden partition på det eksterne SD Kort!</string>
+    <string name="infobox_no_script">Der er ikke noget opstart script tilgængeligt på din enhed. Gå til program indstillinger og installere det!</string>
+    <string name="infobox_update_script">Det nuværende opstart script er forældet. Gå til program indstillinger og opdater det!</string>
+    <string name="infobox_errors">Loggen indeholder en eller flere fejl/advarsler. Tjek log fremviseren for yderligere detaljer!</string>
+    
+    <!-- ######################################################
+       - Messages to be displayed in the notification
+    ####################################################### -->
+    <string name="notify_no_config">Kunne ikke indlæse program konfigurationer</string>
+    <string name="notify_log_details">En eller flere Fejl/Advarsler blev fundet i loggen</string>
+    
+</resources>
