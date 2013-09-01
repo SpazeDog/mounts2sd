@@ -8,7 +8,7 @@
 
 	        <LinearLayout style="?layout_tabItemSubWrapper" >
 	            <ImageView style="?layout_tabItemIcon" android:src="@drawable/btn_tab_overview" />
-	            <TextView style="?layout_tabItemText" android:text="Overview" />
+	            <TextView style="?layout_tabItemText" android:text="@string/tab_name_overview" />
 	        </LinearLayout>
 	    </LinearLayout>
 	    
@@ -17,7 +17,7 @@
 
 	        <LinearLayout style="?layout_tabItemSubWrapper" >
 	            <ImageView style="?layout_tabItemIcon" android:src="@drawable/btn_tab_configure" />
-	            <TextView style="?layout_tabItemText" android:text="Configure" />
+	            <TextView style="?layout_tabItemText" android:text="@string/tab_name_configure" />
 	        </LinearLayout>
 	    </LinearLayout>
 	    
@@ -26,7 +26,7 @@
 
 	        <LinearLayout style="?layout_tabItemSubWrapper" >
 	            <ImageView style="?layout_tabItemIcon" android:src="@drawable/btn_tab_log" />
-	            <TextView style="?layout_tabItemText" android:text="Log" />
+	            <TextView style="?layout_tabItemText" android:text="@string/tab_name_log" />
 	        </LinearLayout>
 	    </LinearLayout>
     </LinearLayout>
