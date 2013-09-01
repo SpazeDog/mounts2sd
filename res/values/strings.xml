@@ -19,7 +19,7 @@
     <string name="log_empty">The log file is empty</string>
     
     <!-- ######################################################
-       - General strings
+       - Tab names
     ####################################################### -->
     <string name="tab_name_overview">Overview</string>
     <string name="tab_name_configure">Configure</string>
@@ -114,6 +114,11 @@
     <string name="settings_general_profiles_description">Allow all profiles to edit script configuration</string>
     <string name="settings_general_busybox_name">Use built-in busybox</string>
     <string name="settings_general_busybox_description">Use the applications built-in busybox binary</string>
+    
+    <string name="settings_script_header">Upstart Script</string>
+    <string name="settings_script_versions">Versions</string>
+    <string name="settings_script_installed">Installed</string>
+    <string name="settings_script_bundled">Bundled</string>
     
     <!-- ######################################################
        - Used the Tab Controller Activity to display

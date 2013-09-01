@@ -115,6 +115,11 @@
     <string name="settings_general_busybox_name">Brug intern busybox version</string>
     <string name="settings_general_busybox_description">Brug den interne busybox binær istedet for systemets</string>
     
+    <string name="settings_script_header">Opstart Script</string>
+    <string name="settings_script_versions">Versioner</string>
+    <string name="settings_script_installed">Installeret</string>
+    <string name="settings_script_bundled">Bundlet</string>
+    
     <!-- ######################################################
        - Used the Tab Controller Activity to display
        - in the Message Dialog opon error
