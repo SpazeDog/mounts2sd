@@ -1170,7 +1170,7 @@ ExportVar() {
 CheckDir() {
     local lPath="$1"
 
-    if $_cat $(ListFolders) | $_grep -q -e "^$lPath\(\/.*\)*$"; then
+    if $_test -d "$lPath" || $_grep -q -e "^$lPath\(\/.*\)*$" "$(ListFolders)"; then
         return 0
     fi
 
