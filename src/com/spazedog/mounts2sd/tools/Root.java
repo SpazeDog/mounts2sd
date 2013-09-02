@@ -20,6 +20,7 @@ public class Root {
 		RootFW.Config.PATH.add("/system/xbin");
 		
 		RootFW.Config.LOG = RootFW.E_DEBUG|RootFW.E_ERROR|RootFW.E_INFO|RootFW.E_WARNING;
+		RootFW.Config.Connection.TIMEOUT = 10000;
 	}
 	
 	public static Boolean isConnected() {
