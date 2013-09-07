@@ -224,15 +224,10 @@ public class Preferences {
 					}
 					
 					for (int i=0; i < (loopContainer = new String[]{"/data", "/cache"}).length; i++) {
-						MountStat stat = rootfw.filesystem(loopContainer[i]).statFstab();
+						MountStat stat = rootfw.filesystem(loopContainer[i]).statMount();
 						
-						/* Since the first stat is taken from various init.rc and fstab files,
-						 * it could have located a wrong device. It should not be possible, 
-						 * but let's makes sure just in case by checking the device existence. 
-						 * It is quite important that we do get an existing device for both cache and especially data. 
-						 */
-						if (stat == null || !rootfw.file(stat.device()).exists()) {
-							stat = rootfw.filesystem(loopContainer[i]).statMount();
+						if (stat == null || stat.device().equals(setupData.getString("path_device_map_sdext")) || (i > 0 && stat.device().equals(setupData.getString("path_device_map_data")))) {
+							stat = rootfw.filesystem(loopContainer[i]).statFstab();
 						}
 						
 						setupData.putString(i == 0 ? "path_device_map_data" : "path_device_map_cache", stat.device());
