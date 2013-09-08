@@ -138,7 +138,7 @@ ListFolderInfo() {
         local lFilePartGroup
 
         for lFile in /*.rc; do
-            $_grep -e '^[ \t]*mkdir' $lFile | $_tr -s ' ' | while read lFilePartType lFilePartPath lFilePartPerm lFilePartUser lFilePartGroup; do
+            $_grep -e '^[ \t]*mkdir[ \t]' $lFile | $_tr -s ' ' | while read lFilePartType lFilePartPath lFilePartPerm lFilePartUser lFilePartGroup; do
                 if ! $_test -z "$lFilePartUser" && ! $_test -z "$lFilePartGroup"; then
                     $_echo "$lFilePartPath $lFilePartPerm $lFilePartUser $lFilePartGroup" >> $iDirTmp/function.list_folder_info.tmp.1
                 fi
@@ -185,7 +185,7 @@ ListExports() {
 
     if ! $_test -f $iDirTmp/function.list_exports.tmp; then
         for lFile in /*.rc; do
-            $_grep -e '^[ \t]*export' $lFile | $_tr -s ' ' | while read lFilePartExport lFilePartName lFilePartValue; do
+            $_grep -e '^[ \t]*export[ \t]' $lFile | $_tr -s ' ' | while read lFilePartExport lFilePartName lFilePartValue; do
                 if ! $_test -z "$lFilePartExport"; then
                     $_echo "$lFilePartName $lFilePartValue" >> $iDirTmp/function.list_exports.tmp
                 fi
@@ -221,6 +221,13 @@ ProcessEnviroment() {
                     lMessage="The script has been invoked without super user permissions!"
 
                 else
+                    # This has not yet been created when we call 'ListCommands'
+                    export _cat="$iBusybox cat"
+                    export _echo="$iBusybox echo"
+
+                    # This has not yet been created when we call 'ExportVar' and 'Session'
+                    export _test="$iBusybox test"
+
                     # Check whether we need eval or not to export variables
                     export $(echo iSimpleExport)=true
 
@@ -241,13 +248,6 @@ ProcessEnviroment() {
 
                         # We need this directory before preparing anything
                         $iBusybox test ! -d $iDirTmp && ( $iBusybox mkdir -p $iDirTmp || $iBusybox mkdir $iDirTmp )
-
-                        # This has not yet been created when we call 'ListCommands'
-                        export _cat="$iBusybox cat"
-                        export _echo="$iBusybox echo"
-
-                        # This has not yet been created when we call 'ExportVar'
-                        export _test="$iBusybox test"
 
                         local lCommand
                         local lType
