@@ -97,7 +97,7 @@
     <!-- ######################################################
        - Group names used by the Application Settings Activity
     ####################################################### -->
-    <string name="settings_style_header">Stile dell'applicazione</string>
+    <string name="settings_style_header">Stile dell\'applicazione</string>
     <string name="settings_general_header">Generico</string>
     
     <!-- ######################################################
@@ -108,7 +108,7 @@
     <string name="settings_style_layout_name">Impostazioni dello Stile</string>
     <string name="settings_style_layout_description">Usa le impostazioni di stile a livello globale</string>
     <string name="settings_style_dialog_name">Impostazioni Tablet</string>
-    <string name="settings_style_dialog_description">Usa finestra tipo dialog per le impostazioni dell'applicazione</string>
+    <string name="settings_style_dialog_description">Usa finestra tipo dialog per le impostazioni dell\'applicazione</string>
     
     <string name="settings_general_profiles_name">Consenti tutti i profili</string>
     <string name="settings_general_profiles_description">Consenti a tutti i profili di modificare la configurazione dello script</string>
@@ -125,13 +125,13 @@
        - in the Message Dialog opon error
     ####################################################### -->
     <string name="message_error_su_headline">Manca SuperUser</string>
-    <string name="message_error_su_text">L'applicazione non ha potuto ottenere i privilegi di SuperUser (root). Questo è richiesto per controllare la configurazione del dispositivo e cambiare/proteggere i files delle proprietà dello script. Vai al sito xda-developer.com e cerca come rootare il tuo dispositivo nella sezione del forum ad esso dedicata</string>
+    <string name="message_error_su_text">L\'applicazione non ha potuto ottenere i privilegi di SuperUser (root). Questo è richiesto per controllare la configurazione del dispositivo e cambiare/proteggere i files delle proprietà dello script. Vai al sito xda-developer.com e cerca come rootare il tuo dispositivo nella sezione del forum ad esso dedicata</string>
 
     <string name="message_error_busybox_headline">Manca Busybox</string>
-    <string name="message_error_busybox_text">L'applicazione non ha potuto trovare busybox nel dispositivo. Busybox è un binario all-in-one che contiene la maggior parte degli strumenti di sistema necessari all'applicazione e allo script di avvio. Prego cerca e installa busybox dal Google Play Store</string>
+    <string name="message_error_busybox_text">L\'applicazione non ha potuto trovare busybox nel dispositivo. Busybox è un binario all-in-one che contiene la maggior parte degli strumenti di sistema necessari all\'applicazione e allo script di avvio. Prego cerca e installa busybox dal Google Play Store</string>
     
     <string name="message_error_unknown_headline">Problema Sconosciuto</string>
-    <string name="message_error_unknown_text">Per qualche ragione l'applicazione non ha potuto completare la sua configurazione</string>
+    <string name="message_error_unknown_text">Per qualche ragione l\'applicazione non ha potuto completare la sua configurazione</string>
     
     <!-- ######################################################
        - Button text for the Dialog
@@ -193,16 +193,16 @@
     <string name="option_content_description_libs">Sposta le librerie delle applicazioni in sd-ext</string>
     <string name="option_content_description_data">Sposta i dati delle applicazioni in sd-ext</string>
     <string name="option_content_description_dalvik">Sposta le caches dalvikv delle applicazioni in sd-ext</string>
-    <string name="option_content_description_media">Sposta l'archiviazione interna (/data/media) in sd-ext</string>
+    <string name="option_content_description_media">Sposta l\'archiviazione interna (/data/media) in sd-ext</string>
     <string name="option_content_description_system">Sposta tutti i dati memorizzati dai file di sistema in sd-ext</string>
     
     <string name="option_memory_description_swap">Abilita SWAP (terza partizione nella sdcard)</string>
-    <string name="option_memory_description_zram">Abilita ZRAM (Piccola partizione di SWAP mantenuta in memoria per l'indicizzazione)</string>
-    <string name="option_memory_description_swappiness">Specifica l'aggressività dello swapping</string>
+    <string name="option_memory_description_zram">Abilita ZRAM (Piccola partizione di SWAP mantenuta in memoria per l\'indicizzazione)</string>
+    <string name="option_memory_description_swappiness">Specifica l\'aggressività dello swapping</string>
     
-    <string name="option_filesystem_description_fschk">Esegui un controllo del file system nella sd-ext durante l'avvio</string>
+    <string name="option_filesystem_description_fschk">Esegui un controllo del file system nella sd-ext durante l\'avvio</string>
     <string name="option_filesystem_description_fstype">Selezionare il tipo di file system in cui montare la sd-ext</string>
-    <string name="option_filesystem_description_journal">Cambia le configurazioni del journal sulla sd-ext durante l'avvio</string>
+    <string name="option_filesystem_description_journal">Cambia le configurazioni del journal sulla sd-ext durante l\'avvio</string>
     
     <string name="option_misc_description_safemode">Impedisci che lo script di avvio entri in modalità sicura (Abilita un workaround per le implementazioni scorrette di init.d)</string>
     <string name="option_misc_description_debug">Ottieni dallo script di avvio voci del registro più dettagliate</string>
@@ -224,14 +224,14 @@
     ####################################################### -->
     <string name="infobox_safemode">Lo script è attualmente in esecuzione in Modalità Sicura. Puoi disabilitare questa modalità nella scheda di configurazione!</string>
     <string name="infobox_no_sdext">Impossibile individuare la partizione di SD-EXT. Questa dovrebbe essere la seconda partizione nella sdcard esterna!</string>
-    <string name="infobox_no_script">Non c'è alcun script di avvio nel tuo dispositivo. Vai nelle impostazioni dell'applicazione ed installalo!</string>
-    <string name="infobox_update_script">Lo script di avvio corrente è vecchio. Vai nelle impostazioni dell'applicazione ed aggiornalo!</string>
+    <string name="infobox_no_script">Non c\'è alcun script di avvio nel tuo dispositivo. Vai nelle impostazioni dell\'applicazione ed installalo!</string>
+    <string name="infobox_update_script">Lo script di avvio corrente è vecchio. Vai nelle impostazioni dell\'applicazione ed aggiornalo!</string>
     <string name="infobox_errors">Il registro contiene uno o più Errori/Avvertenze. Controlla il Visualizzatore del Registro per ulteriori dettagli!</string>
     
     <!-- ######################################################
        - Messages to be displayed in the notification
     ####################################################### -->
-    <string name="notify_no_config">Impossibile caricare le configurazioni dell'applicazione</string>
+    <string name="notify_no_config">Impossibile caricare le configurazioni dell\'applicazione</string>
     <string name="notify_log_details">Uno o più Errori/Avvertenze sono state rilevate nel registro</string>
     
 </resources>
