@@ -233,7 +233,7 @@ ProcessEnviroment() {
 
                     Session set test_session test
 
-                    if $iBusybox test "$(Session get test_session)" = "test"; then
+                    if ! $iBusybox test "$(Session get test_session)" = "test"; then
                         lMessage="The device shell environment does not support dynamic variables!"
 
                     else
