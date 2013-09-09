@@ -87,6 +87,9 @@
     <string name="progress_load_config">Collecting device configurations</string>
     <string name="progress_load_properties">Collecting script property values</string>
     
+    <string name="progress_install_sqlite">Setting up the SQLite3 binary and associated libraries</string>
+    <string name="progress_install_sqlite_failed">It was not possible to extract the SQLite3 resources into the system partition</string>
+    
     <!-- ######################################################
        - Names for the menu entries
     ####################################################### -->
@@ -114,6 +117,8 @@
     <string name="settings_general_profiles_description">Allow all profiles to edit script configuration</string>
     <string name="settings_general_busybox_name">Use built-in busybox</string>
     <string name="settings_general_busybox_description">Use the applications built-in busybox binary</string>
+    <string name="settings_general_sqlite_name">Fix SQLite3 binary</string>
+    <string name="settings_general_sqlite_description">Use this if you are having problems getting Storage Threshold working</string>
     
     <string name="settings_script_header">Upstart Script</string>
     <string name="settings_script_versions">Versions</string>

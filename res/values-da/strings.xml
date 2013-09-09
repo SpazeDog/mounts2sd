@@ -87,6 +87,9 @@
     <string name="progress_load_config">Indlæser enheds konfigurationer</string>
     <string name="progress_load_properties">Indlæser script konfigurationer</string>
     
+    <string name="progress_install_sqlite">Opsætter den SQLite3 binære fil samt tilhørende biblioteker</string>
+    <string name="progress_install_sqlite_failed">Det var ikke muligt at udtrække SQLite3 ressourcerne til system partitionen</string>
+    
     <!-- ######################################################
        - Names for the menu entries
     ####################################################### -->
@@ -114,6 +117,9 @@
     <string name="settings_general_profiles_description">Tillad alle profiler/brugere at redigere script instillingerne</string>
     <string name="settings_general_busybox_name">Brug intern busybox version</string>
     <string name="settings_general_busybox_description">Brug den interne busybox binær istedet for systemets</string>
+    
+    <string name="settings_general_sqlite_name">Fix SQLite3 Binær</string>
+    <string name="settings_general_sqlite_description">Brug denne hvis du oplever problemer med at få Storage Threshold til at fungere</string>
     
     <string name="settings_script_header">Opstart Script</string>
     <string name="settings_script_versions">Versioner</string>

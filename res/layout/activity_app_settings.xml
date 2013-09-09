@@ -80,6 +80,13 @@
 			            </LinearLayout>
 			            <TextView style="?content_itemDescription_clickable" android:id="@+id/item_description" android:text="@string/settings_general_busybox_description" />
 			        </LinearLayout>
+
+			        <View style="?content_itemDivider" android:id="@+id/item_divider" />  -->
+			        
+			        <LinearLayout style="?settings_itemWrapper_clickable" android:id="@+id/settings_general_item_sqlite">
+			            <TextView style="?content_itemNameField_clickable" android:layout_weight="1" android:id="@+id/item_name" android:text="@string/settings_general_sqlite_name" />
+			            <TextView style="?content_itemDescription_clickable" android:id="@+id/item_description" android:text="@string/settings_general_sqlite_description" />
+			        </LinearLayout>
 			    </LinearLayout>
 			</LinearLayout>
 		</ScrollView>

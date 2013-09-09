@@ -52,6 +52,7 @@ public class ActivityAppSettings extends ExtendedActivity implements OnMeasure, 
 	private LinearLayout mCheckboxLayout;
 	private LinearLayout mCheckboxDialog;
 	private LinearLayout mCheckboxBusybox;
+	private LinearLayout mViewSqlite;
 	
 	private TextView mTextScriptInstalled;
 	private TextView mTextScriptBundled;
@@ -117,6 +118,14 @@ public class ActivityAppSettings extends ExtendedActivity implements OnMeasure, 
 			
 		} else {
 			mTextScriptButton.setEnabled(false);
+		}
+		
+		mViewSqlite = (LinearLayout) findViewById(R.id.settings_general_item_sqlite);
+		if (mPreferences.isUserOwner()) {
+			mViewSqlite.setOnTouchListener(new ViewEventHandler(this));
+			
+		} else {
+			mViewSqlite.setEnabled(false);
 		}
 		
 		mTextScriptInstalled = (TextView) findViewById(R.id.settings_script_item_installed);
@@ -209,10 +218,13 @@ public class ActivityAppSettings extends ExtendedActivity implements OnMeasure, 
 			
 		} else if (v == mTextScriptButton) {
 			handleScript();
+			
+		} else if (v == mViewSqlite) {
+			handleSqlite();
 		}
 	}
 	
-	public void handleBusybox() {
+	private void handleBusybox() {
 		new Task<Context, Integer, Boolean>(this, "busybox_installer") {
 			private String mProgressMessage;
 			private String mErrorMessage;
@@ -296,7 +308,7 @@ public class ActivityAppSettings extends ExtendedActivity implements OnMeasure, 
 		}.execute(getApplicationContext());
 	}
 	
-	public void handleScript() {
+	private void handleScript() {
 		new Task<Context, Integer, Boolean>(this, "script_installer") {
 			private String mProgressMessage;
 			private String mFilePath;
@@ -401,6 +413,8 @@ public class ActivityAppSettings extends ExtendedActivity implements OnMeasure, 
 					pref.cached("DeviceSetup").putAll(bundle);
 				}
 				
+				Root.close();
+				
 				return status;
 			}
 			
@@ -429,6 +443,73 @@ public class ActivityAppSettings extends ExtendedActivity implements OnMeasure, 
 				}
 				
 				activity.fillContent();
+			}
+			
+		}.execute(getApplicationContext());
+	}
+	
+	private void handleSqlite() {
+		new Task<Context, Integer, Boolean>(this, "sqlite_installer") {
+			@Override
+			protected void onUIReady() {
+				ActivityAppSettings activity = (ActivityAppSettings) getObject();
+				
+				if (activity.mProgressDialog == null) {
+					activity.mProgressDialog = ProgressDialog.show((FragmentActivity) getActivityObject(), "", activity.getResources().getString(R.string.progress_install_sqlite) + "...");
+				}
+			}
+			
+			@Override
+			protected Boolean doInBackground(Context... params) {
+				RootFW rootfw = Root.open();
+				Boolean status = false;
+				
+				String[] resources = new String[] {"sqlite3", "libsqlite.so", "libsqlite_jni.so"};
+				String[] files = new String[] {"/system/xbin/sqlite3", "/system/lib/libsqlite.so", "/system/lib/libsqlite_jni.so"};
+				
+				rootfw.filesystem("/system").addMount(new String[]{"remount", "rw"});
+				
+				try {
+					Thread.sleep(300);
+					
+				} catch (InterruptedException e) {}
+				
+				for (int i=0; i < resources.length; i++) {
+					FileExtender.File file = rootfw.file(files[i]);
+					
+					if (!(status = ( file.remove() && file.extractFromResource((Context) params[0], resources[i], "0777", "0", "0") ))) {
+						break;
+					}
+				}
+				
+				rootfw.filesystem("/system").addMount(new String[]{"remount", "ro"});
+				
+				Root.close();
+				
+				try {
+					Thread.sleep(700);
+					
+				} catch (InterruptedException e) {}
+				
+				if (status) {
+					new Preferences((Context) params[0]).cached("DeviceSetup").putBoolean("support_binary_sqlite3", true);
+				}
+				
+				return status;
+			}
+			
+			@Override
+			protected void onPostExecute(Boolean result) {
+				ActivityAppSettings activity = (ActivityAppSettings) getObject();
+				
+				if (activity.mProgressDialog != null) {
+					activity.mProgressDialog.dismiss();
+					activity.mProgressDialog = null;
+				}
+				
+				if (!result) {
+					Toast.makeText(activity, activity.getResources().getString(R.string.progress_install_sqlite_failed), Toast.LENGTH_LONG).show();
+				}
 			}
 			
 		}.execute(getApplicationContext());
