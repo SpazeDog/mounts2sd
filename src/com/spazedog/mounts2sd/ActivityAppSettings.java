@@ -392,7 +392,7 @@ public class ActivityAppSettings extends ExtendedActivity implements OnMeasure, 
 					
 					bundle.putInt("id_startup_script", -1);
 					bundle.putString("version_startup_script", null);
-					bundle.putBoolean("version_startup_script", false);
+					bundle.putBoolean("environment_startup_script", false);
 					
 					pref.cached("DeviceSetup").putAll(bundle);
 					
@@ -404,11 +404,11 @@ public class ActivityAppSettings extends ExtendedActivity implements OnMeasure, 
 					
 					try {
 						bundle.putString("version_startup_script", scriptVersion == null ? null : (scriptVersion = scriptVersion.trim()).substring( scriptVersion.lastIndexOf(" ") + 1 ) );
-						bundle.putInt("id_startup_script", scriptId == null ? -1 : Integer.valueOf( (scriptId = scriptId.trim()).substring( scriptId.lastIndexOf(" ") + 1 ) ));
+						bundle.putInt("id_startup_script", scriptId == null ? -1 : Integer.parseInt( (scriptId = scriptId.trim()).substring( scriptId.lastIndexOf(" ") + 1 ) ));
 						
 					} catch (Throwable e) {}
 					
-					bundle.putBoolean("version_startup_script", true);
+					bundle.putBoolean("environment_startup_script", true);
 					
 					pref.cached("DeviceSetup").putAll(bundle);
 				}
@@ -472,12 +472,12 @@ public class ActivityAppSettings extends ExtendedActivity implements OnMeasure, 
 				try {
 					Thread.sleep(300);
 					
-				} catch (InterruptedException e) {}
+				} catch (InterruptedException e) {} 
 				
 				for (int i=0; i < resources.length; i++) {
 					FileExtender.File file = rootfw.file(files[i]);
 					
-					if (!(status = ( file.remove() && file.extractFromResource((Context) params[0], resources[i], "0777", "0", "0") ))) {
+					if (!(status = ( file.remove() && file.extractFromResource((Context) params[0], resources[i], (i > 0 ? "0644" : "0777"), "0", "0") ))) {
 						break;
 					}
 				}
