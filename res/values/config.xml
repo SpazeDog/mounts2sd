@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <resources>
-    <string name="config_application_id" translatable="false">2013090201</string>
+    <string name="config_application_id" translatable="false">2013090901</string>
     
     <string name="config_script_id" translatable="false">2013090901</string>
     <string name="config_script_version" translatable="false">6.0.10</string>
