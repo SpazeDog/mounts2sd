@@ -297,10 +297,10 @@ public class ActivityAppSettings extends ExtendedActivity implements OnMeasure, 
 	}
 	
 	public void handleScript() {
-		new Task<Context, Integer, Boolean>(this, "busybox_installer") {
+		new Task<Context, Integer, Boolean>(this, "script_installer") {
 			private String mProgressMessage;
-			private String mErrorMessage;
 			private String mFilePath;
+			private Boolean mRemove;
 			
 			@Override
 			protected void onUIReady() {
@@ -318,84 +318,88 @@ public class ActivityAppSettings extends ExtendedActivity implements OnMeasure, 
 			
 			@Override
 			protected Boolean doInBackground(Context... params) {
-				/* 
-				 * TODO: Clean up this mess 
-				 */
-				
 				RootFW rootfw = Root.open();
-				FileExtender.File scriptFile = rootfw.file( mFilePath = ((Context) params[0]).getResources().getString(R.string.config_path_script) );
-				FileExtender.File runnerFile = rootfw.file(((Context) params[0]).getResources().getString(R.string.config_path_runner));
 				Preferences pref = new Preferences((Context) params[0]);
 				Boolean status = false;
-				Boolean remove = !pref.deviceSetup().environment_startup_script() ? false : 
+				Boolean remove = mRemove = !pref.deviceSetup().environment_startup_script() ? false : 
 					(!getResources().getString(R.string.config_script_id).equals( "" + mPreferences.deviceSetup().id_startup_script() ) ? false : true);
+				
+				FileExtender.File scriptFile = rootfw.file(mFilePath = ((Context) params[0]).getResources().getString(R.string.config_path_script));
+				FileExtender.File runnerFile = rootfw.file(((Context) params[0]).getResources().getString(R.string.config_path_runner));
 				
 				rootfw.filesystem("/system").addMount(new String[]{"remount", "rw"});
 				
-				if (remove) {
-					publishProgress(2);
+				try {
+					Thread.sleep(300);
 					
-					if(scriptFile.remove() && runnerFile.remove()) {
-						status = true;
-					}
-					
-				} else {
-					publishProgress(1);
-					
-					if (!scriptFile.exists()) {
-						FileExtender.File cleanupFile = rootfw.file("/data/local/a2sd_cleanup");
+				} catch (InterruptedException e) {}
+				
+				for (int tries=0; tries < 2; tries++) {
+					if (remove) {
+						publishProgress(2);
 						
-						if (cleanupFile.remove() && cleanupFile.extractFromResource((Context) params[0], "a2sd_cleanup", "0775", "0", "0")) {
-							rootfw.shell( cleanupFile.getAbsolutePath() );
-							cleanupFile.remove();
+						if(scriptFile.remove() && runnerFile.remove()) {
+							status = true; break;
 						}
-					}
-					
-					if((scriptFile.remove() && scriptFile.extractFromResource((Context) params[0], "mounts2sd.sh", "0775", "0", "0")) && 
-							(runnerFile.remove() && runnerFile.extractFromResource((Context) params[0], "10mounts2sd-runner", "0775", "0", "0"))) {
 						
-						status = true;
+					} else {
+						publishProgress(1);
+						
+						if (!scriptFile.exists()) {
+							FileExtender.File cleanupFile = rootfw.file("/data/local/a2sd_cleanup");
+							
+							if (cleanupFile.remove() && cleanupFile.extractFromResource((Context) params[0], "a2sd_cleanup", "0775", "0", "0")) {
+								rootfw.shell( cleanupFile.getAbsolutePath() );
+								cleanupFile.remove();
+								
+							} else {
+								continue;
+							}
+						}
+						
+						if(scriptFile.remove() && scriptFile.extractFromResource((Context) params[0], "mounts2sd.sh", "0775", "0", "0")) {
+							if (runnerFile.remove() && runnerFile.extractFromResource((Context) params[0], "10mounts2sd-runner", "0775", "0", "0")) {
+								status = true; break;
+								
+							} else {
+								scriptFile.remove();
+							}
+						}
 					}
 				}
 				
 				rootfw.filesystem("/system").addMount(new String[]{"remount", "ro"});
 				
-				if (status) {
-					Bundle lBundle = new Bundle();
-					Boolean isFile = scriptFile.exists();
-					
-					lBundle.putBoolean("environment_startup_script", isFile);
-					
-					String id = !isFile ? null : scriptFile.readOneMatch("@id");
-					String version = !isFile ? null : scriptFile.readOneMatch("@version");
-					
-					try {
-						lBundle.putInt("id_startup_script", id == null ? -1 : Integer.valueOf( id.substring( id.lastIndexOf(" ") + 1 ) ));
-						
-					} catch(Throwable e) {}
-					
-					try {
-						lBundle.putString("version_startup_script", version == null ? null : version.substring( version.lastIndexOf(" ") + 1 ) );
-						
-					} catch(Throwable e) {}
-					
-					pref.cached("DeviceSetup").putAll(lBundle);
-					
-					if (isFile && !getResources().getString(R.string.config_script_id).equals( "" + mPreferences.deviceSetup().id_startup_script() )) {
-						status = false;
-					}
-				}
-				
-				if (!status) {
-					mErrorMessage = String.format(((Context) params[0]).getResources().getString( remove ? R.string.resource_delete_from_disk_failed : R.string.resource_copy_to_disk_failed ), "10mounts2sd", mFilePath);
-				}
-				
-				Root.close();
-				
 				try {
-					Thread.sleep(1000);
+					Thread.sleep(700);
 					
 				} catch (InterruptedException e) {}
+				
+				if (status && remove) {
+					Bundle bundle = new Bundle();
+					
+					bundle.putInt("id_startup_script", -1);
+					bundle.putString("version_startup_script", null);
+					bundle.putBoolean("version_startup_script", false);
+					
+					pref.cached("DeviceSetup").putAll(bundle);
+					
+				} else if (status) {
+					Bundle bundle = new Bundle();
+					
+					String scriptId = scriptFile.readOneMatch("@id");
+					String scriptVersion = scriptFile.readOneMatch("@version");
+					
+					try {
+						bundle.putString("version_startup_script", scriptVersion == null ? null : (scriptVersion = scriptVersion.trim()).substring( scriptVersion.lastIndexOf(" ") + 1 ) );
+						bundle.putInt("id_startup_script", scriptId == null ? -1 : Integer.valueOf( (scriptId = scriptId.trim()).substring( scriptId.lastIndexOf(" ") + 1 ) ));
+						
+					} catch (Throwable e) {}
+					
+					bundle.putBoolean("version_startup_script", true);
+					
+					pref.cached("DeviceSetup").putAll(bundle);
+				}
 				
 				return status;
 			}
@@ -403,8 +407,8 @@ public class ActivityAppSettings extends ExtendedActivity implements OnMeasure, 
 			@Override
 			protected void onProgressUpdate(Integer... progress) {
 				switch((Integer) progress[0]) {
-					case 1: mProgressMessage = String.format(getResources().getString(R.string.resource_copying_to_disk), "10mounts2sd", mFilePath); break;
-					case 2: mProgressMessage = String.format(getResources().getString(R.string.resource_deleting_from_disk), "10mounts2sd", mFilePath);
+					case 1: mProgressMessage = String.format(getResources().getString(R.string.resource_copying_to_disk), "mounts2sd.sh", mFilePath); break;
+					case 2: mProgressMessage = String.format(getResources().getString(R.string.resource_deleting_from_disk), "mounts2sd.sh", mFilePath);
 				}
 				
 				onUIReady();
@@ -419,8 +423,9 @@ public class ActivityAppSettings extends ExtendedActivity implements OnMeasure, 
 					activity.mProgressDialog = null;
 				}
 				
-				if (mErrorMessage != null) {
-					Toast.makeText(activity, mErrorMessage, Toast.LENGTH_LONG).show();
+				if (!result) {
+					String message = String.format(getResources().getString( mRemove ? R.string.resource_delete_from_disk_failed : R.string.resource_copy_to_disk_failed ), "mounts2sd.sh", mFilePath);
+					Toast.makeText(activity, message, Toast.LENGTH_LONG).show();
 				}
 				
 				activity.fillContent();
