@@ -24,6 +24,7 @@
     <string name="tab_name_overview">Oversigt</string>
     <string name="tab_name_configure">Konfigurer</string>
     <string name="tab_name_log">Log</string>
+    <string name="tab_name_appmanager">App Manager</string>
     
     <!-- ######################################################
        - General strings
@@ -238,5 +239,16 @@
     ####################################################### -->
     <string name="notify_no_config">Kunne ikke indlæse program konfigurationer</string>
     <string name="notify_log_details">En eller flere Fejl/Advarsler blev fundet i loggen</string>
+    
+    <!-- ######################################################
+       - Strings for the app manager
+    ####################################################### -->
+    <string name="manager_app_list_loader">Opbygger program liste</string>
+    <string name="manager_app_conversion_loader">Håndtere program konvertering</string>
+    <string name="manager_app_converted_reboot">Du bliver nødt til at genstarte din enhed, for at ændringerne træder i kraft</string>
+    <string name="manager_app_conversion_failed">Program konverteringen mislykkedes</string>
+    <string name="manager_app_unregister_message">Ønsker du at afregistrere dette program som et system program, og genoprette dets tilstand som et almindeligt program?</string>
+    <string name="manager_app_register_message">Ønsker du at registrere dette program som et system program? Vær opmærksom på at system programmer har flere rettigheder! Vær også opmærksom på at programmet vil ikke blive flyttet til system partitionen. Det vil forblive på sin nuværende partition og blot dens tilstand vil blive ændret.</string>
+    <string name="manager_app_conversion_notice">Det vil kræve en genstart før ændringen træder i kraft. Imens vil dette program vil være utilgængelige!</string>
     
 </resources>

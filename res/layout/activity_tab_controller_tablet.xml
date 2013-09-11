@@ -29,6 +29,15 @@
 	            <TextView style="?layout_tabItemText" android:text="@string/tab_name_log" />
 	        </LinearLayout>
 	    </LinearLayout>
+	    
+        <LinearLayout android:id="@+id/tab_fragment_appmanager" style="?layout_tabItemWrapper" >
+	        <View style="?layout_tabItemIndicator" />
+
+	        <LinearLayout style="?layout_tabItemSubWrapper" >
+	            <ImageView style="?layout_tabItemIcon" android:src="@drawable/btn_tab_appmanager" />
+	            <TextView style="?layout_tabItemText" android:text="@string/tab_name_appmanager" />
+	        </LinearLayout>
+	    </LinearLayout>
     </LinearLayout>
     
 	<LinearLayout style="?layout_subWrapper" >

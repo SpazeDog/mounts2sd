@@ -24,6 +24,7 @@
     <string name="tab_name_overview">Overview</string>
     <string name="tab_name_configure">Configure</string>
     <string name="tab_name_log">Log</string>
+    <string name="tab_name_appmanager">App Manager</string>
     
     <!-- ######################################################
        - General strings
@@ -238,5 +239,16 @@
     ####################################################### -->
     <string name="notify_no_config">Could not load the application configurations</string>
     <string name="notify_log_details">One or more Errors/Warnings was detected in the log</string>
+    
+    <!-- ######################################################
+       - Strings for the app manager
+    ####################################################### -->
+    <string name="manager_app_list_loader">Assembling Application List</string>
+    <string name="manager_app_conversion_loader">Handling application conversion</string>
+    <string name="manager_app_converted_reboot">You will need to reboot your device in order for the changes to take affect</string>
+    <string name="manager_app_conversion_failed">The application conversion failed</string>
+    <string name="manager_app_unregister_message">Do you want to unregister this application as a system application and restore its state as a regular application?</string>
+    <string name="manager_app_register_message">Do you want to register this application as a system application? Be aware that system applications has higher privileges! Also note that the application will not be relocated to the system partition. It will remain on its current partition and only its state will be altereds.</string>
+    <string name="manager_app_conversion_notice">It will require a reboot for the change to take affect. Meanwhile this Application will be unavailable!</string>
     
 </resources>

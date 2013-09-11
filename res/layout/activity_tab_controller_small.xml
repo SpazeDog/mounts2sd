@@ -19,6 +19,11 @@
 		        <ImageView style="?layout_tabItemIcon" android:src="@drawable/btn_tab_log" />
 		        <View style="?layout_tabItemIndicator" android:duplicateParentState="true" />
 		    </LinearLayout>
+		    
+	        <LinearLayout android:id="@+id/tab_fragment_appmanager" android:clickable="true" style="?layout_tabItemWrapper" >
+		        <ImageView style="?layout_tabItemIcon" android:src="@drawable/btn_tab_appmanager" />
+		        <View style="?layout_tabItemIndicator" android:duplicateParentState="true" />
+		    </LinearLayout>
 	    </LinearLayout>
 	    
 	    <View style="?layout_divider" />

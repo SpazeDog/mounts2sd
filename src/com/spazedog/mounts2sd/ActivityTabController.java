@@ -58,10 +58,13 @@ public class ActivityTabController extends ExtendedActivity implements OnClickLi
 	private Boolean mAsyncProcessing = false;
 	private Boolean mAsyncFinished = false;
 	private Boolean mAsyncResult = false;
+	
+	private Boolean mLoaded = false;
 
 	private Integer mCurFragment = null;
 
 	private Map<Integer, Fragment> mFragments = new HashMap<Integer, Fragment>(); {
+		mFragments.put(R.id.tab_fragment_appmanager, null);
 		mFragments.put(R.id.tab_fragment_log, null);
 		mFragments.put(R.id.tab_fragment_configure, null);
 		mFragments.put( (mCurFragment = R.id.tab_fragment_overview), null);
@@ -86,6 +89,7 @@ public class ActivityTabController extends ExtendedActivity implements OnClickLi
 			mAsyncProcessing = savedInstanceState.getBoolean("mAsyncProcessing");
 			mAsyncFinished = savedInstanceState.getBoolean("mAsyncFinished");
 			mAsyncResult = savedInstanceState.getBoolean("mAsyncResult");
+			mLoaded = savedInstanceState.getBoolean("mLoaded");
 		}
 		
 		setContentView(R.layout.activity_tab_controller);
@@ -95,6 +99,7 @@ public class ActivityTabController extends ExtendedActivity implements OnClickLi
 			
 			if (fragment == null) {
 				switch (key) {
+					case R.id.tab_fragment_appmanager: fragment = new FragmentTabAppManager(); break;
 					case R.id.tab_fragment_log: fragment = new FragmentTabLog(); break;
 					case R.id.tab_fragment_configure: fragment = new FragmentTabConfigure(); break;
 					case R.id.tab_fragment_overview: fragment = new FragmentTabOverview();
@@ -135,6 +140,7 @@ public class ActivityTabController extends ExtendedActivity implements OnClickLi
 		savedInstanceState.putBoolean("mAsyncProcessing", mAsyncProcessing);
 		savedInstanceState.putBoolean("mAsyncFinished", mAsyncFinished);
 		savedInstanceState.putBoolean("mAsyncResult", mAsyncResult);
+		savedInstanceState.putBoolean("mLoaded", mLoaded);
 
 		super.onSaveInstanceState(savedInstanceState);
 	}
@@ -170,11 +176,13 @@ public class ActivityTabController extends ExtendedActivity implements OnClickLi
 			new Task<Context, Integer, Boolean>(this, "TabController") {
 				private String mProgressMessage;
 				
+				private Boolean mForceProgress = false;
+				
 				@Override
 				protected void onUIReady() {
-					if (mProgressMessage != null) {
-						ActivityTabController activity = (ActivityTabController) getObject();
-						
+					ActivityTabController activity = (ActivityTabController) getObject();
+					
+					if ((!activity.mLoaded || mForceProgress) && mProgressMessage != null) {
 						if (activity.mProgressDialog == null) {
 							activity.mProgressDialog = ProgressDialog.show((FragmentActivity) getActivityObject(), "", mProgressMessage + "...");
 							
@@ -191,24 +199,37 @@ public class ActivityTabController extends ExtendedActivity implements OnClickLi
 						
 						Preferences preferences = new Preferences( (Context) params[0] );
 						
-						if (!preferences.checkDeviceSetup() || !preferences.checkDeviceConfig() || !preferences.checkDeviceProperties()) {
-							publishProgress(1);
-
-							if (preferences.loadDeviceSetup(false)) {
-								publishProgress(2);
-								
-								if (preferences.loadDeviceConfig(false)) {
-									publishProgress(3);
-									
-									if (preferences.loadDeviceProperties(false)) {
-										return true;
-									}
-								}
-							}
+						publishProgress(1);
+						if (!preferences.checkDeviceSetup()) {
+							mForceProgress = true;
 							
-						} else {
-							return true;
+							publishProgress(1);
+							if (!preferences.loadDeviceSetup(false)) {
+								return false;
+							}
 						}
+						
+						publishProgress(2);
+						if (!preferences.checkDeviceConfig()) {
+							mForceProgress = true;
+							
+							publishProgress(2);
+							if (!preferences.loadDeviceConfig(false)) {
+								return false;
+							}
+						}
+						
+						publishProgress(3);
+						if (!preferences.checkDeviceProperties()) {
+							mForceProgress = true;
+							
+							publishProgress(3);
+							if (!preferences.loadDeviceProperties(false)) {
+								return false;
+							}
+						}
+						
+						return true;
 					}
 					
 					return false;
@@ -234,6 +255,7 @@ public class ActivityTabController extends ExtendedActivity implements OnClickLi
 						activity.mProgressDialog = null;
 					}
 					
+					activity.mLoaded = true;
 					activity.mAsyncProcessing = false;
 					activity.mAsyncFinished = true;
 					activity.mAsyncResult = result;

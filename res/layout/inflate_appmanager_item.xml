@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" style="?content_itemWrapper_clickable">
+    <LinearLayout style="?content_itemWrapper_inline_clickable">
+        <ImageView style="?content_itemIcon_clickable" android:id="@+id/item_package_icon" />
+        <TextView style="?content_itemNameField_inline_clickable" android:layout_weight="1" android:id="@+id/item_package_label" />
+        <ImageView style="?content_itemIcon_clickable" android:id="@+id/item_package_type" />
+    </LinearLayout>
+    <TextView style="?content_itemDescription_clickable" android:id="@+id/item_package_name" />
+</LinearLayout>

@@ -85,6 +85,7 @@
     <style name="Content.Item_Inline_Wrapper">
         <item name="android:layout_width">fill_parent</item>
         <item name="android:orientation">horizontal</item>
+        <item name="android:gravity">center_vertical</item>
     </style>
     
     <style name="Content.ThemeDark.Item_Inline_Wrapper" parent="Content.Item_Inline_Wrapper"></style>
@@ -211,15 +212,21 @@
     <!-- ##########################################
          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
     <style name="Content.Item_Icon">
-        <item name="android:layout_height">match_parent</item>
-        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">35dp</item>
+        <item name="android:layout_width">35dp</item>
         <item name="android:paddingRight">7dp</item>
+    </style>
+    
+    <style name="Content.Item_Icon_Clickable" parent="Content.Item_Icon">
+        <item name="android:duplicateParentState">true</item>
     </style>
     
     <!-- ##########################################
          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
     <style name="Content.Item_StatusIcon" parent="Content.Item_Icon">
 		<item name="android:src">@drawable/src_content_item_statusicon</item>
+        <item name="android:layout_height">25dp</item>
+        <item name="android:layout_width">25dp</item>
     </style>
     
     <style name="Content.ThemeDark.Item_StatusIcon" parent="Content.Item_StatusIcon"></style>
@@ -229,6 +236,8 @@
     <style name="Content.Item_CheckboxIcon_Clickable" parent="Content.Item_Icon">
         <item name="android:duplicateParentState">true</item>
 		<item name="android:src">@drawable/src_content_item_checkboxicon</item>
+        <item name="android:layout_height">30dp</item>
+        <item name="android:layout_width">30dp</item>
     </style>
     
     <style name="Content.ThemeDark.Item_CheckboxIcon_Clickable" parent="Content.Item_CheckboxIcon_Clickable">
@@ -239,6 +248,8 @@
          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
     <style name="Content.Item_RadioIcon_Clickable" parent="Content.Item_CheckboxIcon_Clickable">
 		<item name="android:src">@drawable/src_content_item_radioicon</item>
+        <item name="android:layout_height">30dp</item>
+        <item name="android:layout_width">30dp</item>
     </style>
     
     <style name="Content.ThemeDark.Item_RadioIcon_Clickable" parent="Content.Item_RadioIcon_Clickable">

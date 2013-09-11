@@ -48,6 +48,7 @@ import com.spazedog.mounts2sd.tools.Root;
 import com.spazedog.mounts2sd.tools.Utils;
 import com.spazedog.mounts2sd.tools.ViewEventHandler;
 import com.spazedog.mounts2sd.tools.ViewEventHandler.ViewClickListener;
+import com.spazedog.mounts2sd.tools.interfaces.DialogConfirmResponse;
 import com.spazedog.mounts2sd.tools.interfaces.DialogListener;
 import com.spazedog.mounts2sd.tools.interfaces.DialogMessageResponse;
 import com.spazedog.mounts2sd.tools.interfaces.DialogSelectorResponse;
@@ -84,8 +85,16 @@ public class FragmentDialog extends DialogFragment implements OnMeasure, ViewCli
 		
 		if (mArguments.getString("type").equals("message")) {
 			layout = (ExtendedLayout) inflater.inflate(R.layout.dialog_message, null);
-
+			
 			layout.findViewById(R.id.dialog_close_button).setOnTouchListener(new ViewEventHandler(this));
+			
+			((TextView) layout.findViewById(R.id.dialog_textbox)).setText(mArguments.getString("message"));
+			
+		} else if (mArguments.getString("type").equals("confirm")) {
+			layout = (ExtendedLayout) inflater.inflate(R.layout.dialog_confirm, null);
+			
+			layout.findViewById(R.id.dialog_cancel_button).setOnTouchListener(new ViewEventHandler(this));
+			layout.findViewById(R.id.dialog_okay_button).setOnTouchListener(new ViewEventHandler(this));
 			
 			((TextView) layout.findViewById(R.id.dialog_textbox)).setText(mArguments.getString("message"));
 			
@@ -170,6 +179,11 @@ public class FragmentDialog extends DialogFragment implements OnMeasure, ViewCli
 			
 			((DialogMessageResponse) mListener).onDialogClose(mArguments.getString("tag"), mArguments.getBoolean("quit"));
 		
+		} else if (mArguments.getString("type").equals("confirm")) {
+			dismiss();
+			
+			((DialogConfirmResponse) mListener).onDialogConfirm(mArguments.getString("tag"), v.getId() == R.id.dialog_okay_button);
+
 		} else {
 			if (v.getId() == R.id.dialog_cancel_button || v.getId() == R.id.dialog_okay_button) {
 				dismiss();
@@ -284,6 +298,13 @@ public class FragmentDialog extends DialogFragment implements OnMeasure, ViewCli
 			
 			mArguments.putString("tag", (mTag = tag));
 			mArguments.putString("title", title);
+		}
+		
+		public FragmentDialog showConfirmDialog(String message) {
+			mArguments.putString("type", "confirm");
+			mArguments.putString("message", message);
+			
+			return show();
 		}
 		
 		public FragmentDialog showMessageDialog(String message) {

@@ -27,6 +27,7 @@
         <item name="content_itemValueField_inline_clickable">@style/Content.Item_Inline_ValueField_Clickable</item>
         <item name="content_itemDescription">@style/Content.Item_Description</item>
         <item name="content_itemDescription_clickable">@style/Content.Item_Description_Clickable</item>
+        <item name="content_itemIcon_clickable">@style/Content.Item_Icon_Clickable</item>
         <item name="content_itemStatusIcon">@style/Content.Item_StatusIcon</item>
         <item name="content_itemCheckboxIcon_clickable">@style/Content.Item_CheckboxIcon_Clickable</item>
         <item name="content_itemRadioIcon_clickable">@style/Content.Item_RadioIcon_Clickable</item>
@@ -108,6 +109,7 @@
         <item name="content_itemValueField_inline_clickable">@style/Content.ThemeDark.Item_Inline_ValueField_Clickable</item>
         <item name="content_itemDescription">@style/Content.ThemeDark.Item_Description</item>
         <item name="content_itemDescription_clickable">@style/Content.ThemeDark.Item_Description_Clickable</item>
+        <item name="content_itemIcon_clickable">@style/Content.Item_Icon_Clickable</item>
         <item name="content_itemStatusIcon">@style/Content.ThemeDark.Item_StatusIcon</item>
         <item name="content_itemCheckboxIcon_clickable">@style/Content.ThemeDark.Item_CheckboxIcon_Clickable</item>
         <item name="content_itemRadioIcon_clickable">@style/Content.ThemeDark.Item_RadioIcon_Clickable</item>

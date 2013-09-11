@@ -21,6 +21,7 @@
     <attr name="content_itemValueField_inline_clickable" format="reference" />
     <attr name="content_itemDescription" format="reference" />
     <attr name="content_itemDescription_clickable" format="reference" />
+    <attr name="content_itemIcon_clickable" format="reference" />
     <attr name="content_itemStatusIcon" format="reference" />
     <attr name="content_itemCheckboxIcon_clickable" format="reference" />
     <attr name="content_itemRadioIcon_clickable" format="reference" />

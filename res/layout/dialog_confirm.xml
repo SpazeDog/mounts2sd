@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<com.spazedog.mounts2sd.tools.ExtendedLayout xmlns:android="http://schemas.android.com/apk/res/android" style="?dialog_window">
+	<com.spazedog.mounts2sd.tools.ExtendedLayout style="?dialog_mainWrapper">
+    
+	    <TextView android:id="@+id/dialog_title" style="?dialog_panel" />
+	
+		<ScrollView style="?dialog_mainScroller">
+			<TextView android:id="@+id/dialog_textbox" style="?dialog_textBox" />
+		</ScrollView>
+		
+		<View style="?dialog_divider" />
+		
+	    <LinearLayout style="?dialog_buttonWrapper">
+			<TextView android:id="@+id/dialog_cancel_button" android:text="@string/button_cancel" style="?dialog_button" />
+			<TextView android:id="@+id/dialog_okay_button" android:text="@string/button_okay" style="?dialog_button" />
+	    </LinearLayout>
+     
+    </com.spazedog.mounts2sd.tools.ExtendedLayout>
+</com.spazedog.mounts2sd.tools.ExtendedLayout>
