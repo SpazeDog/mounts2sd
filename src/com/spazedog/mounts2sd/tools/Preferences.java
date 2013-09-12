@@ -35,7 +35,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.UserManager;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.spazedog.lib.rootfw3.RootFW;
 import com.spazedog.lib.rootfw3.extenders.FileExtender;
@@ -45,6 +44,7 @@ import com.spazedog.lib.rootfw3.extenders.FilesystemExtender.MountStat;
 import com.spazedog.lib.rootfw3.extenders.MemoryExtender.SwapStat;
 import com.spazedog.lib.rootfw3.extenders.ShellExtender.ShellResult;
 import com.spazedog.mounts2sd.R;
+import com.spazedog.mounts2sd.tools.containers.ApplicationSession;
 import com.spazedog.mounts2sd.tools.containers.ApplicationSettings;
 import com.spazedog.mounts2sd.tools.containers.DeviceConfig;
 import com.spazedog.mounts2sd.tools.containers.DeviceProperties;
@@ -59,6 +59,8 @@ public class Preferences {
 	private DeviceProperties mDeviceProperties;
 	
 	private ApplicationSettings mApplicationSettings;
+	
+	private ApplicationSession mApplicationSession;
 	
 	private static Boolean oCacheChecked = false;
 	
@@ -95,6 +97,14 @@ public class Preferences {
 		}
 		
 		return mApplicationSettings;
+	}
+	
+	public ApplicationSession session() {
+		if (mApplicationSession == null) {
+			mApplicationSession = new ApplicationSession();
+		}
+		
+		return mApplicationSession;
 	}
 	
 	public Boolean loadAll(Boolean forceCheck) {

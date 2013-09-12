@@ -22,6 +22,7 @@ package com.spazedog.mounts2sd.tools;
 import java.lang.ref.WeakReference;
 
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.os.Environment;
 import android.os.StatFs;
 import android.view.View;
@@ -147,5 +148,12 @@ public class Utils {
 	    }
 
 	    return null;
+	}
+	
+	public static boolean checkLicenseKey(Context context) {
+	    PackageManager manager = context.getPackageManager();
+	    
+	    return manager.checkSignatures(context.getPackageName(), "com.spazedog.mounts2sd.unlock")
+	    		== PackageManager.SIGNATURE_MATCH;
 	}
 }

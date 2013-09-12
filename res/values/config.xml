@@ -17,4 +17,6 @@
     <string name="config_path_runner" translatable="false">/system/etc/init.d/10mounts2sd-runner</string>
     
     <string name="config_screen_type" translatable="false">normal</string>
+    
+    <bool name="config_unlocked" translatable="false">false</bool>
 </resources>

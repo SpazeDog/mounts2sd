@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import android.app.ProgressDialog;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -37,7 +38,6 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.spazedog.lib.taskmanager.Daemon;
 import com.spazedog.lib.taskmanager.Task;
 import com.spazedog.mounts2sd.tools.ExtendedActivity;
 import com.spazedog.mounts2sd.tools.Preferences;
@@ -46,7 +46,6 @@ import com.spazedog.mounts2sd.tools.Utils;
 import com.spazedog.mounts2sd.tools.Utils.Relay.Message;
 import com.spazedog.mounts2sd.tools.Utils.Relay.MessageReceiver;
 import com.spazedog.mounts2sd.tools.containers.DeviceSetup;
-import com.spazedog.mounts2sd.tools.containers.MessageItem;
 import com.spazedog.mounts2sd.tools.interfaces.DialogListener;
 import com.spazedog.mounts2sd.tools.interfaces.DialogMessageResponse;
 import com.spazedog.mounts2sd.tools.interfaces.TabController;
@@ -114,6 +113,15 @@ public class ActivityTabController extends ExtendedActivity implements OnClickLi
 		}
 		
 		Utils.Relay.Message.setReceiver(this);
+		
+		mPreferences.session().is_unlocked( getResources().getBoolean(R.bool.config_unlocked) || Utils.checkLicenseKey(this) );
+		
+		if (!mPreferences.session().is_unlocked()) {
+			View view = findViewById(R.id.tab_fragment_appmanager);
+			((ViewGroup) view.getParent()).removeView(view);
+			
+			mFragments.remove(R.id.tab_fragment_appmanager);
+		}
 	}
 	
 	@Override
