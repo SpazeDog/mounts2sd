@@ -23,7 +23,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import android.app.ProgressDialog;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -279,14 +278,12 @@ public class ActivityTabController extends ExtendedActivity implements OnClickLi
 	}
 	
 	private void stopLoader() {
-		DeviceSetup deviceSetup = mPreferences.deviceSetup();
-		
 		if (!mAsyncResult) {
 			if (isForeground() && getSupportFragmentManager().findFragmentByTag("TabControllerDialog") == null) {
 				if (!Root.isConnected()) {
 					new FragmentDialog.Builder(this, "TabControllerDialog", getResources().getString(R.string.message_error_su_headline)).showMessageDialog(getResources().getString(R.string.message_error_su_text), true);
 					
-				} else if (!deviceSetup.environment_busybox()) {
+				} else if (!mPreferences.deviceSetup().environment_busybox()) {
 					new FragmentDialog.Builder(this, "TabControllerDialog", getResources().getString(R.string.message_error_busybox_headline)).showMessageDialog(getResources().getString(R.string.message_error_busybox_text), true);
 					
 				} else {
@@ -295,6 +292,7 @@ public class ActivityTabController extends ExtendedActivity implements OnClickLi
 			}
 			
 		} else {
+			DeviceSetup deviceSetup = mPreferences.deviceSetup();
 			switchTabFragment(mCurFragment);
 			
 			if (deviceSetup.log_level() > 1) {
@@ -445,8 +443,10 @@ public class ActivityTabController extends ExtendedActivity implements OnClickLi
 		super.onDestroy();
 		
 		if (mBackPressed) {
-			Root.unlock("TabController");
-			Root.close();
+			if (Root.isConnected()) {
+				Root.unlock("TabController");
+				Root.close();
+			}
 			
 			System.exit(0);
 		}

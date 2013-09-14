@@ -685,12 +685,14 @@ public class Preferences {
 	public PersistentPreferences cached(String aName) {
 		SharedPreferences preferences = mContext.getSharedPreferences("cache", 0x00000000);
 		
-		if (!oCacheChecked) {
+		if (!oCacheChecked && Root.isConnected()) {
 			String tmpDir = mContext.getResources().getString(R.string.config_dir_tmp);
 			RootFW rootfw = Root.open();
 			String appid = mContext.getResources().getString(R.string.config_application_id);
 			
-			if (!rootfw.file(tmpDir + "/application.lock").exists() || !appid.equals("" + preferences.getInt("android.appId", 0))) {
+			if (!rootfw.file(tmpDir + "/application.lock").exists() || 
+					!appid.equals("" + preferences.getInt("android.appId", 0))) {
+				
 				Editor edit = preferences.edit();
 				
 				edit.clear();

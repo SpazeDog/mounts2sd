@@ -206,7 +206,7 @@ public class FragmentTabConfigure extends Fragment implements ViewClickListener,
 		
 		Boolean workingScript = deviceSetup.environment_startup_script();
 		Boolean workingSdext = workingScript && deviceSetup.path_device_map_sdext() != null;
-		Boolean safeMode = deviceSetup.init_implementation().equals("service") && !deviceProperties.disable_safemode();
+		Boolean safeMode = "service".equals(deviceSetup.init_implementation()) && !deviceProperties.disable_safemode();
 		
 		mOptionContentApps.setEnabled(workingSdext);
 		mOptionContentData.setEnabled(workingSdext && !safeMode);

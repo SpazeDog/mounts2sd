@@ -46,7 +46,7 @@ public class Root {
 			});
 			
 		} else if (!oConnected) {
-			oInstance.get().connect();
+			oConnected = oInstance.get().connect();
 		}
 		
 		return oConnected;
