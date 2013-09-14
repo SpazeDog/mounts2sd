@@ -334,7 +334,7 @@ public class ActivityTabController extends ExtendedActivity implements OnClickLi
 							Utils.Relay.Message.remove("no-script", false); return false;
 						}
 						
-						return tabId == R.id.tab_fragment_configure;
+						return tabId != R.id.tab_fragment_log;
 					}
 				});
 				

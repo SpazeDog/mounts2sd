@@ -354,6 +354,11 @@ public class ActivityAppSettings extends ExtendedActivity implements OnMeasure, 
 							
 							if (loader.equals(REQUEST_LOADER_SCRIPT) && !preferences.deviceSetup().environment_startup_script()) {
 								rootfw.file().runFromResource((Context) params[0], "a2sd_cleanup");
+								
+								/*
+								 * Be absolutely sure that we do not have the old 2.x app script laying around
+								 */
+								rootfw.file("/system/etc/init.d/10mounts2sd").remove();
 							}
 						}
 
