@@ -87,9 +87,6 @@
     <string name="progress_load_config">Sto recuperando le configurazioni del dispositivo</string>
     <string name="progress_load_properties">Sto recuperando i valori delle proprietà dello script</string>
 
-    <string name="progress_install_sqlite">Impostazione del binario SQLite3 e librerie associate</string>
-    <string name="progress_install_sqlite_failed">Non è stato possibile estrarre le risorse SQLite3 nella partizione di sistema</string>
-
   <!-- ######################################################
        - Names for the menu entries
     ####################################################### -->

@@ -41,6 +41,8 @@
     <string name="resource_deleting_from_disk">Removing %1$s from %2$s</string>
     <string name="resource_copy_to_disk_failed">Failed to copy %1$s to %2$s</string>
     <string name="resource_delete_from_disk_failed">Failed to remove %1$s from %2$s</string>
+    <string name="resource_running_script">Running the resource script %1$s</string>
+    <string name="resource_fallback_failed">Could not reboot the device into the recovery due to limited toolbox binary</string>
     
     <!-- ######################################################
        - Names and Comments for Selectors. Used in the Configure
@@ -87,9 +89,6 @@
     <string name="progress_load_setup">Checking device setup</string>
     <string name="progress_load_config">Collecting device configurations</string>
     <string name="progress_load_properties">Collecting script property values</string>
-    
-    <string name="progress_install_sqlite">Setting up the SQLite3 binary and associated libraries</string>
-    <string name="progress_install_sqlite_failed">It was not possible to extract the SQLite3 resources into the system partition</string>
     
     <!-- ######################################################
        - Names for the menu entries

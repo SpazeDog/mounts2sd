@@ -41,6 +41,8 @@
     <string name="resource_deleting_from_disk">Fjerner %1$s fra %2$s</string>
     <string name="resource_copy_to_disk_failed">Det var ikke muligt at kopiere %1$s til %2$s</string>
     <string name="resource_delete_from_disk_failed">Det var ikke muligt at fjerne %1$s fra %2$s</string>
+    <string name="resource_running_script">Eksekvere resurce scriptet %1$s</string>
+    <string name="resource_fallback_failed">Kunne ikke genstarte enheden i recovery grundet begrænset toolbox binær</string>
     
     <!-- ######################################################
        - Names and Comments for Selectors. Used in the Configure
@@ -87,9 +89,6 @@
     <string name="progress_load_setup">Tjekker enheds opsætning</string>
     <string name="progress_load_config">Indlæser enheds konfigurationer</string>
     <string name="progress_load_properties">Indlæser script konfigurationer</string>
-    
-    <string name="progress_install_sqlite">Opsætter den SQLite3 binære fil samt tilhørende biblioteker</string>
-    <string name="progress_install_sqlite_failed">Det var ikke muligt at udtrække SQLite3 ressourcerne til system partitionen</string>
     
     <!-- ######################################################
        - Names for the menu entries

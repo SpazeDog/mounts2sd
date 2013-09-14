@@ -161,8 +161,9 @@ public class Preferences {
 				Bundle setupData = new Bundle();
 				RootFW rootfw = Root.open();
 				
+				String pathBusybox = mContext.getResources().getString(R.string.config_path_busybox);
+				
 				if (settings().use_builtin_busybox()) {
-					String pathBusybox = mContext.getResources().getString(R.string.config_path_busybox);
 					FileExtender.File busyboxFile = rootfw.file(pathBusybox);
 					
 					if (!busyboxFile.exists() || 
@@ -170,11 +171,22 @@ public class Preferences {
 						
 						busyboxFile.extractFromResource(mContext, "busybox", "0777", "0", "0");
 					}
+					
+					setupData.putBoolean("environment_busybox_internal", busyboxFile.exists());
+					
+				} else {
+					setupData.putBoolean("environment_busybox_internal", rootfw.file(pathBusybox).exists());
 				}
 				
 				if (rootfw.busybox().exists()) {
 					String[] loopContainer;
 					FileExtender.File scriptFile = rootfw.file( mContext.getResources().getString(R.string.config_path_script) );
+					
+					if (rootfw.filesystem("/system").addMount(new String[]{"remount", "rw"}) && rootfw.file("/system/S_On.test").write("1") && "1".equals(rootfw.file("/system/S_On.test").readOneLine())) {
+						rootfw.file("/system/S_On.test").remove();
+						setupData.putBoolean("environment_secure_flag_off", true);
+					}
+					rootfw.filesystem("/system").addMount(new String[]{"remount", "ro"});
 					
 					if (scriptFile.exists() && rootfw.file( mContext.getResources().getString(R.string.config_path_runner) ).exists()) {
 						String scriptId = scriptFile.readOneMatch("@id");

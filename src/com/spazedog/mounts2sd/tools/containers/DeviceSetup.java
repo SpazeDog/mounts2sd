@@ -60,8 +60,10 @@ public final class DeviceSetup {
 		else if (aKey.equals("type_device_sdext")) return (Object) type_device_sdext();
 		else if (aKey.equals("safemode")) return (Object) safemode();
 		else if (aKey.equals("environment_busybox")) return (Object) environment_busybox();
+		else if (aKey.equals("environment_busybox_internal")) return (Object) environment_busybox_internal();
 		else if (aKey.equals("environment_multiple_binaries")) return (Object) environment_multiple_binaries();
 		else if (aKey.equals("environment_startup_script")) return (Object) environment_startup_script();
+		else if (aKey.equals("environment_secure_flag_off")) return (Object) environment_secure_flag_off();
 		else if (aKey.equals("id_startup_script")) return (Object) id_startup_script();
 		else if (aKey.equals("version_startup_script")) return (Object) version_startup_script();
 		else if (aKey.equals("log_level")) return (Object) log_level();
@@ -183,12 +185,20 @@ public final class DeviceSetup {
 		return mCached.getBoolean("environment_busybox", false);
 	}
 	
+	public Boolean environment_busybox_internal() {
+		return mCached.getBoolean("environment_busybox_internal", false);
+	}
+	
 	public Boolean environment_multiple_binaries() {
 		return mCached.getBoolean("environment_multiple_binaries", false);
 	}
 	
 	public Boolean environment_startup_script() {
 		return mCached.getBoolean("environment_startup_script", false);
+	}
+	
+	public Boolean environment_secure_flag_off() {
+		return mCached.getBoolean("environment_secure_flag_off", false);
 	}
 	
 	public Integer id_startup_script() {

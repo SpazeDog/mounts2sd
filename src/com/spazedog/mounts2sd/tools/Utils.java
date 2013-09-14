@@ -156,4 +156,11 @@ public class Utils {
 	    return manager.checkSignatures(context.getPackageName(), "com.spazedog.mounts2sd.unlock")
 	    		== PackageManager.SIGNATURE_MATCH;
 	}
+	
+	public static void wait(int time) {
+		try {
+			Thread.sleep(time);
+			
+		} catch (Throwable e) {}
+	}
 }
