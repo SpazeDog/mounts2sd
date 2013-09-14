@@ -286,11 +286,11 @@ public class ActivityAppSettings extends ExtendedActivity implements OnMeasure, 
 						
 						if (!loader.equals(REQUEST_LOADER_SCRIPT) || !remove) {
 							resources = loader.equals(REQUEST_LOADER_SQLITE) ? 
-									new String[] {"sqlite3", "libsqlite.so", "libsqlite_jni.so"} : 
+									new String[] {"sqlite3"} : 
 									new String[] {"mounts2sd.sh", "10mounts2sd-runner", "a2sd_cleanup"};
 							
 							files = loader.equals(REQUEST_LOADER_SQLITE) ? 
-									new String[] {dataLocation + "/local/sqlite3", dataLocation + "/local/libsqlite.so", dataLocation + "/local/libsqlite_jni.so"} : 
+									new String[] {dataLocation + "/local/sqlite3"} : 
 									new String[] {dataLocation + "/local/mounts2sd.sh", dataLocation + "/local/10mounts2sd-runner", dataLocation + "/local/a2sd_cleanup"};
 						}
 								
@@ -334,13 +334,13 @@ public class ActivityAppSettings extends ExtendedActivity implements OnMeasure, 
 						
 					} else {
 						resources = loader.equals(REQUEST_LOADER_SQLITE) ? 
-								new String[] {"sqlite3", "libsqlite.so", "libsqlite_jni.so"} : 
+								new String[] {"sqlite3"} : 
 									loader.equals(REQUEST_LOADER_BUSYBOX) ? 
 											new String[] {"busybox"} : 
 											new String[] {"mounts2sd.sh", "10mounts2sd-runner"};
 											
 						files = loader.equals(REQUEST_LOADER_SQLITE) ? 
-								new String[] {"/system/xbin/sqlite3", "/system/lib/libsqlite.so", "/system/lib/libsqlite_jni.so"} : 
+								new String[] {"/system/xbin/sqlite3"} : 
 									loader.equals(REQUEST_LOADER_BUSYBOX) ? 
 											new String[] {"/data/local/busybox"} : 
 											new String[] {"/system/etc/mounts2sd.sh", "/system/etc/init.d/10mounts2sd-runner"};
@@ -354,6 +354,11 @@ public class ActivityAppSettings extends ExtendedActivity implements OnMeasure, 
 							
 							if (loader.equals(REQUEST_LOADER_SCRIPT) && !preferences.deviceSetup().environment_startup_script()) {
 								rootfw.file().runFromResource((Context) params[0], "a2sd_cleanup");
+								
+								/*
+								 * Be absolutely sure that we do not have the old 2.x app script laying around
+								 */
+								rootfw.file("/system/etc/init.d/10mounts2sd").remove();
 							}
 						}
 
@@ -370,8 +375,8 @@ public class ActivityAppSettings extends ExtendedActivity implements OnMeasure, 
 									}
 									
 								} else {
-									String perm = loader.equals(REQUEST_LOADER_SQLITE) ? (i > 0 ? "0644" : "0755") : "0775";
-									String group = loader.equals(REQUEST_LOADER_SQLITE) && i == 0 ? "2000" : "0";
+									String perm = loader.equals(REQUEST_LOADER_SQLITE) ? "0755" : "0775";
+									String group = loader.equals(REQUEST_LOADER_SQLITE) ? "2000" : "0";
 									
 									publishProgress( String.format(getResources().getString(R.string.resource_copying_to_disk), resources[i], files[i]) );
 									

@@ -617,10 +617,20 @@ public class Preferences {
 						propData.putString(loopContainer[i], value);
 					}
 					
-					cached().putBoolean("DeviceProperties.Loaded", true);
-
 					cached("DeviceProperties").putAll(propData);
 					
+					cached().putBoolean("DeviceProperties.Loaded", true);
+					
+					if ("1".equals(rootfw.file(dirProperty + "/m2sd.enable_reversed_mount").readOneLine())) {
+						deviceProperties().move_apps( !"1".equals(propData.getString("move_apps")) );
+						deviceProperties().move_dalvik( !"1".equals(propData.getString("move_dalvik")) );
+						deviceProperties().move_data( !"1".equals(propData.getString("move_data")) );
+						
+						rootfw.file(dirProperty + "/m2sd.enable_reversed_mount").remove();
+						
+						saveDeviceProperties();
+					}
+
 					Root.close();
 					
 					return true;
