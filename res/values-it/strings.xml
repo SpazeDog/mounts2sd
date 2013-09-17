@@ -24,7 +24,8 @@
     <string name="tab_name_overview">Panoramica</string>
     <string name="tab_name_configure">Configura</string>
     <string name="tab_name_log">Registro</string>
-    
+    <string name="tab_name_appmanager">Gestore App</string>
+
     <!-- ######################################################
        - General strings
     ####################################################### -->
@@ -40,7 +41,9 @@
     <string name="resource_deleting_from_disk">Sto rimuovendo %1$s da %2$s</string>
     <string name="resource_copy_to_disk_failed">Impossibile copiare %1$s in %2$s</string>
     <string name="resource_delete_from_disk_failed">Impossibile rimuovere %1$s da %2$s</string>
-    
+    <string name="resource_running_script">Esecuzione dello script di risorsa %1$s</string>
+    <string name="resource_fallback_failed">Impossibile riavviare il dispositivo in recovery a causa della limitazione del binario toolbox</string>
+
     <!-- ######################################################
        - Names and Comments for Selectors. Used in the Configure
        - Tab for everything not providing a checkbox to select
@@ -189,16 +192,16 @@
     ####################################################### -->
     <string name="option_storage_description_cache">Sposta la partizione cache in data o sd-ext</string>
     
-    <string name="option_system_description_threshold">Quando spazio deve essere lasciato in data per poter installare le applicazioni</string>
+    <string name="option_system_description_threshold">Quanto spazio deve essere lasciato in data per poter installare le applicazioni</string>
     
     <string name="option_content_description_apps">Sposta le applicazioni in sd-ext</string>
     <string name="option_content_description_libs">Sposta le librerie delle applicazioni in sd-ext</string>
     <string name="option_content_description_data">Sposta i dati delle applicazioni in sd-ext</string>
-    <string name="option_content_description_dalvik">Sposta le caches dalvikv delle applicazioni in sd-ext</string>
+    <string name="option_content_description_dalvik">Sposta le caches dalvikvm delle applicazioni in sd-ext</string>
     <string name="option_content_description_media">Sposta l\'archiviazione interna (/data/media) in sd-ext</string>
     <string name="option_content_description_system">Sposta tutti i dati memorizzati dai file di sistema in sd-ext</string>
     
-    <string name="option_memory_description_swap">Abilita SWAP (terza partizione nella sdcard)</string>
+    <string name="option_memory_description_swap">Abilita SWAP (terza partizione della sdcard)</string>
     <string name="option_memory_description_zram">Abilita ZRAM (Piccola partizione di SWAP mantenuta in memoria per l\'indicizzazione)</string>
     <string name="option_memory_description_swappiness">Specifica l\'aggressività dello swapping</string>
     
@@ -235,5 +238,16 @@
     ####################################################### -->
     <string name="notify_no_config">Impossibile caricare le configurazioni dell\'applicazione</string>
     <string name="notify_log_details">Uno o più Errori/Avvertenze sono state rilevate nel registro</string>
-    
+
+    <!-- ######################################################
+       - Strings for the app manager
+    ####################################################### -->
+    <string name="manager_app_list_loader">Preparazione Elenco Applicazioni</string>
+    <string name="manager_app_conversion_loader">Gestione conversione delle applicazioni</string>
+    <string name="manager_app_converted_reboot">Sarà necessario riavviare il dispositivo per far si che le modifiche abbiano effetto</string>
+    <string name="manager_app_conversion_failed">La conversione dell\'applicazione è fallita</string>
+    <string name="manager_app_unregister_message">Vuoi annullare la registrazione di questa applicazione come applicazione di sistema e ripristinare il suo stato come una normale applicazione?</string>
+    <string name="manager_app_register_message">Vuoi registrare questo applicazione come applicazione di sistema? Devi essere consapevole del fatto che le applicazioni di sistema hanno privilegi più elevati! Si noti inoltre che l\'applicazione non sarà trasferita nella partizione di sistema. Rimarrà nella sua partizione attuale e solo il suo stato sarà alterato.</string>
+    <string name="manager_app_conversion_notice">È necessario un riavvio perché la modifica abbia effetto. Nel frattempo questa applicazione non sarà disponibile!</string>
+
 </resources>
