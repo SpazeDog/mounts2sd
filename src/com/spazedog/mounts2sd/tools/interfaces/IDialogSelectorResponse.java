@@ -19,6 +19,6 @@
 
 package com.spazedog.mounts2sd.tools.interfaces;
 
-public interface DialogListener {
-
+public interface IDialogSelectorResponse extends IDialogListener {
+	public void onDialogSelect(String tag, String value);
 }

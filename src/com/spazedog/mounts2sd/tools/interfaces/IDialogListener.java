@@ -17,29 +17,6 @@
  * along with Mounts2SD. If not, see <http://www.gnu.org/licenses/>
  */
 
-package com.spazedog.mounts2sd.tools.containers;
+package com.spazedog.mounts2sd.tools.interfaces;
 
-import android.content.Context;
-
-public abstract class MessageItem {
-	
-	private String mTag;
-	private String mMessage;
-	
-	public MessageItem(String aTag, String aMessage) {
-		mTag = aTag;
-		mMessage = aMessage;
-	}
-	
-	public final String tag() {
-		return mTag;
-	}
-	
-	public final String message() {
-		return mMessage;
-	}
-	
-	public Boolean onVisibilityChange(Context context, Integer tabId, Boolean visible) {
-		return true;
-	}
-}
+public interface IDialogListener {}

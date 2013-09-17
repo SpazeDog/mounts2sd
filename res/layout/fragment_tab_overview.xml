@@ -59,6 +59,17 @@
         
         <View style="?content_itemDivider" android:id="@+id/item_divider" />
         
+        <LinearLayout style="?content_itemWrapper" android:id="@+id/option_content_item_sysapps">
+            <LinearLayout style="?content_itemWrapper_inline">
+                <TextView style="?content_itemNameField_inline" android:layout_weight="2" android:id="@+id/item_name" android:text="@string/option_content_item_sysapps" />
+                <TextView style="?content_itemValueField_inline" android:id="@+id/item_value_extra" android:layout_height="match_parent" android:gravity="center_vertical" />
+                <ImageView style="?content_itemStatusIcon" android:id="@+id/item_icon" />
+            </LinearLayout>
+            <TextView style="?content_itemDescription" android:id="@+id/item_message" android:visibility="gone" />
+        </LinearLayout>
+        
+        <View style="?content_itemDivider" android:id="@+id/item_divider" />
+        
         <LinearLayout style="?content_itemWrapper" android:id="@+id/option_content_item_libs">
             <LinearLayout style="?content_itemWrapper_inline">
                 <TextView style="?content_itemNameField_inline" android:layout_weight="2" android:id="@+id/item_name" android:text="@string/option_content_item_libs" />

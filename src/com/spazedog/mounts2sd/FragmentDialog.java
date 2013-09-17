@@ -39,43 +39,61 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.spazedog.lib.rootfw3.RootFW;
-import com.spazedog.lib.rootfw3.extenders.MemoryExtender.MemStat;
 import com.spazedog.mounts2sd.tools.ExtendedLayout;
 import com.spazedog.mounts2sd.tools.ExtendedLayout.OnMeasure;
 import com.spazedog.mounts2sd.tools.Preferences;
-import com.spazedog.mounts2sd.tools.Root;
-import com.spazedog.mounts2sd.tools.Utils;
 import com.spazedog.mounts2sd.tools.ViewEventHandler;
 import com.spazedog.mounts2sd.tools.ViewEventHandler.ViewClickListener;
-import com.spazedog.mounts2sd.tools.interfaces.DialogConfirmResponse;
-import com.spazedog.mounts2sd.tools.interfaces.DialogListener;
-import com.spazedog.mounts2sd.tools.interfaces.DialogMessageResponse;
-import com.spazedog.mounts2sd.tools.interfaces.DialogSelectorResponse;
+import com.spazedog.mounts2sd.tools.interfaces.IDialogConfirmResponse;
+import com.spazedog.mounts2sd.tools.interfaces.IDialogCustomLayout;
+import com.spazedog.mounts2sd.tools.interfaces.IDialogListener;
+import com.spazedog.mounts2sd.tools.interfaces.IDialogMessageResponse;
 
 public class FragmentDialog extends DialogFragment implements OnMeasure, ViewClickListener {
 	
 	private Bundle mArguments;
+	private Bundle mExtra;
 	
-	private DialogListener mListener;
+	private IDialogListener mListener;
 	
-	private String mSelected;
+	@Override
+	public void onAttach(Activity activity) {
+		super.onAttach(activity);
+		
+		if (getArguments().getBoolean("fragment")) {
+			mListener = (IDialogListener) getParentFragment();
+			
+		} else {
+			mListener = (IDialogListener) activity;
+		}
+	}
 	
-	private static Double oDataSize;
-	private static Double oMeminfo;
+	@Override
+	public void onSaveInstanceState(Bundle savedInstanceState) {
+		savedInstanceState.putBundle("extra", mExtra);
+
+		super.onSaveInstanceState(savedInstanceState);
+	}
 	
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 		super.onCreateDialog(savedInstanceState);
 		
-		if (savedInstanceState != null) {
-			mSelected = savedInstanceState.getString("mSelected");
-		}
-		
 		mArguments = getArguments();
 		
+		if (savedInstanceState != null) {
+			mExtra = savedInstanceState.getBundle("extra");
+			
+		} else {
+			mExtra = mArguments.getBundle("extra");
+			
+			if (mExtra == null) {
+				mExtra = new Bundle();
+			}
+		}
+		
 		LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		Dialog dialog = (Dialog) new Dialog(getActivity(), new Preferences(getActivity()).theme());
+		Dialog dialog = (Dialog) new Dialog(getActivity(), Preferences.getInstance(getActivity()).theme());
 		
 		dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		dialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
@@ -85,44 +103,33 @@ public class FragmentDialog extends DialogFragment implements OnMeasure, ViewCli
 		
 		if (mArguments.getString("type").equals("message")) {
 			layout = (ExtendedLayout) inflater.inflate(R.layout.dialog_message, null);
-			
 			layout.findViewById(R.id.dialog_close_button).setOnTouchListener(new ViewEventHandler(this));
 			
-			((TextView) layout.findViewById(R.id.dialog_textbox)).setText(mArguments.getString("message"));
-			
-		} else if (mArguments.getString("type").equals("confirm")) {
+		} else {
 			layout = (ExtendedLayout) inflater.inflate(R.layout.dialog_confirm, null);
-			
 			layout.findViewById(R.id.dialog_cancel_button).setOnTouchListener(new ViewEventHandler(this));
 			layout.findViewById(R.id.dialog_okay_button).setOnTouchListener(new ViewEventHandler(this));
+		}
+		
+		((TextView) layout.findViewById(R.id.dialog_title)).setText(mArguments.getString("title"));
+		
+		if (mArguments.getBoolean("custom")) {
+			ViewGroup scroller = (ViewGroup) layout.findViewById(R.id.dialog_textbox).getParent();
 			
-			((TextView) layout.findViewById(R.id.dialog_textbox)).setText(mArguments.getString("message"));
+			scroller.removeView(layout.findViewById(R.id.dialog_textbox));
+			scroller.addView(
+				((IDialogCustomLayout) mListener).onDialogCreateView(mArguments.getString("tag"), inflater, scroller, mExtra)
+			);
 			
 		} else {
-			layout = (ExtendedLayout) inflater.inflate(R.layout.dialog_selector, null);
-			
-			layout.findViewById(R.id.dialog_cancel_button).setOnTouchListener(new ViewEventHandler(this));
-			layout.findViewById(R.id.dialog_okay_button).setOnTouchListener(new ViewEventHandler(this));
-			
-			inflateSelector( layout.findViewById(R.id.dialog_placeholder) );
+			((TextView) layout.findViewById(R.id.dialog_textbox)).setText(mArguments.getString("message"));
 		}
 		
 		layout.setOnMeasure(this);
 
 		dialog.addContentView(layout, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
 		
-		((TextView) dialog.findViewById(R.id.dialog_title)).setText(mArguments.getString("title"));
-		
 		return dialog;
-	}
-	
-	@Override
-	public void onSaveInstanceState(Bundle savedInstanceState) {
-		if (mSelected != null) {
-			savedInstanceState.putString("mSelected", mSelected);
-		}
-
-		super.onSaveInstanceState(savedInstanceState);
 	}
 	
 	@Override
@@ -161,143 +168,42 @@ public class FragmentDialog extends DialogFragment implements OnMeasure, ViewCli
 	}
 	
 	@Override
-	public void onAttach(Activity activity) {
-		super.onAttach(activity);
-		
-		if (getArguments().getBoolean("fragment")) {
-			mListener = (DialogListener) getParentFragment();
-			
-		} else {
-			mListener = (DialogListener) activity;
+	public void onViewCreated(View view, Bundle savedInstanceState) {
+		if (mArguments.getBoolean("custom")) {
+			((IDialogCustomLayout) mListener).onDialogViewCreated(mArguments.getString("tag"), view, mExtra);
 		}
 	}
 
 	@Override
 	public void onViewClick(View v) {
+		dismiss();
+		
 		if (mArguments.getString("type").equals("message")) {
-			dismiss();
+			((IDialogMessageResponse) mListener).onDialogClose(mArguments.getString("tag"), mArguments.getBoolean("quit"), mExtra);
 			
-			((DialogMessageResponse) mListener).onDialogClose(mArguments.getString("tag"), mArguments.getBoolean("quit"));
-		
-		} else if (mArguments.getString("type").equals("confirm")) {
-			dismiss();
-			
-			((DialogConfirmResponse) mListener).onDialogConfirm(mArguments.getString("tag"), v.getId() == R.id.dialog_okay_button);
-
 		} else {
-			if (v.getId() == R.id.dialog_cancel_button || v.getId() == R.id.dialog_okay_button) {
-				dismiss();
-				
-				if (v.getId() == R.id.dialog_okay_button && mSelected != null) {
-					((DialogSelectorResponse) mListener).onDialogSelect(mArguments.getString("tag"), mSelected);
-				}
-				
-			} else {
-				ViewGroup view = (ViewGroup) v.getParent();
-				
-				for (int i=0; i < view.getChildCount(); i++) {
-					View child = view.getChildAt(i);
-					
-					if (child == v) {
-						child.setSelected(true);
-								
-						mSelected = (String) child.getTag();
-						
-					} else {
-						child.setSelected(false);
-					}
-				}
-			}
-		}
-	}
-	
-	private void inflateSelector(View view) {
-		String name = mArguments.getString("selector");
-		String defValue = mArguments.getString("defValue");
-		String[] enabledValues = mArguments.getStringArray("enabledValues");
-		
-		Integer iSelectorNames = getResources().getIdentifier("selector_" + name + "_names", "array", getActivity().getPackageName());
-		Integer iSelectorValues = getResources().getIdentifier("selector_" + name + "_values", "array", getActivity().getPackageName());
-		Integer iSelectorComments = getResources().getIdentifier("selector_" + name + "_comments", "array", getActivity().getPackageName());
-		
-		LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		
-		if (iSelectorNames != 0 && iSelectorValues != 0) {
-			String[] lSelectorNames = getResources().getStringArray(iSelectorNames);
-			String[] lSelectorValues = getResources().getStringArray(iSelectorValues);
-			String[] lSelectorComments = iSelectorComments != 0 ? getResources().getStringArray(iSelectorComments) : new String[lSelectorNames.length];
-			
-			for (int i=0; i < lSelectorNames.length; i++) {
-				ViewGroup itemView = (ViewGroup) inflater.inflate(R.layout.inflate_selector_item, (ViewGroup) view, false);
-				Boolean enabled = true;
-				
-				if (enabledValues != null) {
-					for (int x=0; x < enabledValues.length; x++) {
-						if (enabledValues[x].equals(lSelectorValues[i])) {
-							enabled = true; break;
-						}
-						
-						enabled = false;
-					}
-				}
-				
-				if (name.equals("threshold")) {
-					if (oDataSize == null) {
-						oDataSize = Utils.getDiskTotal("/data");
-					}
-
-					lSelectorComments[i] = Utils.convertPrifix((oDataSize * (Double.parseDouble(lSelectorValues[i]) / 100)));
-					
-				} else if (name.equals("zram")) {
-					if (oMeminfo == null) {
-						RootFW rootfw = Root.open();
-						MemStat memstat = rootfw.memory().getUsage();
-						oMeminfo = 0D;
-						
-						if (memstat != null) {
-							oMeminfo = memstat.memTotal().doubleValue();
-							
-						} else {
-							oMeminfo = 0D;
-						}
-						
-						Root.close();
-					}
-					
-					lSelectorComments[i] = Utils.convertPrifix((oMeminfo * (Double.parseDouble(lSelectorValues[i]) / 100)));
-				}
-				
-				((TextView) itemView.findViewById(R.id.item_name)).setText(lSelectorNames[i]);
-				
-				if (lSelectorComments[i] != null && !lSelectorComments[i].equals("")) {
-					((TextView) itemView.findViewById(R.id.item_description)).setText(lSelectorComments[i]);
-				}
-				
-				itemView.setSelected( mSelected != null ? lSelectorValues[i].equals(mSelected) : lSelectorValues[i].equals(defValue) );
-				itemView.setEnabled(enabled);
-				itemView.setTag(lSelectorValues[i]);
-				itemView.setOnTouchListener(new ViewEventHandler(this));
-				
-				if (i > 0) {
-					inflater.inflate(R.layout.inflate_selector_divider, (ViewGroup) view);
-				}
-				
-				((ViewGroup) view).addView(itemView);
-			}
+			((IDialogConfirmResponse) mListener).onDialogConfirm(mArguments.getString("tag"), v.getId() == R.id.dialog_okay_button, mExtra);
 		}
 	}
 	
 	public static class Builder {
-		
-		private WeakReference<DialogListener> mListener;
+		private WeakReference<IDialogListener> mListener;
 		private String mTag;
 		private Bundle mArguments = new Bundle();
 		
-		public Builder(DialogListener listener, String tag, String title) {
-			mListener = new WeakReference<DialogListener>(listener);
+		public Builder(IDialogListener listener, String tag, String title, Bundle extra) {
+			mListener = new WeakReference<IDialogListener>(listener);
 			
 			mArguments.putString("tag", (mTag = tag));
 			mArguments.putString("title", title);
+			mArguments.putBundle("extra", extra);
+		}
+		
+		public FragmentDialog showCustomConfirmDialog() {
+			mArguments.putString("type", "confirm");
+			mArguments.putBoolean("custom", true);
+			
+			return show();
 		}
 		
 		public FragmentDialog showConfirmDialog(String message) {
@@ -307,27 +213,18 @@ public class FragmentDialog extends DialogFragment implements OnMeasure, ViewCli
 			return show();
 		}
 		
-		public FragmentDialog showMessageDialog(String message) {
-			return showMessageDialog(message, false);
+		public FragmentDialog showCustomMessageDialog(Boolean quitOnClose) {
+			mArguments.putString("type", "message");
+			mArguments.putBoolean("quit", quitOnClose);
+			mArguments.putBoolean("custom", true);
+			
+			return show();
 		}
 		
 		public FragmentDialog showMessageDialog(String message, Boolean quitOnClose) {
 			mArguments.putString("type", "message");
 			mArguments.putString("message", message);
 			mArguments.putBoolean("quit", quitOnClose);
-			
-			return show();
-		}
-		
-		public FragmentDialog showSelectorDialog(String selector, String defaultValue) {
-			return showSelectorDialog(selector, defaultValue, null);
-		}
-		
-		public FragmentDialog showSelectorDialog(String selector, String defaultValue, String[] enabledValues) {
-			mArguments.putString("type", "selector");
-			mArguments.putString("selector", selector);
-			mArguments.putString("defValue", defaultValue);
-			mArguments.putStringArray("enabledValues", enabledValues);
 			
 			return show();
 		}

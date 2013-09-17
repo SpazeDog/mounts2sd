@@ -20,6 +20,6 @@
 package com.spazedog.mounts2sd.tools.interfaces;
 
 
-public interface TabController {
-	public void frameUpdated();
+public interface ITabController {
+	public void onTabUpdate();
 }

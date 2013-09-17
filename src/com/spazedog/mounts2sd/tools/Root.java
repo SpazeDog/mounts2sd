@@ -1,18 +1,14 @@
 package com.spazedog.mounts2sd.tools;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import com.spazedog.lib.rootfw3.RootFW;
-import com.spazedog.lib.rootfw3.extenders.InstanceExtender;
-import com.spazedog.lib.rootfw3.extenders.InstanceExtender.InstanceCallback;
+import com.spazedog.lib.rootfw3.RootFW.ConnectionController;
+import com.spazedog.lib.rootfw3.RootFW.ConnectionListener;
 
 public class Root {
-	private static InstanceExtender.Instance oInstance;
 	
-	private static Set<String> oLocks = new HashSet<String>();
+	private static Boolean mLocked = false;
 	
-	private static Boolean oConnected = false;
+	private static Boolean mIsConnected = false;
 	
 	static {
 		/* Make sure that either our busybox or the ROM's has first priority above possible existing /sbin */
@@ -21,70 +17,56 @@ public class Root {
 		
 		RootFW.Config.LOG = RootFW.E_DEBUG|RootFW.E_ERROR|RootFW.E_INFO|RootFW.E_WARNING;
 		RootFW.Config.Connection.TIMEOUT = 10000;
+		
+		RootFW.getSharedRoot().addInstanceController(new ConnectionController(){
+			@Override
+			public Boolean onConnectionEstablishing(RootFW instance) {
+				return true;
+			}
+
+			@Override
+			public Boolean onConnectionClosing(RootFW instance) {
+				return !mLocked;
+			}
+		});
+		
+		RootFW.getSharedRoot().addInstanceListener(new ConnectionListener(){
+			@Override
+			public void onConnectionEstablished(RootFW instance) {
+				mIsConnected = true;
+			}
+
+			@Override
+			public void onConnectionFailed(RootFW instance) {
+				mIsConnected = false;
+			}
+
+			@Override
+			public void onConnectionClosed(RootFW instance) {
+				mIsConnected = false;
+			}
+		});
+		
+		mIsConnected = RootFW.getSharedRoot().isConnected();
+	}
+	
+	public static RootFW initiate() {
+		return (RootFW) RootFW.getSharedRoot().addLock();
+	}
+	
+	public static void release() {
+		RootFW.getSharedRoot().removeLock().disconnect();
+	}
+	
+	public static void lock() {
+		mLocked = true;
+	}
+	
+	public static void unlock() {
+		mLocked = false;
 	}
 	
 	public static Boolean isConnected() {
-		if (oInstance == null) {
-			oInstance = RootFW.rootInstance();
-			oConnected = oInstance.get().isConnected();
-			
-			oInstance.addCallback(new InstanceCallback() {
-				@Override
-				public void onConnect(RootFW instance) {
-					oConnected = true;
-				}
-				
-				@Override
-				public void onDisconnect(RootFW instance) {
-					oConnected = false;
-				}
-				
-				@Override
-				public void onFailed(RootFW instance) {
-					oConnected = false;
-				}
-			});
-			
-		} else if (!oConnected) {
-			oConnected = oInstance.get().connect();
-		}
-		
-		return oConnected;
-	}
-	
-	public static RootFW open() {
-		if (isConnected()) {
-			return oInstance.get();
-		}
-		
-		return null;
-	}
-	
-	public static void close() {
-		if (oLocks.size() == 0) {
-			oInstance.get().disconnect();
-		}
-	}
-	
-	public static Boolean lock(String name) {
-		if (isConnected() && !oLocks.contains(name)) {
-			oLocks.add(name);
-			oInstance.lock();
-			
-			return true;
-		}
-		
-		return false;
-	}
-	
-	public static Boolean unlock(String name) {
-		if (oConnected && oLocks.contains(name)) {
-			oLocks.remove(name);
-			oInstance.unlock();
-			
-			return true;
-		}
-		
-		return false;
+		return mIsConnected;
 	}
 }

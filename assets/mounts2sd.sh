@@ -1,7 +1,7 @@
 #!/system/bin/sh
 #####
-# @id 2013090901
-# @version 6.0.10
+# @id 2013091701
+# @version 6.0.12
 #####
 # This file is part of the Mounts2SD Project: https://github.com/spazedog/mounts2sd
 #  
@@ -41,6 +41,7 @@ export iLogReset=false
 ListProperties() {
 $_cat <<EOF > $iDirTmp/function.list_properties.tmp
 move_apps 1
+move_sysapps 0
 move_dalvik 0
 move_data 0
 move_libs 0
@@ -560,80 +561,79 @@ ProcessStorage() {
         local lStatus
 
         if $_grep -q "$lDevice" /proc/mounts; then
-            Log i "The device '$lDevice' has already been mounted. Unmounting in order to proceed"
-            DetachMount $lDevice
-        fi 
-
-        if $_test $(Session get prop_run_sdext_fschk 0) -eq 1; then
-            if ! $_test -z "$_e2fsck"; then
-                Log v "Running a file system check on '$lDevice'"
-                lShellError=$($_e2fsck -y -D $lDevice 2>&1); lStatus=$?
-
-                if $_test $lStatus -gt 0 && $_test $lStatus -lt 4; then
-                    Log i "Error detected while checking '$lDevice'. Auto correction was performed!"
-
-                elif $_test $lStatus -gt 0; then
-                    Log w "Error detected while checking '$lDevice'. Everything was left uncorrected!"
-                fi
-
-                $_echo $lStatus > $iDirTmp/e2fsck.result
-
-            else
-                Log w "Could not run a file system check on '$lDevice'. Missing the e2fsck binary!"
-            fi
+            Log e "The device '$lDevice' is already in use by another process. Mounts2SD will not move any content between the partitions to avoid any conflicts!"
 
         else
-            Log d "File system check is disabled. Skipping test on '$lDevice'"
-        fi
+            if $_test $(Session get prop_run_sdext_fschk 0) -eq 1; then
+                if ! $_test -z "$_e2fsck"; then
+                    Log v "Running a file system check on '$lDevice'"
+                    lShellError=$($_e2fsck -y -D $lDevice 2>&1); lStatus=$?
 
-        if $_test $(Session get prop_enable_sdext_journal 0) -ne 2 && $_blkid $lDevice | $_grep -q 'TYPE="ext4"'; then
-            if ! $_test -z "$_tune2fs"; then
-                local lHasJournal=$($_tune2fs -l $lDevice | $_grep features | $_grep -q has_journal && $_echo 1 || $_echo 0)
-                local lShellError
+                    if $_test $lStatus -gt 0 && $_test $lStatus -lt 4; then
+                        Log i "Error detected while checking '$lDevice'. Auto correction was performed!"
 
-                Log v "Checking current journal status on '$lDevice'"
-
-                if $_test "`Session get prop_enable_sdext_journal 0`" != "$lHasJournal"; then
-                    Log v "Changing journal settings on '$lDevice'"
-                    lShellError=$($_tune2fs -O $($_test $lHasJournal -eq 1 && $_echo "^has_journal" || $_echo "has_journal") $lDevice 2>&1); lStatus=$?
-
-                    if $_test $? -gt 0; then
-                        Log e "Failed while trying to change journal settings on '$lDevice'" "$lShellError"
+                    elif $_test $lStatus -gt 0; then
+                        Log w "Error detected while checking '$lDevice'. Everything was left uncorrected!"
                     fi
 
+                    $_echo $lStatus > $iDirTmp/e2fsck.result
+
                 else
-                    Log v "The journal status on $lDevice already matches the configuration"
+                    Log w "Could not run a file system check on '$lDevice'. Missing the e2fsck binary!"
                 fi
 
-                $_echo $lStatus > $iDirTmp/tune2fs.result
-
             else
-                Log w "Could not change journal settings on '$lDevice'. Missing the tune2fs binary!"
+                Log d "File system check is disabled. Skipping test on '$lDevice'"
             fi
 
-        elif $_test $(Session get prop_enable_sdext_journal 0) -ne 2; then
-            Log d "The file system type on '$lDevice' is not ext4. Disabling journal handling on this device"
+            if $_test $(Session get prop_enable_sdext_journal 0) -ne 2 && $_blkid $lDevice | $_grep -q 'TYPE="ext4"'; then
+                if ! $_test -z "$_tune2fs"; then
+                    local lHasJournal=$($_tune2fs -l $lDevice | $_grep features | $_grep -q has_journal && $_echo 1 || $_echo 0)
+                    local lShellError
 
-        else
-            Log d "Journal handeling is disabled. Leaving journal on '$lDevice' as it is"
-        fi
+                    Log v "Checking current journal status on '$lDevice'"
 
-        if AttachMount --fstype $lFsType --options $lMountParamsFull --options $lMountParamsLimited $lDevice $iDirSdext; then
-            Log v "Checking writable state on '$lDevice'"
-            $_echo 1 > $iDirSdext/WriteTest; sync
+                    if $_test "`Session get prop_enable_sdext_journal 0`" != "$lHasJournal"; then
+                        Log v "Changing journal settings on '$lDevice'"
+                        lShellError=$($_tune2fs -O $($_test $lHasJournal -eq 1 && $_echo "^has_journal" || $_echo "has_journal") $lDevice 2>&1); lStatus=$?
 
-            # Samsung has created some pretty strange file systems which has been used on their older devices,
-            # and has been encountered a few times on the sd-ext partition (Don't know why). This is how to detect them.
-            if $_df $iDirSdext > /dev/null 2>&1 && $_test -f $iDirSdext/WriteTest; then
-                $_rm -rf $iDirSdext/WriteTest
+                        if $_test $? -gt 0; then
+                            Log e "Failed while trying to change journal settings on '$lDevice'" "$lShellError"
+                        fi
 
-                Session set device_sdext_status 1
+                    else
+                        Log v "The journal status on $lDevice already matches the configuration"
+                    fi
+
+                    $_echo $lStatus > $iDirTmp/tune2fs.result
+
+                else
+                    Log w "Could not change journal settings on '$lDevice'. Missing the tune2fs binary!"
+                fi
+
+            elif $_test $(Session get prop_enable_sdext_journal 0) -ne 2; then
+                Log d "The file system type on '$lDevice' is not ext4. Disabling journal handling on this device"
 
             else
-                Log e "The '$lDevice' file system cannot be mounted with write permissions. Please change your file system type to something like ext(2/3/4)!"
-                DetachMount $iDirSdext
+                Log d "Journal handeling is disabled. Leaving journal on '$lDevice' as it is"
             fi
-        fi
+
+            if AttachMount --fstype $lFsType --options $lMountParamsFull --options $lMountParamsLimited $lDevice $iDirSdext; then
+                Log v "Checking writable state on '$lDevice'"
+                $_echo 1 > $iDirSdext/WriteTest; sync
+
+                # Samsung has created some pretty strange file systems which has been used on their older devices,
+                # and has been encountered a few times on the sd-ext partition (Don't know why). This is how to detect them.
+                if $_df $iDirSdext > /dev/null 2>&1 && $_test -f $iDirSdext/WriteTest; then
+                    $_rm -rf $iDirSdext/WriteTest
+
+                    Session set device_sdext_status 1
+
+                else
+                    Log e "The '$lDevice' file system cannot be mounted with write permissions. Please change your file system type to something like ext(2/3/4)!"
+                    DetachMount $iDirSdext
+                fi
+            fi
     fi
 }
 
@@ -691,7 +691,8 @@ ProcessContent() {
             fi
         done
 
-        $_test $(Session get prop_move_apps 0) -eq 1 && lContentMove="$lContentMove app app-private app-system" || lContentRevert="$lContentRevert app app-private app-system"
+        $_test $(Session get prop_move_apps 0) -eq 1 && lContentMove="$lContentMove app app-private" || lContentRevert="$lContentRevert app app-private"
+        $_test $(Session get prop_move_sysapps 0) -eq 1 && lContentMove="$lContentMove app-system" || lContentRevert="$lContentRevert app-system"
         $_test $(Session get prop_move_data 0) -eq 1 && lContentMove="$lContentMove data" || lContentRevert="$lContentRevert data"
         $_test $(Session get prop_move_dalvik 0) -eq 1 && lContentMove="$lContentMove dalvik-cache" || lContentRevert="$lContentRevert dalvik-cache"
 
@@ -1089,7 +1090,7 @@ ProcessSubShell() {
                                         Log v "Changing storage threshold to '${lNewValue}%'"
                                         lShellError=$($_sqlite3 /data/data/com.android.providers.settings/databases/settings.db "insert into secure (name, value) VALUES('sys_storage_threshold_percentage','1')" 2>&1); lStatus=$?
 
-                                        if $_test $lStatus -eq 0; then
+                                        if $_test $lStatus -ne 0; then
                                             Log e "Storage threshold could not be changed. The sqlite3 binary returned result code '$lStatus'!" "$lShellError"
                                         fi
 

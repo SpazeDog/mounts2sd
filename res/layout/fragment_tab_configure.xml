@@ -39,6 +39,16 @@
 		
 		<View style="?content_itemDivider" android:id="@+id/item_divider" />
 		
+		<LinearLayout style="?content_itemWrapper_clickable" android:id="@+id/option_content_item_sysapps">
+		    <LinearLayout style="?content_itemWrapper_inline_clickable">
+		        <TextView style="?content_itemNameField_inline_clickable" android:layout_weight="1" android:id="@+id/item_name" android:text="@string/option_content_item_sysapps" />
+		        <ImageView style="?content_itemCheckboxIcon_clickable" android:id="@+id/item_icon" />
+		    </LinearLayout>
+		    <TextView style="?content_itemDescription_clickable" android:id="@+id/item_description" android:text="@string/option_content_description_sysapps" />
+		</LinearLayout>
+		
+		<View style="?content_itemDivider" android:id="@+id/item_divider" />
+		
 		<LinearLayout style="?content_itemWrapper_clickable" android:id="@+id/option_content_item_libs">
 		    <LinearLayout style="?content_itemWrapper_inline_clickable">
 		        <TextView style="?content_itemNameField_inline_clickable" android:layout_weight="1" android:id="@+id/item_name" android:text="@string/option_content_item_libs" />

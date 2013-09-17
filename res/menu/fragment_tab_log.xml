@@ -7,5 +7,11 @@
         android:orderInCategory="100"
         android:showAsAction="never"
         android:title="@string/menu_log_save"/>
+    
+    <item
+        android:id="@+id/menu_build_debug"
+        android:orderInCategory="99"
+        android:showAsAction="never"
+        android:title="@string/menu_log_build_debug"/>
 
 </menu>

@@ -19,6 +19,8 @@
 
 package com.spazedog.mounts2sd.tools.interfaces;
 
-public interface DialogSelectorResponse {
-	public void onDialogSelect(String tag, String value);
+import android.os.Bundle;
+
+public interface IDialogMessageResponse extends IDialogListener {
+	public void onDialogClose(String tag, Boolean exit, Bundle extra);
 }

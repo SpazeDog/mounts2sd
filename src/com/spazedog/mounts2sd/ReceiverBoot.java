@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
 
+import com.spazedog.lib.rootfw3.RootFW;
 import com.spazedog.mounts2sd.tools.Preferences;
 import com.spazedog.mounts2sd.tools.Root;
 
@@ -28,19 +29,20 @@ public class ReceiverBoot extends BroadcastReceiver {
 				public void run() {
 					String message = null;
 					
-					if (Root.isConnected()) {
-						Root.lock("ReceiverBoot");
-						Preferences preferences = new Preferences(mContext);
+					RootFW root = Root.initiate();
+					
+					if (root.isConnected()) {
+						Preferences preferences = Preferences.getInstance(mContext);
 						
-						if (!preferences.loadAll(false)) {
+						if (!preferences.deviceSetup.load(true)
+								|| !preferences.deviceConfig.load(true)
+								|| !preferences.deviceProperties.load(true)) {
+						
 							message = mContext.getResources().getString(R.string.notify_no_config);
 							
-						} else if (preferences.deviceSetup().log_level() > 1) {
+						} else if (preferences.deviceSetup.log_level() > 1) {
 							message = mContext.getResources().getString(R.string.notify_log_details);
 						}
-						
-						Root.unlock("ReceiverBoot");
-						Root.close();
 						
 					} else {
 						message = mContext.getResources().getString(R.string.notify_no_config);
@@ -63,6 +65,8 @@ public class ReceiverBoot extends BroadcastReceiver {
 						
 						manager.notify(1, notification.build());
 					}
+					
+					Root.release();
 				}
 				
 			}.putContext(context.getApplicationContext()).start();

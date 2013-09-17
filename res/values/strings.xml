@@ -80,8 +80,10 @@
     <!-- ######################################################
        - Toast messages used by the Log Fragment
     ####################################################### -->
-    <string name="toast_log_copied">Log file was copied to /sdcard/Mounts2SD/log.txt</string>
-    <string name="toast_log_unsuccessful">Could not copy the log file to the sdcard</string>
+    <string name="toast_log_copied">File was saved to %1$s</string>
+    <string name="toast_log_unsuccessful">Could not save file to the sdcard</string>
+    
+    <string name="progress_load_debug_file">Assembling the debug file</string>
 
     <!-- ######################################################
        - Used by the progress dialog when loading AsyncTask
@@ -95,6 +97,7 @@
     ####################################################### -->
     <string name="menu_overview_reload">Reload Status</string>
     <string name="menu_log_save">Save log to sdcard</string>
+    <string name="menu_log_build_debug">Build debug file</string>
     <string name="menu_controller_app_settings">Application Settings</string>
     
     <!-- ######################################################
@@ -167,6 +170,7 @@
     <string name="option_system_item_threshold">Storage Threshold</string>
     
     <string name="option_content_item_apps">Applications</string>
+    <string name="option_content_item_sysapps">System Apps</string>
     <string name="option_content_item_libs">Libraries</string>
     <string name="option_content_item_data">Data</string>
     <string name="option_content_item_dalvik">Dalvik Cache</string>
@@ -195,6 +199,7 @@
     <string name="option_system_description_threshold">How much space that needs to be left on data in order to install applications</string>
     
     <string name="option_content_description_apps">Move applications to sd-ext</string>
+    <string name="option_content_description_sysapps">Move system converted applications to sd-ext</string>
     <string name="option_content_description_libs">Move application libraries to sd-ext</string>
     <string name="option_content_description_data">Move application data to sd-ext</string>
     <string name="option_content_description_dalvik">Move dalvikvm application caches to sd-ext</string>

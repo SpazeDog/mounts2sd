@@ -19,558 +19,708 @@
 
 package com.spazedog.mounts2sd.tools;
 
+import java.lang.ref.WeakReference;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import android.annotation.TargetApi;
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Build;
-import android.os.Bundle;
 import android.os.UserManager;
-import android.text.TextUtils;
 
 import com.spazedog.lib.rootfw3.RootFW;
+import com.spazedog.lib.rootfw3.RootFW.ConnectionListener;
 import com.spazedog.lib.rootfw3.extenders.FileExtender;
 import com.spazedog.lib.rootfw3.extenders.FileExtender.FileStat;
 import com.spazedog.lib.rootfw3.extenders.FilesystemExtender.DiskStat;
 import com.spazedog.lib.rootfw3.extenders.FilesystemExtender.MountStat;
+import com.spazedog.lib.rootfw3.extenders.InstanceExtender.SharedRootFW;
 import com.spazedog.lib.rootfw3.extenders.MemoryExtender.SwapStat;
 import com.spazedog.lib.rootfw3.extenders.ShellExtender.ShellResult;
 import com.spazedog.mounts2sd.R;
-import com.spazedog.mounts2sd.tools.containers.ApplicationSession;
-import com.spazedog.mounts2sd.tools.containers.ApplicationSettings;
-import com.spazedog.mounts2sd.tools.containers.DeviceConfig;
-import com.spazedog.mounts2sd.tools.containers.DeviceProperties;
-import com.spazedog.mounts2sd.tools.containers.DeviceSetup;
+import com.spazedog.mounts2sd.tools.containers.IApplicationSession;
+import com.spazedog.mounts2sd.tools.containers.IApplicationSettings;
+import com.spazedog.mounts2sd.tools.containers.IDeviceConfig;
+import com.spazedog.mounts2sd.tools.containers.IDeviceProperties;
+import com.spazedog.mounts2sd.tools.containers.IDeviceSetup;
+import com.spazedog.mounts2sd.tools.containers.IPersistence;
 
-public class Preferences {
+public final class Preferences {
 	
-	private final static Object oLock = new Object();
-	
-	private DeviceSetup mDeviceSetup;
-	private DeviceConfig mDeviceConfig;
-	private DeviceProperties mDeviceProperties;
-	
-	private ApplicationSettings mApplicationSettings;
-	
-	private ApplicationSession mApplicationSession;
-	
-	private static Boolean oCacheChecked = false;
+	private final static Object oClassLock = new Object();
+	private final Object mInstanceLock = new Object();
 	
 	private static Integer oTheme;
 	
-	private Context mContext;
+	private final static Map<String, Boolean> oClassChecks = new HashMap<String, Boolean>();
+	private final Map<String, SharedPreferences> mSharedPreferences = new HashMap<String, SharedPreferences>();
+	
+	private static WeakReference<Context> oContextReference;
+	private static WeakReference<Preferences> oClassReference;
+	
+	public final DeviceSetup deviceSetup = new DeviceSetup();
+	public final DeviceConfig deviceConfig = new DeviceConfig();
+	public final DeviceProperties deviceProperties = new DeviceProperties();
+	public final ApplicationSettings applicationSettings = new ApplicationSettings();
+	public final ApplicationSession applicationSession = new ApplicationSession();
+	public final Persistence persistence = new Persistence();
+	
+	static {
+		oClassChecks.put("loaded.device.setup", false);
+		oClassChecks.put("loaded.device.config", false);
+		oClassChecks.put("loaded.device.properties", false);
+		oClassChecks.put("initiated.cache", false);
+	}
+	
+	public static Preferences getInstance(Context context) {
+		synchronized (oClassLock) {
+			if (oContextReference == null || oContextReference.get() == null)
+				oContextReference = new WeakReference<Context>(context.getApplicationContext());
+			
+			if (oClassReference == null || oClassReference.get() == null)
+				oClassReference = new WeakReference<Preferences>(new Preferences());
+			
+			if (oClassReference.get().mSharedPreferences.size() == 0) {
+				oClassReference.get().mSharedPreferences.put("cache", oContextReference.get().getSharedPreferences("cache", 0x00000000));
+				oClassReference.get().mSharedPreferences.put("persistent", oContextReference.get().getSharedPreferences("persistent", 0x00000000));
+			}
+			
+			if (!oClassChecks.get("initiated.cache")) {
+				String appid = oContextReference.get().getResources().getString(R.string.config_application_id);
+				SharedPreferences sharedPreferences = oClassReference.get().mSharedPreferences.get("cache");
+				
+				if (!appid.equals("" + sharedPreferences.getInt("android.appId", 0)) || !new java.io.File("/boot.chk").exists()) {
+					RootFW root = Root.initiate();
+					Editor edit = sharedPreferences.edit();
+					
+					edit.clear();
+					edit.putInt("android.appId", Integer.parseInt(appid));
+					edit.commit();
+						
+					if (root.isConnected()) {
+						root.filesystem("/").addMount(new String[]{"remount", "rw"});
+						root.file("/boot.chk").write("1");
+						root.filesystem("/").addMount(new String[]{"remount", "ro"});
+						
+					} else {
+						((SharedRootFW) root).addInstanceListener(new ConnectionListener(){
 
-	public Preferences(Context aContext) {
-		mContext = aContext;
+							@Override
+							public void onConnectionEstablished(RootFW instance) {
+								instance.filesystem("/").addMount(new String[]{"remount", "rw"});
+								instance.file("/boot.chk").write("1");
+								instance.filesystem("/").addMount(new String[]{"remount", "ro"});
+								
+								((SharedRootFW) instance).removeInstanceListener(this);
+							}
+
+							@Override
+							public void onConnectionFailed(RootFW instance) {}
+
+							@Override
+							public void onConnectionClosed(RootFW instance) {}
+						});
+					}
+					
+					Root.release();
+				}
+				
+				oClassChecks.put("initiated.cache", true);
+			}
+			
+			return oClassReference.get();
+		}
+	}
+	
+	private Preferences() {}
+
+	public Context getContext() {
+		return oContextReference.get();
 	}
 	
 	public Integer theme() {
 		if (oTheme == null) {
-			oTheme = settings().use_dark_theme() ? 
-					(settings().use_global_settings_style() ? R.style.Theme_Dark_Settings : R.style.Theme_Dark) : 
-						(settings().use_global_settings_style() ? R.style.Theme_Settings : R.style.Theme);
+			oTheme = applicationSettings.use_dark_theme() ? 
+					(applicationSettings.use_global_settings_style() ? R.style.Theme_Dark_Settings : R.style.Theme_Dark) : 
+						(applicationSettings.use_global_settings_style() ? R.style.Theme_Settings : R.style.Theme);
 		}
 		
 		return oTheme;
 	}
 	
-	public void restartApplication() {
-		Intent intent = mContext.getPackageManager().getLaunchIntentForPackage( mContext.getPackageName() );
-		PendingIntent pending = PendingIntent.getActivity(mContext, 82806298, intent, PendingIntent.FLAG_CANCEL_CURRENT);
-		
-		((AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE)).set(AlarmManager.RTC, System.currentTimeMillis() + 100, pending);
-		
-		System.exit(0);
-	}
-	
-	public ApplicationSettings settings() {
-		if (mApplicationSettings == null) {
-			mApplicationSettings = new ApplicationSettings(this);
+	@SuppressWarnings("deprecation")
+	@TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
+	public boolean isUserOwner() {
+		if (Integer.valueOf(android.os.Build.VERSION.SDK) >= 17) {
+		    try {
+		        Method getUserHandle = UserManager.class.getMethod("getUserHandle");
+		        int userHandle = (Integer) getUserHandle.invoke(getContext().getSystemService(Context.USER_SERVICE));
+		        
+		        return userHandle == 0;
+		        
+		    } catch (Exception e) {}
 		}
 		
-		return mApplicationSettings;
+		return true;
 	}
 	
-	public ApplicationSession session() {
-		if (mApplicationSession == null) {
-			mApplicationSession = new ApplicationSession();
+	public final class Persistence extends IPersistence {
+		private Persistence() {
+			mPersistentStorage = new IPersistentPreferences("cache", "Persistence");
+		}
+	}
+	
+	public final class ApplicationSession extends IApplicationSession {
+		@Override
+		protected Context getContext() {
+			return oContextReference.get();
+		}
+	}
+	
+	public final class ApplicationSettings extends IApplicationSettings {
+		private ApplicationSettings() {
+			mPersistentStorage = new IPersistentPreferences("persistent", "AppSettings");
+		}
+	}
+	
+	public final class DeviceSetup extends IDeviceSetup {
+		private DeviceSetup() {
+			mPersistentStorage = new IPersistentPreferences("cache", "DeviceSetup");
 		}
 		
-		return mApplicationSession;
-	}
-	
-	public Boolean loadAll(Boolean forceCheck) {
-		return loadDeviceSetup(forceCheck) && 
-				loadDeviceConfig(forceCheck) && 
-					loadDeviceProperties(forceCheck);
-	}
-	
-	public Boolean checkAll() {
-		return checkDeviceSetup() && 
-				checkDeviceConfig() && 
-					checkDeviceProperties();
-	}
-	
-	public Boolean checkDeviceSetup() {
-		return cached().getBoolean("DeviceSetup.Loaded", false);
-	}
-	
-	public Boolean checkDeviceConfig() {
-		return cached().getBoolean("DeviceConfig.Loaded", false);
-	}
-	
-	public Boolean checkDeviceProperties() {
-		return cached().getBoolean("DeviceProperties.Loaded", false);
-	}
-	
-	public DeviceSetup deviceSetup() {
-		if (mDeviceSetup == null) {
-			mDeviceSetup = new DeviceSetup(this);
-		}
-		
-		return mDeviceSetup;
-	}
-	
-	public DeviceConfig deviceConfig() {
-		if (mDeviceConfig == null) {
-			mDeviceConfig = new DeviceConfig(this);
-		}
-		
-		return mDeviceConfig;
-	}
-	
-	public DeviceProperties deviceProperties() {
-		if (mDeviceProperties == null) {
-			mDeviceProperties = new DeviceProperties(this);
-		}
-		
-		return mDeviceProperties;
-	}
-	
-	public Boolean loadDeviceSetup(Boolean forceCheck) {
-		synchronized(oLock) {
-			if (!checkDeviceSetup() || forceCheck) {
-				Bundle setupData = new Bundle();
-				RootFW rootfw = Root.open();
-				
-				String pathBusybox = mContext.getResources().getString(R.string.config_path_busybox);
-				
-				if (settings().use_builtin_busybox()) {
-					FileExtender.File busyboxFile = rootfw.file(pathBusybox);
-					
-					if (!busyboxFile.exists() || 
-							(!mContext.getResources().getString(R.string.config_busybox_checksum).equals(busyboxFile.getChecksum()) && busyboxFile.remove())) {
-						
-						busyboxFile.extractFromResource(mContext, "busybox", "0777", "0", "0");
+		public Boolean isLoaded() {
+			synchronized (mInstanceLock) {
+				if (!oClassChecks.get("loaded.device.setup")) {
+					if (!mPersistentStorage.getBoolean("isLoaded")) {
+						return false;
 					}
 					
-					setupData.putBoolean("environment_busybox_internal", busyboxFile.exists());
-					
-				} else {
-					setupData.putBoolean("environment_busybox_internal", rootfw.file(pathBusybox).exists());
+					oClassChecks.put("loaded.device.setup", true);
 				}
 				
-				if (rootfw.busybox().exists()) {
+				return true;
+			}
+		}
+		
+		public Boolean load(Boolean force) {
+			synchronized (mInstanceLock) {
+				RootFW root = Root.initiate();
+				
+				if (root.isConnected() && (force || !isLoaded())) {
+					mPersistentStorage.edit().lockEditor();
+					
 					String[] loopContainer;
-					FileExtender.File scriptFile = rootfw.file( mContext.getResources().getString(R.string.config_path_script) );
+
+					/* ================================================================
+					 * Handle the Application Busybox binary
+					 */
+					String configPathBusybox = getContext().getResources().getString(R.string.config_path_busybox);
 					
-					if (rootfw.filesystem("/system").addMount(new String[]{"remount", "rw"}) && rootfw.file("/system/S_On.test").write("1") && "1".equals(rootfw.file("/system/S_On.test").readOneLine())) {
-						rootfw.file("/system/S_On.test").remove();
-						setupData.putBoolean("environment_secure_flag_off", true);
-					}
-					rootfw.filesystem("/system").addMount(new String[]{"remount", "ro"});
+					environment_busybox_internal( root.file(configPathBusybox).exists() );
 					
-					if (scriptFile.exists() && rootfw.file( mContext.getResources().getString(R.string.config_path_runner) ).exists()) {
-						String scriptId = scriptFile.readOneMatch("@id");
-						String scriptVersion = scriptFile.readOneMatch("@version");
+					if (applicationSettings.use_builtin_busybox() && !environment_busybox_internal()) {
+						FileExtender.File busyboxFile = root.file(configPathBusybox);
+						busyboxFile.extractFromResource(getContext(), "busybox", "0777", "0", "0");
 						
-						setupData.putBoolean("environment_startup_script", true);
-						
-						try {
-							if (scriptId != null) 
-								setupData.putInt("id_startup_script", Integer.valueOf( scriptId.trim().substring( scriptId.trim().lastIndexOf(" ")+1 ) ));
-							
-						} catch (Throwable e) {}
-						
-						if (scriptVersion != null) 
-							setupData.putString("version_startup_script", scriptVersion.substring( scriptVersion.lastIndexOf(" ") + 1 ));
+						environment_busybox_internal(busyboxFile.exists());
 					}
 					
 					for (int i=0; i < (loopContainer = new String[]{"/system/xbin/busybox", "/system/bin/busybox", "/system/sbin/busybox", "/sbin/busybox"}).length; i++) {
-						if (rootfw.file(loopContainer[i]).exists()) {
-							setupData.putBoolean("environment_multiple_binaries", true); break;
+						if (root.file(loopContainer[i]).exists()) {
+							environment_multiple_binaries(true); break;
 						}
 					}
-					
-					for (int i=0; i < 10; i++) {
-						FileExtender.File mmcTypeFile = rootfw.file("/sys/block/mmcblk" + i + "/device/type");
-						
-						if (mmcTypeFile.exists()) {
-							String mmcType = mmcTypeFile.readOneLine();
-							
-							if ("MMC".equals(mmcType)) {
-								setupData.putString("path_device_map_immc", "/dev/block/mmcblk" + i);
-								
-							} else if ("SD".equals(mmcType)) {
-								setupData.putString("path_device_map_emmc", "/dev/block/mmcblk" + i);
-								
-								if (rootfw.file("/dev/block/mmcblk" + i + "p2").exists()) {
-									setupData.putString("path_device_map_sdext", "/dev/block/mmcblk" + i + "p2"); 
-									setupData.putString("type_device_sdext", rootfw.filesystem("/dev/block/mmcblk" + i + "p2").fsType(true));
-								}
-								
-								if (rootfw.file("/dev/block/mmcblk" + i + "p3").exists())
-									setupData.putString("path_device_map_swap", "/dev/block/mmcblk" + i + "p3");
-							}
-							
-						} else {
-							if (setupData.getString("path_device_map_immc") == null) {
-								if (rootfw.file("/dev/block/mtdblock0").exists()) {
-									setupData.putString("path_device_map_immc", "/dev/block/mtdblock0");
-									
-								} else if (rootfw.file("/dev/block/mtdblock0").exists()) {
-									setupData.putString("path_device_map_immc", "/dev/block/bml0!c");
-								}
-							}
-							
-							break;
-						}
-					}
-					
-					for (int i=0; i < (loopContainer = new String[]{"/data", "/cache"}).length; i++) {
-						MountStat stat = rootfw.filesystem(loopContainer[i]).statMount();
-						
-						if (stat == null || stat.device().equals(setupData.getString("path_device_map_sdext")) || (i > 0 && stat.device().equals(setupData.getString("path_device_map_data")))) {
-							stat = rootfw.filesystem(loopContainer[i]).statFstab();
-						}
-						
-						setupData.putString(i == 0 ? "path_device_map_data" : "path_device_map_cache", stat.device());
-					}
-					
-					for (int i=0; i < (loopContainer = new String[]{setupData.getString("path_device_map_immc"), setupData.getString("path_device_map_emmc")}).length; i++) {
-						if (loopContainer[i] != null) {
-							FileStat stat = rootfw.file(loopContainer[i]).getDetails();
-							
-							if (stat != null) {
-								String readaheadPath = "/sys/devices/virtual/bdi/" + stat.mm() + "/read_ahead_kb";
-								String schedulerPath = "/sys/block/" + loopContainer[i].substring(loopContainer[i].lastIndexOf("/") + 1) + "/queue/scheduler";
-								
-								setupData.putString(i == 0 ? "path_device_readahead_immc" : "path_device_readahead_emmc", (rootfw.file(readaheadPath).exists() ? readaheadPath : null));
-								setupData.putString(i == 0 ? "path_device_scheduler_immc" : "path_device_scheduler_emmc", (rootfw.file(schedulerPath).exists() ? schedulerPath : null));
-							}
-						}
-					}
-					
-					for (int i=0; i < (loopContainer = new String[]{"/dev/block/zram0", "/system/lib/modules/zram.ko", "/system/lib/modules/ramzswap.ko", "/dev/block/ramzswap0"}).length; i++) {
-						if (rootfw.file(loopContainer[i]).exists()) {
-							setupData.putString("path_device_map_zram", i < 2 ? "/dev/block/zram0" : (rootfw.binary("rzscontrol").exists() ? "/dev/block/ramzswap0" : null));
-						}
-					}
-					
-					for (int i=0; i < (loopContainer = new String[]{"tune2fs", "sqlite3", "e2fsck"}).length; i++) {
-						setupData.putBoolean("support_binary_" + loopContainer[i], rootfw.binary(loopContainer[i]).exists());
-					}
-					
-					if ((loopContainer = rootfw.file("/system").getList()) != null) {
-						List<String> systemDirs = new ArrayList<String>();
-						
-						for (int i=0; i < loopContainer.length; i++) {
-							if (!loopContainer[i].equals(".") && !loopContainer[i].equals("..") && rootfw.file("/data/" + loopContainer[i] + "_s").isDirectory()) {
-								systemDirs.add(loopContainer[i] + "_s");
-							}
-						}
-						
-						if (systemDirs.size() > 0) {
-							setupData.putString("paths_directory_system", TextUtils.join(",", systemDirs));
-						}
-					}
-					
-					setupData.putBoolean("environment_busybox", true);
-					setupData.putBoolean("support_option_swap", rootfw.file("/proc/swaps").exists() && setupData.getString("path_device_map_swap") != null);
-					setupData.putBoolean("support_option_zram", rootfw.file("/proc/swaps").exists() && setupData.getString("path_device_map_zram") != null);
-					setupData.putBoolean("support_directory_library", rootfw.file("/data/app-lib").isDirectory());
-					setupData.putBoolean("support_directory_user", rootfw.file("/data/user").isDirectory());
-					setupData.putBoolean("support_directory_media", rootfw.file("/data/media").isDirectory());
-					setupData.putBoolean("support_directory_system", setupData.getString("paths_directory_system") != null);
-					setupData.putBoolean("support_directory_cmdalvik", rootfw.file("/cache/dalvik-cache").isDirectory() && !"1".equals(rootfw.property().get("dalvik.vm.dexopt-data-only")));
-					setupData.putBoolean("support_device_mtd", rootfw.file("/proc/mtd").exists());
-					setupData.putBoolean("safemode", "1".equals(rootfw.file(mContext.getResources().getString(R.string.config_dir_tmp) + "/safemode.result").readOneLine()) ? true : false);
-					setupData.putString("init_implementation", "service".equals(rootfw.file(mContext.getResources().getString(R.string.config_dir_tmp) + "/init.type").readOneLine()) ? "service" : "internal");
-					
-					try {
-						setupData.putInt("log_level", Integer.parseInt( rootfw.file(mContext.getResources().getString(R.string.config_dir_tmp) + "/log.level").readOneLine() ));
-						
-					} catch (Throwable e) {}
-					
-					cached().putBoolean("DeviceSetup.Loaded", true);
-					
-					cached("DeviceSetup").putAll(setupData);
-					
-					Root.close();
-					
-					return true;
-					
-				} else {
-					cached("DeviceSetup").putBoolean("environment_busybox", false);
-				}
-				
-				Root.close();
-				
-			} else {
-				return true;
-			}
-			
-			return false;
-		}
-	}
 
-	public boolean loadDeviceConfig(Boolean forceCheck) {
-		synchronized(oLock) {
-			if (checkDeviceSetup()) {
-				if (!checkDeviceConfig() || forceCheck) {
-					Bundle configData = new Bundle();
-					RootFW rootfw = Root.open();
-					DeviceSetup deviceSetup = deviceSetup();
-					String[] loopContainer;
-					
-					String sdextLocation = mContext.getResources().getString(R.string.config_dir_sdext);
-					DiskStat stat = rootfw.filesystem("/data").statDisk();
-					
-					if (stat != null) {
-						String sdextDevice = deviceSetup.path_device_map_data().equals( stat.device() ) ? deviceSetup.path_device_map_sdext() : deviceSetup.path_device_map_data();
+					if (root.busybox().exists()) {
+						environment_busybox(true);
 						
-						configData.putString(deviceSetup.path_device_map_data().equals( stat.device() ) ? 
-								"location_storage_data" : "location_storage_sdext", "/data");
+						/* ================================================================
+						 * Check the device for S-On protection
+						 */
+						FileExtender.File sOnFile = root.file("/system/S_On.test");
 						
-						configData.putLong(deviceSetup.path_device_map_data().equals( stat.device() ) ? 
-								"size_storage_data" : "size_storage_sdext", stat.size());
+						root.filesystem("/system").addMount(new String[]{"remount", "rw"});
 						
-						configData.putLong(deviceSetup.path_device_map_data().equals( stat.device() ) ? 
-								"usage_storage_data" : "usage_storage_sdext", stat.usage());
+						environment_secure_flag_off(
+							sOnFile.write("1") 
+								&& "1".equals(sOnFile.readOneLine())
+						);
+						sOnFile.remove();
 						
-						if (sdextDevice != null && (sdextDevice.equals( deviceSetup.path_device_map_data() ) || rootfw.filesystem(sdextDevice).isMounted())) {
-							stat = rootfw.filesystem(sdextLocation).statDisk();
+						root.filesystem("/system").addMount(new String[]{"remount", "ro"});
+						/*
+						 * ----------------------------------------------------------------
+						   ================================================================
+						 * Check the startup scripts
+						 */
+						String configPathScript = getContext().getResources().getString(R.string.config_path_script);
+						String configPathRunner = getContext().getResources().getString(R.string.config_path_runner);
+						
+						FileExtender.File scriptFile = root.file( configPathScript );
+						FileExtender.File runnerFile = root.file( configPathRunner );
+						
+						if (scriptFile.exists() && runnerFile.exists()) {
+							environment_startup_script(true);
 							
-							/* For some reason, some Android versions makes a restructured copy of /proc/mounts for application processes. 
-							 * This means that some times, the mount order has been altered so we no longer know which location was mounted at first (Original location), 
-							 * when working with --bind mounted locations. So we could end up getting for an example /sd-ext/dalvik-cache as the sd-ext location. 
-							 * And since some script also uses alternative location for sd-ext, like Link2SD which uses /data/sdext, we can't just check if the device is mounted 
-							 * and then assume it's on /sd-ext. So if the device is mounted but not on /sd-ext, we make a second mount location on /sd-ext that we can use to access sd-ext
-							 * no mater where it is originally located (Our own little entry point). 
-							 */
-							if (stat == null || !stat.device().equals(sdextDevice)) {
-								rootfw.filesystem("/").addMount(new String[]{"remount", "rw"});
-								rootfw.file("/sd-ext").createDirectory();
-								rootfw.filesystem("/").addMount(new String[]{"remount", "ro"});
-								
-								/* Toolbox mostly does not allow double mounting of a device. 
-								 * So if we do not have busybox available, we need a fallback. 
-								 * We cannot always trust an app process version of /proc/mounts, 
-								 * but it is better than nothing. 
-								 */
-								if(!rootfw.filesystem(sdextDevice).addMount(sdextLocation)) {
-									try {
-										sdextLocation = rootfw.filesystem(sdextDevice).statMount().location();
-										
-									} catch(Throwable e) {}
-								}
-								
-								stat = rootfw.filesystem(sdextLocation).statDisk();
-							}
+							String scriptId = scriptFile.readOneMatch("@id");
+							String scriptVersion = scriptFile.readOneMatch("@version");
 							
-							if (stat != null) {
-								configData.putString(deviceSetup.path_device_map_data().equals( stat.device() ) ? 
-										"location_storage_data" : "location_storage_sdext", sdextLocation);
+							if (scriptId != null)
+								id_startup_script(Integer.parseInt( ("" + scriptId.substring(scriptId.lastIndexOf(" "))).trim() ));
 								
-								configData.putLong(deviceSetup.path_device_map_data().equals( stat.device() ) ? 
-										"size_storage_data" : "size_storage_sdext", stat.size());
-								
-								configData.putLong(deviceSetup.path_device_map_data().equals( stat.device() ) ? 
-										"usage_storage_data" : "usage_storage_sdext", stat.usage());
-							}
+							if (scriptVersion != null)
+								version_startup_script( scriptVersion.substring(scriptVersion.lastIndexOf(" ")) );
 						}
-					}
-					
-					if ((stat = rootfw.filesystem("/cache").statDisk()) != null) {
-						configData.putString("location_storage_cache", stat.device().equals(deviceSetup.path_device_map_sdext()) ? 
-								configData.getString("location_storage_sdext") + "/cache" : 
-									stat.device().equals(deviceSetup.path_device_map_data()) ? 
-											configData.getString("location_storage_data") + "/cache" : "/cache");
-						
-						configData.putLong("size_storage_cache", stat.size());
-						configData.putLong("usage_storage_cache", stat.usage());
-					}
-					
-					List<String[]> mountLooper = new ArrayList<String[]>();
-					
-					mountLooper.add(new String[]{"apps", "app", "app-private", "app-asec", "app-system"});
-					mountLooper.add(new String[]{"dalvik", "dalvik-cache"});
-					mountLooper.add(deviceSetup.support_directory_user() ? new String[]{"data", "data", "user"} : new String[]{"data", "data"});
-					
-					if (deviceSetup.support_directory_library()) {
-						mountLooper.add(new String[]{"libs", "app-lib"});
-					}
-					
-					if (deviceSetup.support_directory_media()) {
-						mountLooper.add(new String[]{"media", "media"});
-					}
-					
-					if (deviceSetup.support_directory_system()) {
-						String[] sysDirectories = deviceSetup.paths_directory_system();
-						
-						if (sysDirectories != null) {
-							String[] sysList = new String[ sysDirectories.length ];
+						/*
+						 * ----------------------------------------------------------------
+						   ================================================================
+						 * Locate all of the partitions
+						 */
+						for (int i=0; i < 10; i++) {
+							FileExtender.File mmcTypeFile = root.file("/sys/block/mmcblk" + i + "/device/type");
 							
-							sysList[0] = "system";
-							
-							for (int i=0; i < sysDirectories.length; i++) {
-								sysList[i+1] = sysDirectories[i];
-							}
-							
-							mountLooper.add(sysList);
-						}
-					}
-					
-					for (int i=0; i < mountLooper.size(); i++) {
-						String[] curOption = mountLooper.get(i);
-						Integer curState = null;
-						Long curUSage = 0L;
-						
-						for (int x=1; x < curOption.length; x++) {
-							if (deviceSetup.path_device_map_sdext() != null && configData.getString("location_storage_sdext") != null) {
-								DiskStat curStat = rootfw.filesystem("/data/" + curOption[x]).statDisk();
+							if (mmcTypeFile.exists()) {
+								String mmcType = mmcTypeFile.readOneLine();
 								
-								if (curStat != null) {
-									if (curState == null || curState >= 0) {
-										curState = deviceSetup.path_device_map_data().equals(curStat.device()) ? 
-												(curState == null || curState == 0 ? 0 : -1) : 
-													(curState == null || curState == 1 ? 1 : -1);
+								if ("MMC".equals(mmcType)) {
+									path_device_map_immc("/dev/block/mmcblk" + i);
+									
+								} else if ("SD".equals(mmcType)) {
+									path_device_map_emmc("/dev/block/mmcblk" + i);
+									
+									if (root.file("/dev/block/mmcblk" + i + "p2").exists()) {
+										path_device_map_sdext("/dev/block/mmcblk" + i + "p2");
+										type_device_sdext(root.filesystem("/dev/block/mmcblk" + i + "p2").fsType(true));
 									}
+									
+									if (root.file("/dev/block/mmcblk" + i + "p3").exists())
+										path_device_map_swap("/dev/block/mmcblk" + i + "p3");
 								}
 								
 							} else {
-								curState = 0;
+								if (path_device_map_immc() != null) {
+									if (root.file("/dev/block/mtdblock0").exists()) {
+										path_device_map_immc("/dev/block/mtdblock0");
+										
+									} else if (root.file("/dev/block/mtdblock0").exists()) {
+										path_device_map_immc("/dev/block/bml0!c");
+									}
+								}
+								
+								break;
 							}
-							
-							curUSage += rootfw.file("/data/" + curOption[x]).fileSize();
 						}
 						
-						configData.putInt("status_content_" + curOption[0], curState);
-						configData.putLong("usage_content_" + curOption[0], curUSage);
-					}
-					
-					if (deviceSetup.path_device_map_sdext() != null) {
-						if (deviceSetup.support_binary_e2fsck()) {
-							String result = rootfw.file(mContext.getResources().getString(R.string.config_dir_tmp) + "/e2fsck.result").readOneLine();
+						for (int i=0; i < (loopContainer = new String[]{"/data", "/cache"}).length; i++) {
+							MountStat mountStat = root.filesystem(loopContainer[i]).statMount();
 							
-							if (result != null) {
-								try {
-									configData.putInt("level_filesystem_fschk", Integer.parseInt(result));
+							if (mountStat == null
+									|| mountStat.device() == null
+									|| mountStat.device().equals(path_device_map_sdext())
+									|| (i > 0 && mountStat.device().equals(path_device_map_data()))) {
+								
+								mountStat = root.filesystem(loopContainer[i]).statFstab();
+							}
+							
+							if (i == 0) {
+								path_device_map_data(mountStat.device());
+							
+							} else {
+								path_device_map_cache(mountStat.device());
+							}
+						}
+						
+						for (int i=0; i < (loopContainer = new String[]{"/dev/block/zram0", "/system/lib/modules/zram.ko", "/system/lib/modules/ramzswap.ko", "/dev/block/ramzswap0"}).length; i++) {
+							if (root.file(loopContainer[i]).exists()) {
+								path_device_map_zram(
+									i < 2 ? "/dev/block/zram0"
+										: (root.binary("rzscontrol").exists() ? "/dev/block/ramzswap0" : null)
+								);
+								
+								break;
+							}
+						}
+						/*
+						 * ----------------------------------------------------------------
+						   ================================================================
+						 * Locate scheduler and readahead files for the EMMC and IMMC
+						 */
+						for (int i=0; i < (loopContainer = new String[]{path_device_map_immc(), path_device_map_emmc()}).length; i++) {
+							if (loopContainer[i] != null) {
+								FileStat fileStat = root.file(loopContainer[i]).getDetails();
+								
+								if (fileStat != null) {
+									FileExtender.File readaheadFile = root.file("/sys/devices/virtual/bdi/" + fileStat.mm() + "/read_ahead_kb");
+									FileExtender.File schedulerFile = root.file("/sys/block/" + loopContainer[i].substring(loopContainer[i].lastIndexOf("/") + 1) + "/queue/scheduler");
 									
-								} catch(Throwable e) {}
-							}
-						}
-						
-						if (deviceSetup.support_binary_tune2fs() && "ext4".equals(rootfw.filesystem(deviceSetup.path_device_map_sdext()).fsType(true))) {
-							ShellResult result = rootfw.shell().run("tune2fs -l '" + deviceSetup.path_device_map_sdext() + "'");
-							
-							configData.putInt("status_filesystem_journal", result.wasSuccessful() ? 
-									( result.getString().contains("has_journal") ? 1 : 0 ) : 
-										-1);
-						}
-					}
-					
-					if (configData.getString("location_storage_sdext") != null) {
-						MountStat mountStat = rootfw.filesystem(deviceSetup.path_device_map_sdext()).statMount();
-						
-						if (mountStat != null) {
-							configData.putString("type_filesystem_driver", mountStat.fstype());
-						}
-					}
-
-					for (int i=0; i < (loopContainer = new String[]{deviceSetup.path_device_scheduler_immc(), deviceSetup.path_device_scheduler_emmc(), deviceSetup.path_device_readahead_immc(), deviceSetup.path_device_readahead_emmc()}).length; i++) {
-						String line;
-						
-						if (loopContainer[i] != null && (line = rootfw.file(loopContainer[i]).readOneLine()) != null) {
-							switch(i) {
-								case 0: configData.putString("value_immc_scheduler", line.substring(line.indexOf("[")+1, line.lastIndexOf("]"))); break;
-								case 1: configData.putString("value_emmc_scheduler", line.substring(line.indexOf("[")+1, line.lastIndexOf("]"))); break;
-								case 2: configData.putString("value_immc_readahead", line); break;
-								case 3: configData.putString("value_emmc_readahead", line);
-							}
-						}
-					}
-					
-					if (deviceSetup.support_option_swap()) {
-						SwapStat[] swapList = rootfw.memory().listSwaps();
-						
-						if (swapList != null) {
-							for (int i=0; i < swapList.length; i++) {
-								if (deviceSetup.support_option_swap() && swapList[i].device().equals(deviceSetup.path_device_map_swap())) {
-									configData.putLong("size_memory_swap", swapList[i].size());
-									configData.putLong("usage_memory_swap", swapList[i].usage());
-									
-								} else if (deviceSetup.support_option_zram() && swapList[i].device().equals(deviceSetup.path_device_map_zram())) {
-									configData.putLong("size_memory_zram", swapList[i].size());
-									configData.putLong("usage_memory_zram", swapList[i].usage());
+									if (i == 0) {
+										path_device_readahead_immc(readaheadFile.exists() ? readaheadFile.getResolvedPath() : null);
+										path_device_scheduler_immc(schedulerFile.exists() ? schedulerFile.getResolvedPath() : null);
+										
+									} else {
+										path_device_readahead_emmc(readaheadFile.exists() ? readaheadFile.getResolvedPath() : null);
+										path_device_scheduler_emmc(schedulerFile.exists() ? schedulerFile.getResolvedPath() : null);
+									}
 								}
 							}
 						}
-						
-						try {
-							configData.putInt("level_memory_swappiness", Integer.parseInt( rootfw.file("/proc/sys/vm/swappiness").readOneLine() ));
+						/*
+						 * ----------------------------------------------------------------
+						   ================================================================
+						 * Collect system folders on /data
+						 */
+						if ((loopContainer = root.file("/system").getList()) != null) {
+							List<String> systemDirs = new ArrayList<String>();
 							
-						} catch(Throwable e) {}
+							for (int i=0; i < loopContainer.length; i++) {
+								if (!loopContainer[i].equals(".") 
+										&& !loopContainer[i].equals("..") 
+										&& root.file("/data/" + loopContainer[i] + "_s").isDirectory()) {
+									
+									systemDirs.add(loopContainer[i] + "_s");
+								}
+							}
+							
+							if (systemDirs.size() > 0) {
+								paths_directory_system(systemDirs.toArray(new String[systemDirs.size()]));
+								support_directory_system(true);
+							}
+						}
+						/*
+						 * ----------------------------------------------------------------
+						   ================================================================
+						 * Handle memory devices
+						 */
+						if (root.file("/proc/swaps").exists()) {
+							support_option_swap(path_device_map_swap() != null);
+							support_option_zram(path_device_map_zram() != null);
+						}
+						/*
+						 * ---------------------------------------------------------------- */
+						String configFileTmp = getContext().getResources().getString(R.string.config_dir_tmp);
+
+						support_binary_tune2fs(root.binary("tune2fs").exists());
+						support_binary_sqlite3(root.binary("sqlite3").exists());
+						support_binary_e2fsck(root.binary("e2fsck").exists());
+						support_directory_asec(root.file("/data/app-asec").isDirectory());
+						support_directory_library(root.file("/data/app-lib").isDirectory());
+						support_directory_user(root.file("/data/user").isDirectory());
+						support_directory_media(root.file("/data/media").isDirectory());
+						support_directory_cmdalvik(root.file("/cache/dalvik-cache").isDirectory() && !"1".equals(root.property().get("dalvik.vm.dexopt-data-only")));
+						support_device_mtd(root.file("/proc/mtd").exists());
+						safemode("1".equals(root.file(configFileTmp + "/safemode.result").readOneLine()));
+						init_implementation("service".equals(root.file(configFileTmp + "/init.type").readOneLine()) ? "service" : "internal");
+						
+						mPersistentStorage.edit().putBoolean("isLoaded", true);
+						oClassChecks.put("loaded.device.setup", true);
 					}
 					
+					mPersistentStorage.edit().unlockEditor();
+				}
+				
+				Root.release();
+
+				return isLoaded();
+			}
+		}
+	}
+	
+	public final class DeviceConfig extends IDeviceConfig {
+		private DeviceConfig() {
+			mPersistentStorage = new IPersistentPreferences("cache", "DeviceConfig");
+		}
+		
+		public Boolean isLoaded() {
+			synchronized (mInstanceLock) {
+				if (!oClassChecks.get("loaded.device.config")) {
+					if (!mPersistentStorage.getBoolean("isLoaded")) {
+						return false;
+					}
+					
+					oClassChecks.put("loaded.device.config", true);
+				}
+				
+				return true;
+			}
+		}
+		
+		public Boolean load(Boolean force) {
+			synchronized (mInstanceLock) {
+				RootFW root = Root.initiate();
+				
+				if (root.isConnected() && (force || !isLoaded()) && deviceSetup.isLoaded()) {
+					String[] loopContainer;
+					
+					mPersistentStorage.edit().lockEditor();
+					
+					/* ================================================================
+					 * Locate device mount points
+					 */
+					String configDirSdext = getContext().getResources().getString(R.string.config_dir_sdext);
+					DiskStat diskStat = null;
+					String additLocationDevice = null;
+					
+					for (int i=0; i <= (loopContainer = new String[]{"/data", configDirSdext}).length; i++) {
+						if (i < loopContainer.length) {
+							diskStat = root.filesystem(loopContainer[i]).statDisk();
+						}
+					
+						if (diskStat != null && diskStat.device().equals(deviceSetup.path_device_map_data())) {
+							location_storage_data(loopContainer[i]);
+							size_storage_data(diskStat.size());
+							usage_storage_data(diskStat.usage());
+							
+						} else if (diskStat != null && diskStat.device().equals(deviceSetup.path_device_map_sdext())) {
+							location_storage_sdext(loopContainer[i]);
+							size_storage_sdext(diskStat.size());
+							usage_storage_sdext(diskStat.usage());
+							
+						} else if (additLocationDevice != null) {
+							if (root.filesystem(additLocationDevice).isMounted()) {
+								diskStat = root.filesystem(additLocationDevice).statDisk(); continue;
+							}
+						}
+						
+						if (additLocationDevice == null) {
+							additLocationDevice = diskStat != null && diskStat.device().equals(deviceSetup.path_device_map_data()) ? deviceSetup.path_device_map_data() : deviceSetup.path_device_map_sdext(); continue;
+						}
+							
+						break;
+					}
+
+					if ((diskStat = root.filesystem("/cache").statDisk()) != null) {
+						location_storage_cache(
+							diskStat.device().equals(deviceSetup.path_device_map_sdext()) ? location_storage_sdext() + "/cache" : 
+								diskStat.device().equals(deviceSetup.path_device_map_data()) ? location_storage_data() + "/cache" : "/cache"
+						);
+						
+						size_storage_cache(diskStat.size());
+						usage_storage_cache(diskStat.usage());
+					}
+					/*
+					 * ----------------------------------------------------------------
+					   ================================================================
+					 * Get folder status and usage
+					 */
+					List<String[]> mountLooper = new ArrayList<String[]>();
+					
+					mountLooper.add(deviceSetup.support_directory_asec() ? new String[]{"app", "app-private", "app-asec"} : new String[]{"app", "app-private"});
+					mountLooper.add(new String[]{"app-system"});
+					mountLooper.add(new String[]{"dalvik-cache"});
+					mountLooper.add(deviceSetup.support_directory_user() ? new String[]{"data", "user"} : new String[]{"data"});
+					
+					if (deviceSetup.support_directory_library()) {
+						mountLooper.add(new String[]{"app-lib"});
+					}
+					
+					if (deviceSetup.support_directory_media()) {
+						mountLooper.add(new String[]{"media"});
+					}
+					
+					if (deviceSetup.support_directory_system()) {
+						mountLooper.add(deviceSetup.paths_directory_system());
+					}
+					
+					for (int i=0; i < mountLooper.size(); i++) {
+						Boolean sdextMounted = deviceSetup.path_device_map_sdext() != null 
+								&& location_storage_sdext() != null;
+						
+						String[] curFolders = mountLooper.get(i);
+						Integer curState = 0;
+						Long curUsage = 0L;
+						
+						for (int x=0; x < curFolders.length; x++) {
+							if (sdextMounted && curState >= 0) {
+								DiskStat curStat = root.filesystem("/data/" + curFolders[x]).statDisk();
+								
+								curState = curStat == null || curStat.device().equals(deviceSetup.path_device_map_data()) ? 
+										(x == 0 || curState == 0 ? 0 : -1) : 
+											(x == 0 || curState == 1 ? 1 : -1);
+							}
+							
+							curUsage += root.file("/data/" + curFolders[x]).fileSize();
+						}
+						
+						switch (i) {
+							case 0: 
+								status_content_apps(curState);
+								usage_content_apps(curUsage); break;
+								
+							case 1: 
+								status_content_sysapps(curState);
+								usage_content_sysapps(curUsage); break;
+								
+							case 2: 
+								status_content_dalvik(curState);
+								usage_content_dalvik(curUsage); break;
+								
+							case 3: 
+								status_content_data(curState);
+								usage_content_data(curUsage); break;
+								
+							case 4: 
+								status_content_libs(curState);
+								usage_content_libs(curUsage); break;
+								
+							case 5: 
+								status_content_media(curState);
+								usage_content_media(curUsage); break;
+								
+							case 6: 
+								status_content_system(curState);
+								usage_content_system(curUsage);
+						}
+					}
+					/*
+					 * ----------------------------------------------------------------
+					   ================================================================
+					 * Get SD-EXT information
+					 */
+					if (deviceSetup.path_device_map_sdext() != null) {
+						String configDirTmp = getContext().getResources().getString(R.string.config_dir_tmp);
+						
+						if (deviceSetup.support_binary_e2fsck()) {
+							String result = root.file(configDirTmp + "/e2fsck.result").readOneLine();
+							
+							if (result != null) {
+								level_filesystem_fschk(Integer.parseInt(result));
+							}
+						}
+						
+						if (deviceSetup.support_binary_tune2fs() 
+								&& "ext4".equals(deviceSetup.type_device_sdext())) {
+							
+							ShellResult result = root.shell().run("tune2fs -l '" + deviceSetup.path_device_map_sdext() + "'");
+							
+							status_filesystem_journal(
+								result.wasSuccessful() ? 
+									( ("" + result.getString()).contains("has_journal") ? 1 : 0 ) : -1
+							);
+						}
+					}
+
+					if (location_storage_sdext() != null) {
+						MountStat mountStat = root.filesystem(deviceSetup.path_device_map_sdext()).statMount();
+						
+						if (mountStat != null) {
+							type_filesystem_driver(mountStat.fstype());
+						}
+					}
+					/*
+					 * ----------------------------------------------------------------
+					   ================================================================
+					 * Get MMC scheduler and readahead information
+					 */
+					for (int i=0; i < (loopContainer = new String[]{deviceSetup.path_device_scheduler_immc(), deviceSetup.path_device_scheduler_emmc(), deviceSetup.path_device_readahead_immc(), deviceSetup.path_device_readahead_emmc()}).length; i++) {
+						String line = loopContainer[i] == null ? 
+								null : root.file(loopContainer[i]).readOneLine();
+						
+						if (line != null) {
+							switch(i) {
+								case 0: value_immc_scheduler(line.substring(line.indexOf("[")+1, line.lastIndexOf("]"))); break;
+								case 1: value_emmc_scheduler(line.substring(line.indexOf("[")+1, line.lastIndexOf("]"))); break;
+								case 2: value_immc_readahead(line); break;
+								case 3: value_emmc_readahead(line);
+							}
+						}
+					}
+					/*
+					 * ----------------------------------------------------------------
+					   ================================================================
+					 * Get memory information
+					 */
+					if (deviceSetup.support_option_swap()) {
+						SwapStat[] swapList = root.memory().listSwaps();
+						String swappiness = root.file("/proc/sys/vm/swappiness").readOneLine();
+						
+						if (swapList != null) {
+							for (int i=0; i < swapList.length; i++) {
+								if (swapList[i].device().equals(deviceSetup.path_device_map_swap())) {
+									size_memory_swap(swapList[i].size());
+									usage_memory_swap(swapList[i].usage());
+									
+								} else if (deviceSetup.support_option_zram() 
+										&& swapList[i].device().equals(deviceSetup.path_device_map_zram())) {
+									
+									size_memory_zram(swapList[i].size());
+									usage_memory_zram(swapList[i].usage());
+								}
+							}
+						}
+
+						if (swappiness != null) {
+							level_memory_swappiness(Integer.parseInt(swappiness));
+						}
+					}
+					/*
+					 * ----------------------------------------------------------------
+					   ================================================================
+					 * Get storage threshold
+					 */
 					if (deviceSetup.support_binary_sqlite3()) {
-						ShellResult result = rootfw.shell().run("sqlite3 /data/data/com.android.providers.settings/databases/settings.db \"select value from secure where name = 'sys_storage_threshold_percentage'\"");
+						ShellResult result = root.shell().run("sqlite3 /data/data/com.android.providers.settings/databases/settings.db \"select value from secure where name = 'sys_storage_threshold_percentage'\"");
 						
 						if (result.wasSuccessful()) {
 							try {
-								configData.putLong("size_storage_threshold", ((Double) (((Long) configData.getLong("size_storage_data")).doubleValue() * (Double.parseDouble( result.getLine() ) / 100))).longValue());
+								size_storage_threshold(((Double) (((Long) size_storage_data()).doubleValue() * (Double.parseDouble( result.getLine() ) / 100))).longValue());
 								
 							} catch(Throwable e) {}
 						}
 					}
-
-					cached().putBoolean("DeviceConfig.Loaded", true);
+					/*
+					 * ---------------------------------------------------------------- */
 					
-					cached("DeviceConfig").putAll(configData);
-					
-					Root.close();
-					
-					return true;
-					
-				} else {
-					return true;
+					oClassChecks.put("loaded.device.config", true);
+					mPersistentStorage.edit().putBoolean("isLoaded", true);
+					mPersistentStorage.edit().unlockEditor();
 				}
+				
+				Root.release();
+
+				return isLoaded();
 			}
-			
-			return false;
 		}
 	}
 	
-	public boolean loadDeviceProperties(Boolean forceCheck) {
-		synchronized(oLock) {
-			if (checkDeviceSetup()) {
-				if (!checkDeviceProperties() || forceCheck) {
-					RootFW rootfw = Root.open();
-					Bundle propData = new Bundle();
-					DeviceSetup deviceSetup = deviceSetup();
-					String dirProperty = mContext.getResources().getString(R.string.config_dir_properties);
-					String[] loopContainer = new String[]{"move_apps", "move_dalvik", "move_data", "move_libs", "move_media", "move_system", "enable_cache", "enable_swap", "enable_sdext_journal", "enable_debug", "set_swap_level", "set_sdext_fstype", "run_sdext_fschk", "set_storage_threshold", "set_zram_compression", "set_emmc_readahead", "set_emmc_scheduler", "set_immc_readahead", "set_immc_scheduler", "disable_safemode"};
+	public final class DeviceProperties extends IDeviceProperties {
+		private DeviceProperties() {
+			mPersistentStorage = new IPersistentPreferences("cache", "DeviceProperties");
+		}
+		
+		public Boolean isLoaded() {
+			synchronized (mInstanceLock) {
+				if (!oClassChecks.get("loaded.device.properties")) {
+					if (!mPersistentStorage.getBoolean("isLoaded")) {
+						return false;
+					}
+					
+					oClassChecks.put("loaded.device.properties", true);
+				}
+				
+				return true;
+			}
+		}
+		
+		public Boolean load(Boolean force) {
+			synchronized (mInstanceLock) {
+				RootFW root = Root.initiate();
+				
+				if (root.isConnected() && (force || !isLoaded()) && deviceSetup.isLoaded()) {
+					mPersistentStorage.edit().lockEditor();
+					
+					/* ================================================================
+					 * Collect and/or create script properties
+					 */
+					String dirProperty = getContext().getResources().getString(R.string.config_dir_properties);
+					String[] loopContainer = new String[]{"move_apps", "move_sysapps", "move_dalvik", "move_data", "move_libs", "move_media", "move_system", "enable_cache", "enable_swap", "enable_sdext_journal", "enable_debug", "set_swap_level", "set_sdext_fstype", "run_sdext_fschk", "set_storage_threshold", "set_zram_compression", "set_emmc_readahead", "set_emmc_scheduler", "set_immc_readahead", "set_immc_scheduler", "disable_safemode"};
 					
 					for (int i=0; i < loopContainer.length; i++) {
-						FileExtender.File propFile = rootfw.file(dirProperty + "/m2sd." + loopContainer[i]);
+						FileExtender.File propFile = root.file(dirProperty + "/m2sd." + loopContainer[i]);
 						String value = propFile.readOneLine();
 						
 						if (value == null) {
@@ -584,7 +734,7 @@ public class Preferences {
 								value = deviceSetup.support_binary_tune2fs() ? "2" : "1";
 								
 							} else if (loopContainer[i].equals("set_sdext_fstype")) {
-								value = rootfw.filesystem().hasTypeSupport("ext4") ? "ext4" : "auto";
+								value = root.filesystem().hasTypeSupport("ext4") ? "ext4" : "auto";
 								
 							} else if (loopContainer[i].equals("run_sdext_fschk")) {
 								value = deviceSetup.support_binary_e2fsck() ? "1" : "0";
@@ -613,255 +763,194 @@ public class Preferences {
 
 							propFile.write(value);
 						}
-
-						propData.putString(loopContainer[i], value);
-					}
-					
-					cached("DeviceProperties").putAll(propData);
-					
-					cached().putBoolean("DeviceProperties.Loaded", true);
-					
-					if ("1".equals(rootfw.file(dirProperty + "/m2sd.enable_reversed_mount").readOneLine())) {
-						deviceProperties().move_apps( !"1".equals(propData.getString("move_apps")) );
-						deviceProperties().move_dalvik( !"1".equals(propData.getString("move_dalvik")) );
-						deviceProperties().move_data( !"1".equals(propData.getString("move_data")) );
 						
-						rootfw.file(dirProperty + "/m2sd.enable_reversed_mount").remove();
-						
-						saveDeviceProperties();
+						mPersistentStorage.edit().putString(loopContainer[i], value);
 					}
-
-					Root.close();
+					/*
+					 * ---------------------------------------------------------------- */
 					
-					return true;
+					oClassChecks.put("loaded.device.properties", true);
+					mPersistentStorage.edit().putBoolean("isLoaded", true);
+					mPersistentStorage.edit().unlockEditor();
 					
-				} else {
-					return true;
-				}
-			}
-			
-			return false;
-		}
-	}
-	
-	public void saveDeviceProperties() {
-		synchronized(oLock) {
-			DeviceProperties deviceProperties = deviceProperties();
-			
-			if (deviceProperties != null && deviceProperties.hasUpdated()) {
-				RootFW rootfw = Root.open();
-				String dirProperty = mContext.getResources().getString(R.string.config_dir_properties);
-				String name;
-				
-				while ((name = deviceProperties.nextUpdated()) != null) {
-					rootfw.file(dirProperty + "/m2sd." + name).write("" + cached("DeviceProperties").getString(name));
+					/* ================================================================
+					 * Handle old reversed mount if enabled
+					 */
+					if ("1".equals(root.file(dirProperty + "/m2sd.enable_reversed_mount").readOneLine())) {
+						move_apps( !move_apps() );
+						move_dalvik( !move_dalvik() );
+						move_data( !move_data() );
+						
+						root.file(dirProperty + "/m2sd.enable_reversed_mount").remove();
+					}
+					/*
+					 * ---------------------------------------------------------------- */
 				}
 				
-				Root.close();
+				Root.release();
+				
+				return isLoaded();
 			}
 		}
 	}
 	
-	public String getSelectorValue(String aSelector, String aValue) {
-		Integer iSelectorNames = mContext.getResources().getIdentifier("selector_" + aSelector + "_names", "array", mContext.getPackageName());
-		Integer iSelectorValues = mContext.getResources().getIdentifier("selector_" + aSelector + "_values", "array", mContext.getPackageName());
-		
-		if (iSelectorNames != 0 && iSelectorValues != 0) {
-			String[] lSelectorNames = mContext.getResources().getStringArray(iSelectorNames);
-			String[] lSelectorValues = mContext.getResources().getStringArray(iSelectorValues);
-			
-			for (int i=0; i < lSelectorValues.length; i++) {
-				if (lSelectorValues[i].equals(aValue)) {
-					return lSelectorNames[i];
-				}
-			}
-		}
-		
-		return mContext.getResources().getString(R.string.status_unknown);
-	}
-	
-	public PersistentPreferences stored() {
-		return stored("Preferences");
-	}
-	
-	public PersistentPreferences stored(String aName) {
-		return new PersistentPreferences(aName, mContext.getSharedPreferences("settings", 0x00000000));
-	}
-	
-	public PersistentPreferences cached() {
-		return cached("Preferences");
-	}
-	
-	public PersistentPreferences cached(String aName) {
-		SharedPreferences preferences = mContext.getSharedPreferences("cache", 0x00000000);
-		
-		if (!oCacheChecked && Root.isConnected()) {
-			String tmpDir = mContext.getResources().getString(R.string.config_dir_tmp);
-			RootFW rootfw = Root.open();
-			String appid = mContext.getResources().getString(R.string.config_application_id);
-			
-			if (!rootfw.file(tmpDir + "/application.lock").exists() || 
-					!appid.equals("" + preferences.getInt("android.appId", 0))) {
-				
-				Editor edit = preferences.edit();
-				
-				edit.clear();
-				edit.putInt("android.appId", Integer.parseInt(appid));
-				edit.commit();
-				
-				rootfw.filesystem("/").addMount(new String[]{"remount", "rw"});
-				rootfw.file(tmpDir).createDirectory();
-				rootfw.file(tmpDir + "/application.lock").write("1");
-				rootfw.filesystem("/").addMount(new String[]{"remount", "ro"});
-			}
-			
-			Root.close();
-			
-			oCacheChecked = true;
-		}
-
-		return new PersistentPreferences(aName, preferences);
-	}
-	
-	public static class PersistentPreferences {
-		private SharedPreferences mSharedPreferences;
+	public final class IPersistentPreferences {
+		private String mStorageName;
 		private String mName;
 		
-		public PersistentPreferences(String aName, SharedPreferences aSharedPreferences) {
-			mSharedPreferences = aSharedPreferences;
-			mName = aName;
+		private IPersistentEditor mEditor;
+		
+		private IPersistentPreferences(String storage, String name) {
+			mStorageName = storage;
+			mName = name;
 		}
 		
-		public Object find(String aName) {
-			if (mSharedPreferences.contains(aName)) {
-				return mSharedPreferences.getAll().get(mName + ":" + aName);
+		public IPersistentEditor edit() {
+			if (mEditor == null) {
+				mEditor = new IPersistentEditor();
 			}
 			
-			return null;
+			return mEditor;
 		}
-		
-		public String getString(String aName) {
-			return mSharedPreferences.getString(mName + ":" + aName, null);
-		}
-		
-		public String getString(String aName, String aDefault) {
-			return mSharedPreferences.getString(mName + ":" + aName, aDefault);
-		}
-		
-		public Boolean getBoolean(String aName) {
-			return mSharedPreferences.getBoolean(mName + ":" + aName, false);
-		}
-		
-		public Boolean getBoolean(String aName, Boolean aDefault) {
-			return mSharedPreferences.getBoolean(mName + ":" + aName, aDefault);
-		}
-		
-		public Integer getInteger(String aName) {
-			return mSharedPreferences.getInt(mName + ":" + aName, -1);
-		}
-		
-		public Integer getInteger(String aName, Integer aDefault) {
-			return mSharedPreferences.getInt(mName + ":" + aName, aDefault);
-		}
-		
-		public Long getLong(String aName, Long aDefault) {
-			return mSharedPreferences.getLong(mName + ":" + aName, aDefault);
-		}
-		
-		public Bundle getAll() {
-			if (mSharedPreferences.getAll().size() > 0) {
-				Bundle bundle = new Bundle();
-				Integer count = 0;
-				
-				for(Map.Entry<String,?> entry : ((Map<String,?>) mSharedPreferences.getAll()).entrySet()) {
-					String key = entry.getKey();
-					
-					if (key.startsWith(mName + ":")) {
-						key = key.substring(mName.length()+1);
-						count += 1;
-						
-						if (entry.getValue() instanceof Integer) {
-							bundle.putInt(key, (Integer) entry.getValue());
-							
-						} else if (entry.getValue() instanceof Long) {
-							bundle.putLong(key, (Long) entry.getValue());
-							
-						}  else if (entry.getValue() instanceof Boolean) {
-							bundle.putBoolean(key, (Boolean) entry.getValue());
-							
-						} else {
-							bundle.putString(key, (String) entry.getValue());
-						}
-					}
-				}
-				
-				return count > 0 ? bundle : null;
+
+		public final class IPersistentEditor {
+			private Editor mInnerEditor;
+			
+			private Boolean mLockEditor = false;
+			
+			private IPersistentEditor() {
+				mInnerEditor = mSharedPreferences.get(mStorageName).edit();
 			}
 			
-			return null;
-		}
-		
-		public PersistentPreferences putString(String aName, String aValue) {
-			mSharedPreferences.edit().putString(mName + ":" + aName, aValue).commit();
-			
-			return this;
-		}
-		
-		public PersistentPreferences putBoolean(String aName, Boolean aValue) {
-			mSharedPreferences.edit().putBoolean(mName + ":" + aName, aValue).commit();
-			
-			return this;
-		}
-		
-		public PersistentPreferences putInteger(String aName, Integer aValue) {
-			mSharedPreferences.edit().putInt(mName + ":" + aName, aValue).commit();
-			
-			return this;
-		}
-		
-		public PersistentPreferences putLong(String aName, Long aValue) {
-			mSharedPreferences.edit().putLong(mName + ":" + aName, aValue).commit();
-			
-			return this;
-		}
-		
-		public PersistentPreferences putAll(Bundle aBundle) {
-			Editor editor = mSharedPreferences.edit();
-			
-			for (String key : aBundle.keySet()) {
-				if (aBundle.get(key) instanceof Integer) {
-					editor.putInt(mName + ":" + key, (Integer) aBundle.get(key));
+			public void commit() {
+				if (!mLockEditor) {
+					apply();
 					
-				} else if (aBundle.get(key) instanceof Long) {
-					editor.putLong(mName + ":" + key, (Long) aBundle.get(key));
-					
-				} else if (aBundle.get(key) instanceof Boolean) {
-					editor.putBoolean(mName + ":" + key, (Boolean) aBundle.get(key));
-					
-				} else if (aBundle.get(key) instanceof String) {
-					editor.putString(mName + ":" + key, (String) aBundle.get(key));
+					mInnerEditor = null;
+					mEditor = null;
 				}
 			}
 			
-			editor.commit();
+			@SuppressWarnings("deprecation")
+			@TargetApi(Build.VERSION_CODES.GINGERBREAD)
+			public void apply() {
+				if (Integer.valueOf(android.os.Build.VERSION.SDK) >= 9) {
+					mInnerEditor.apply();
+					
+				} else {
+					mInnerEditor.commit();
+				}
+			}
 			
-			return this;
-		}
-	}
-	
-	@SuppressWarnings("deprecation")
-	@TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
-	public boolean isUserOwner() {
-		if (Integer.valueOf(android.os.Build.VERSION.SDK) >= 17) {
-		    try {
-		        Method getUserHandle = UserManager.class.getMethod("getUserHandle");
-		        int userHandle = (Integer) getUserHandle.invoke(mContext.getSystemService(Context.USER_SERVICE));
-		        
-		        return userHandle == 0;
-		        
-		    } catch (Exception e) {}
+			public void lockEditor() {
+				mLockEditor = true;
+			}
+			
+			public void unlockEditor() {
+				mLockEditor = false;
+				
+				commit();
+			}
+			
+			public Boolean isLocked() {
+				return mLockEditor;
+			}
+			
+			public IPersistentEditor putLong(String name, Long value) {
+				mInnerEditor.putLong(mName + ":" + name, value); return this;
+			}
+			
+			public IPersistentEditor putInteger(String name, Integer value) {
+				mInnerEditor.putInt(mName + ":" + name, value); return this;
+			}
+			
+			public IPersistentEditor putBoolean(String name, Boolean value) {
+				mInnerEditor.putBoolean(mName + ":" + name, value); return this;
+			}
+			
+			public IPersistentEditor putString(String name, String value) {
+				mInnerEditor.putString(mName + ":" + name, value); return this;
+			}
+			
+			public IPersistentEditor putStringArray(String name, String[] value) {
+				String newValue = "";
+				
+				for (int i=0; i < value.length; i++) {
+					newValue += (i > 0 ? "," : "") + newValue.replaceAll(",", "*comma*");
+				}
+				
+				return putString(name, newValue);
+			}
 		}
 		
-		return true;
+		public Long getLong(String name) {
+			return getLong(name, 0L);
+		}
+		
+		public Long getLong(String name, Long defaultValue) {
+			if (mEditor != null) {
+				mEditor.apply();
+			}
+			
+			return mSharedPreferences.get(mStorageName).getLong(mName + ":" + name, defaultValue);
+		}
+
+		public Integer getInteger(String name) {
+			return getInteger(name, 0);
+		}
+		
+		public Integer getInteger(String name, Integer defaultValue) {
+			if (mEditor != null) {
+				mEditor.apply();
+			}
+			
+			return mSharedPreferences.get(mStorageName).getInt(mName + ":" + name, defaultValue);
+		}
+
+		public Boolean getBoolean(String name) {
+			return getBoolean(name, false);
+		}
+		
+		public Boolean getBoolean(String name, Boolean defaultValue) {
+			if (mEditor != null) {
+				mEditor.apply();
+			}
+			
+			return mSharedPreferences.get(mStorageName).getBoolean(mName + ":" + name, defaultValue);
+		}
+
+		public String getString(String name) {
+			return getString(name, null);
+		}
+		
+		public String getString(String name, String defaultValue) {
+			if (mEditor != null) {
+				mEditor.apply();
+			}
+			
+			return mSharedPreferences.get(mStorageName).getString(mName + ":" + name, defaultValue);
+		}
+		
+		public String[] getStringArray(String name) {
+			return getStringArray(name, null);
+		}
+		
+		public String[] getStringArray(String name, String[] defaultValue) {
+			if (mEditor != null) {
+				mEditor.apply();
+			}
+			
+			if (!mSharedPreferences.get(mStorageName).contains(mName + ":" + name)) {
+				return defaultValue;
+			}
+			
+			String[] value = mSharedPreferences.get(mStorageName).getString(mName + ":" + name, "").split(",");
+			
+			for (int i=0; i < value.length; i++) {
+				value[i] = value[i].replaceAll("*comma*", ",");
+			}
+			
+			return value;
+		}
 	}
 }

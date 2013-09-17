@@ -70,7 +70,7 @@
     <!-- ######################################################
        - Toast messages used by the Log Fragment
     ####################################################### -->
-    <string name="toast_log_copied">Le journal a été copié vers /sdcard/Mounts2SD/log.txt</string>
+    <string name="toast_log_copied">Le journal a été copié vers %1$s</string>
     <string name="toast_log_unsuccessful">Impossible do copier le journal sur la carte SD</string>
 
     <!-- ######################################################

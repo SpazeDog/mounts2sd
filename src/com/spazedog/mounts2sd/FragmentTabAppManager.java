@@ -20,11 +20,10 @@
 package com.spazedog.mounts2sd;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -32,7 +31,6 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,15 +45,14 @@ import com.spazedog.lib.taskmanager.Task;
 import com.spazedog.mounts2sd.tools.Root;
 import com.spazedog.mounts2sd.tools.ViewEventHandler;
 import com.spazedog.mounts2sd.tools.ViewEventHandler.ViewClickListener;
-import com.spazedog.mounts2sd.tools.interfaces.DialogConfirmResponse;
-import com.spazedog.mounts2sd.tools.interfaces.DialogListener;
-import com.spazedog.mounts2sd.tools.interfaces.TabController;
+import com.spazedog.mounts2sd.tools.interfaces.IDialogConfirmResponse;
+import com.spazedog.mounts2sd.tools.interfaces.ITabController;
 
-public class FragmentTabAppManager extends Fragment implements DialogListener, DialogConfirmResponse, ViewClickListener {
+public class FragmentTabAppManager extends Fragment implements IDialogConfirmResponse, ViewClickListener {
 	
-	private ViewGroup mContainer;
+	private static SortedMap<String, PackageDetails> oPackages = new TreeMap<String, PackageDetails>();
 	
-	private static Map<String, PackageDetails> mPackages = new HashMap<String, PackageDetails>();
+	private Boolean mAssamblingList = false;
 	
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -63,43 +60,124 @@ public class FragmentTabAppManager extends Fragment implements DialogListener, D
     	
         return inflater.inflate(R.layout.fragment_tab_appmanager, container, false);
     }
-	
-	@Override
-	public void onHiddenChanged(boolean hidden) {
-		super.onHiddenChanged(hidden);
-		
-		if (getActivity() != null) {
-			((TabController) getActivity()).frameUpdated();
-		}
-	}
-	
+    
 	@Override
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 		
 		onHiddenChanged(false);
 		
-		mContainer = (ViewGroup) ((ViewGroup) view).getChildAt(0);
-		
 		assembleApplicationList();
 	}
 	
-	public void assembleApplicationList() {
-		if (mPackages.size() == 0) {
-			new Task<Context, Integer, PackageDetails[]>(this, "application_list_assembler") {
-				private ProgressDialog mProgressDialog;
+	@Override
+	public void onHiddenChanged(boolean hidden) {
+		super.onHiddenChanged(hidden);
+		
+		if (getActivity() != null && !hidden) {
+			((ITabController) getActivity()).onTabUpdate();
+		}
+	}
+
+	@Override
+	public void onViewClick(View v) {
+		String message = (Boolean) oPackages.get(v.getTag()).getObject("isSystem") ? 
+				getResources().getString(R.string.manager_app_unregister_message) : 
+					getResources().getString(R.string.manager_app_register_message);
 				
-				@Override
-				protected void onUIReady() {
-					if (mProgressDialog == null) {
-						mProgressDialog = ProgressDialog.show((FragmentActivity) getActivityObject(), "", getResources().getString(R.string.manager_app_list_loader) + "...");
+		Bundle extra = new Bundle();
+		extra.putString("application", (String) v.getTag());
+		
+		new FragmentDialog.Builder(this, "app_selector", "Register System Application", extra).showConfirmDialog(message + "\n\n" + getResources().getString(R.string.manager_app_conversion_notice));
+	}
+
+	@Override
+	public void onDialogConfirm(String tag, Boolean confirm, Bundle extra) {
+		if (confirm) {
+			moveApplication( extra.getString("application") );
+		}
+	}
+	
+	private void moveApplication(final String application) {
+		new Task<Context, Void, Boolean>(this, "assembleApplicationList") {
+			@Override
+			protected void onPreExecute() {
+				setProgressMessage( getResources().getString(R.string.manager_app_conversion_loader) + "..." );
+			}
+			
+			@Override
+			protected Boolean doInBackground(Context... params) {
+				Boolean status = false;
+				RootFW root = Root.initiate();
+				PackageDetails packageDetails = oPackages.get(application);
+				FileExtender.File packageFile = root.file(
+					packageDetails.isUpdate() ? packageDetails.updatedPackage().path() : 
+							packageDetails.path()
+				);
+				
+				if (packageFile.exists()) {
+					root.filesystem("/system").addMount(new String[]{"remount", "rw"});
+					
+					try {
+						Thread.sleep(300);
+						
+					} catch (InterruptedException e) {}
+					
+					if ((Boolean) packageDetails.getObject("isSystem") && packageDetails.isUpdate()) {
+						status = packageFile.openCanonical().remove() && packageFile.remove();
+						
+					} else if ((Boolean) packageDetails.getObject("isSystem")) {
+						status = packageFile.openCanonical().move("/data/app/" + packageFile.getName()) && packageFile.remove();
+						
+					} else {
+						status = packageFile.move("/data/app-system/" + packageFile.getName()) && packageFile.openNew("/data/app-system/" + packageFile.getName()).createLink("/system/app/" + packageFile.getName());
 					}
+					
+					root.filesystem("/system").addMount(new String[]{"remount", "ro"});
+					
+					try {
+						Thread.sleep(700);
+						
+					} catch (InterruptedException e) {}
+				}
+				
+				Root.release();
+				
+				return status;
+			}
+			
+			@Override
+			protected void onPostExecute(Boolean result) {
+				FragmentTabAppManager fragment = (FragmentTabAppManager) getObject();
+				
+				if (result) {
+					Toast.makeText(getActivity(), getResources().getString(R.string.manager_app_converted_reboot), Toast.LENGTH_LONG).show();
+					View view = fragment.getView().findViewWithTag(application);
+					
+					if (view != null) {
+						((ViewGroup) view.getParent()).removeView(view);
+					}
+					
+				} else {
+					Toast.makeText(getActivity(), getResources().getString(R.string.manager_app_conversion_failed), Toast.LENGTH_LONG).show();
+				}
+			}
+			
+		}.execute(getActivity().getApplicationContext());
+	}
+	
+	private void assembleApplicationList() {
+		if (!mAssamblingList && oPackages.size() == 0) {
+			new Task<Context, Void, PackageDetails[]>(this, "assembleApplicationList") {
+				@Override
+				protected void onPreExecute() {
+					setProgressMessage( getResources().getString(R.string.manager_app_list_loader) + "..." );
 				}
 				
 				@Override
 				protected PackageDetails[] doInBackground(Context... params) {
 					Context context = params[0];
-					RootFW rootfw = Root.open();
+					RootFW rootfw = Root.initiate();
 					PackageDetails[] packages = rootfw.packages().getPackageList();
 					List<PackageDetails> assambled = new ArrayList<PackageDetails>();
 					String thisPackage = context.getPackageName();
@@ -116,7 +194,7 @@ public class FragmentTabAppManager extends Fragment implements DialogListener, D
 						}
 					}
 					
-					Root.close();
+					Root.release();
 					
 					return assambled.toArray( new PackageDetails[ assambled.size() ] );
 				}
@@ -135,15 +213,10 @@ public class FragmentTabAppManager extends Fragment implements DialogListener, D
 								result[i].putObject("label", packageInfo.applicationInfo.loadLabel(packageManager).toString());
 								result[i].putObject("isSystem", Boolean.valueOf( result[i].isUpdate() || result[i].path().startsWith("/system/") ));
 								
-								mPackages.put(result[i].name(), result[i]);
+								oPackages.put(result[i].name(), result[i]);
 							}
 							
 						} catch (NameNotFoundException e) {}
-					}
-					
-					if (mProgressDialog != null) {
-						mProgressDialog.dismiss();
-						mProgressDialog = null;
 					}
 					
 					fragment.buildApplicationList();
@@ -151,7 +224,7 @@ public class FragmentTabAppManager extends Fragment implements DialogListener, D
 				
 			}.execute(getActivity().getApplicationContext());
 			
-		} else {
+		} else if (!mAssamblingList) {
 			buildApplicationList();
 		}
 	}
@@ -159,24 +232,25 @@ public class FragmentTabAppManager extends Fragment implements DialogListener, D
 	private void buildApplicationList() {
 		LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		Boolean divider = false;
+		ViewGroup container = (ViewGroup) ((ViewGroup) getView()).getChildAt(0);
 		
-		for (String key : mPackages.keySet()) {
-			ViewGroup itemView = (ViewGroup) inflater.inflate(R.layout.inflate_appmanager_item, mContainer, false);
+		for (String key : oPackages.keySet()) {
+			ViewGroup itemView = (ViewGroup) inflater.inflate(R.layout.inflate_appmanager_item, container, false);
 			
-			((ImageView) itemView.findViewById(R.id.item_package_icon)).setImageDrawable((Drawable) mPackages.get(key).getObject("icon"));
-			((TextView) itemView.findViewById(R.id.item_package_label)).setText((String) mPackages.get(key).getObject("label"));
-			((TextView) itemView.findViewById(R.id.item_package_name)).setText(mPackages.get(key).name());
+			((ImageView) itemView.findViewById(R.id.item_package_icon)).setImageDrawable((Drawable) oPackages.get(key).getObject("icon"));
+			((TextView) itemView.findViewById(R.id.item_package_label)).setText((String) oPackages.get(key).getObject("label"));
+			((TextView) itemView.findViewById(R.id.item_package_name)).setText(oPackages.get(key).name());
 			
 			((ImageView) itemView.findViewById(R.id.item_package_type)).setImageResource(
-					(Boolean) mPackages.get(key).getObject("isSystem") ? 
+					(Boolean) oPackages.get(key).getObject("isSystem") ? 
 							R.drawable.app_manager_system : R.drawable.app_manager_regular
 			);
 			
-			itemView.setSelected((Boolean) mPackages.get(key).getObject("isSystem"));
-			itemView.setTag(mPackages.get(key).name());
+			itemView.setSelected((Boolean) oPackages.get(key).getObject("isSystem"));
+			itemView.setTag(oPackages.get(key).name());
 			
 			if (divider) {
-				inflater.inflate(R.layout.inflate_selector_divider, mContainer);
+				inflater.inflate(R.layout.inflate_dialog_divider, container);
 				
 			} else {
 				divider = true;
@@ -184,96 +258,7 @@ public class FragmentTabAppManager extends Fragment implements DialogListener, D
 			
 			itemView.setOnTouchListener(new ViewEventHandler(this));
 			
-			mContainer.addView(itemView);
+			container.addView(itemView);
 		}
-	}
-
-	@Override
-	public void onDialogConfirm(final String tag, final Boolean confirm) {
-		if (confirm) {
-			new Task<Context, Void, Boolean>(this, "application_converter") {
-				private ProgressDialog mProgressDialog;
-				
-				@Override
-				protected void onUIReady() {
-					if (mProgressDialog == null) {
-						mProgressDialog = ProgressDialog.show((FragmentActivity) getActivityObject(), "", getResources().getString(R.string.manager_app_conversion_loader) + "...");
-					}
-				}
-				
-				@Override
-				protected Boolean doInBackground(Context... params) {
-					Boolean status = false;
-					RootFW rootfw = Root.open();
-					PackageDetails packageDetails = mPackages.get(tag);
-					FileExtender.File packageFile = rootfw.file(
-						packageDetails.isUpdate() ? packageDetails.updatedPackage().path() : 
-								packageDetails.path()
-					);
-					
-					if (packageFile.exists()) {
-						rootfw.filesystem("/system").addMount(new String[]{"remount", "rw"});
-						
-						try {
-							Thread.sleep(300);
-							
-						} catch (InterruptedException e) {}
-						
-						if ((Boolean) packageDetails.getObject("isSystem") && packageDetails.isUpdate()) {
-							status = packageFile.openCanonical().remove() && packageFile.remove();
-							
-						} else if ((Boolean) packageDetails.getObject("isSystem")) {
-							status = packageFile.openCanonical().move("/data/app/" + packageFile.getName()) && packageFile.remove();
-							
-						} else {
-							status = packageFile.move("/data/app-system/" + packageFile.getName()) && packageFile.openNew("/data/app-system/" + packageFile.getName()).createLink("/system/app/" + packageFile.getName());
-						}
-						
-						rootfw.filesystem("/system").addMount(new String[]{"remount", "ro"});
-						
-						try {
-							Thread.sleep(700);
-							
-						} catch (InterruptedException e) {}
-					}
-					
-					Root.close();
-					
-					return status;
-				}
-				
-				@Override
-				protected void onPostExecute(Boolean result) {
-					FragmentTabAppManager fragment = (FragmentTabAppManager) getObject();
-					
-					if (mProgressDialog != null) {
-						mProgressDialog.dismiss();
-						mProgressDialog = null;
-					}
-					
-					if (result) {
-						Toast.makeText(getActivity(), getResources().getString(R.string.manager_app_converted_reboot), Toast.LENGTH_LONG).show();
-						View view = fragment.mContainer.findViewWithTag(tag);
-						
-						if (view != null) {
-							fragment.mContainer.removeView(view);
-						}
-						
-					} else {
-						Toast.makeText(getActivity(), getResources().getString(R.string.manager_app_conversion_failed), Toast.LENGTH_LONG).show();
-					}
-				}
-				
-			}.execute(getActivity().getApplicationContext());
-		}
-	}
-
-	@Override
-	public void onViewClick(View v) {
-		String message = (Boolean) mPackages.get(v.getTag()).getObject("isSystem") ? 
-				getResources().getString(R.string.manager_app_unregister_message) : 
-					getResources().getString(R.string.manager_app_register_message);
-		
-		new FragmentDialog.Builder(this, (String) v.getTag(), "Register System Application").showConfirmDialog(message + "\n\n" + getResources().getString(R.string.manager_app_conversion_notice));
 	}
 }

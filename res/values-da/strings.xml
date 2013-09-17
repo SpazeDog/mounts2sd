@@ -80,8 +80,10 @@
     <!-- ######################################################
        - Toast messages used by the Log Fragment
     ####################################################### -->
-    <string name="toast_log_copied">Log filen blev kopieret til /sdcard/Mounts2SD/log.txt</string>
-    <string name="toast_log_unsuccessful">Kunen ikke Kopierer log filen til SD Kortet</string>
+    <string name="toast_log_copied">Filen blev gemt i %1$s</string>
+    <string name="toast_log_unsuccessful">Det var ikke muligt at gemme filen til SD Kortet</string>
+    
+    <string name="progress_load_debug_file">Opbygger fejlretnings fil</string>
 
     <!-- ######################################################
        - Used by the progress dialog when loading AsyncTask
@@ -95,6 +97,7 @@
     ####################################################### -->
     <string name="menu_overview_reload">Genindlæs Status</string>
     <string name="menu_log_save">Gem log til SD Kort</string>
+    <string name="menu_log_build_debug">Opbyg fejlretnings fil</string>
     <string name="menu_controller_app_settings">Program Indstillinger</string>
     
     <!-- ######################################################
@@ -168,6 +171,7 @@
     <string name="option_system_item_threshold">Lager Tærskel</string>
     
     <string name="option_content_item_apps">Programmer</string>
+    <string name="option_content_item_sysapps">System Programmer</string>
     <string name="option_content_item_libs">Biblioteker</string>
     <string name="option_content_item_data">Data</string>
     <string name="option_content_item_dalvik">Dalvik Cache</string>
@@ -196,6 +200,7 @@
     <string name="option_system_description_threshold">Hvor meget plads der skal være tilbage på data, for at kunne installere nye programmer</string>
     
     <string name="option_content_description_apps">Flyt programmer sd-ext</string>
+    <string name="option_content_description_sysapps">Flyt system conventerede programmer sd-ext</string>
     <string name="option_content_description_libs">Flyt program biblioteker til sd-ext</string>
     <string name="option_content_description_data">Flyt program data til sd-ext</string>
     <string name="option_content_description_dalvik">Flyt dalvikvm program caches til sd-ext</string>

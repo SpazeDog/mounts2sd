@@ -31,48 +31,22 @@ import android.view.ViewGroup;
 import com.spazedog.mounts2sd.R;
 
 public class Utils {
-	
-	private static final String[] mPrifixes = {"b","Kb","Mb","Gb"};
-	
-    public static String convertPrifix(double iNum) {
-        String lPrifix = mPrifixes[0];
-        double iCal = (double) iNum;
-        double iDevide = 1024D;
-
-        for (int i=1; i < mPrifixes.length; i++) {
-                if (iCal < iDevide) {
-                        break;
-                }
-
-                iCal = iCal/iDevide;
-                lPrifix = mPrifixes[i];
-        }
-
-        return "" + (Math.round(iCal*100.0)/100.0) + lPrifix;
-	}
-	
-	public static double getDiskUsage(String dir) {
-		try {
-	        StatFs stat = new StatFs(dir);
-	        double result = ((double) stat.getBlockCount() - (double) stat.getAvailableBlocks()) * (double) stat.getBlockSize();
-	
-	        return result;
-	        
-		} catch (Exception e) {
-			return 0;
+	public static String getSelectorValue(Context context, String aSelector, String aValue) {
+		Integer iSelectorNames = context.getResources().getIdentifier("selector_" + aSelector + "_names", "array", context.getPackageName());
+		Integer iSelectorValues = context.getResources().getIdentifier("selector_" + aSelector + "_values", "array", context.getPackageName());
+		
+		if (iSelectorNames != 0 && iSelectorValues != 0) {
+			String[] lSelectorNames = context.getResources().getStringArray(iSelectorNames);
+			String[] lSelectorValues = context.getResources().getStringArray(iSelectorValues);
+			
+			for (int i=0; i < lSelectorValues.length; i++) {
+				if (lSelectorValues[i].equals(aValue)) {
+					return lSelectorNames[i];
+				}
+			}
 		}
-	}
-	
-	public static double getDiskTotal(String dir) {
-		try {
-	        StatFs stat = new StatFs(dir);
-	        double result = (double) stat.getBlockCount() * (double) stat.getBlockSize();
-	
-	        return result;
-	        
-		} catch (Exception e) {
-			return 0;
-		}
+		
+		return context.getResources().getString(R.string.status_unknown);
 	}
 	
 	public static void removeView(View aView, Boolean aGroup) {
@@ -95,13 +69,14 @@ public class Utils {
 	}
 	
 	public static class Relay {
-		public static interface MessageReceiver {
+		public static interface IRelayMessageReceiver {
 			public abstract void onMessageReceive(String tag, String message, Message visibilityController);
 			public abstract void onMessageRemove(String tag, Boolean retainState);
+			public abstract void onMessageVisibilityUpdate();
 		}
 		
 		public static abstract class Message {
-			private static WeakReference<MessageReceiver> mReceiver;
+			private static WeakReference<IRelayMessageReceiver> mReceiver;
 			
 			public static void add(String tag, String message, Message visibilityController) {
 				if (mReceiver != null && mReceiver.get() != null) {
@@ -115,52 +90,19 @@ public class Utils {
 				}
 			}
 			
-			public static void setReceiver(MessageReceiver receiver) {
-				mReceiver = new WeakReference<MessageReceiver>(receiver);
+			public static void triggerVisibilityUpdate() {
+				if (mReceiver != null && mReceiver.get() != null) {
+					mReceiver.get().onMessageVisibilityUpdate();
+				}
+			}
+			
+			public static void setReceiver(IRelayMessageReceiver receiver) {
+				mReceiver = new WeakReference<IRelayMessageReceiver>(receiver);
 			}
 			
 			public Boolean onVisibilityChange(Context context, Integer tabId, Boolean visible) {
 				return true;
 			}
 		}
-	}
-	
-	public static String sdcardStateMessage(Context context) {
-	    String sdcardStatus = Environment.getExternalStorageState();
-
-	    if (sdcardStatus.equals(Environment.MEDIA_MOUNTED_READ_ONLY)) {
-	    	return context.getResources().getString(R.string.sdcard_state_ro);
-
-	    } else if (sdcardStatus.equals(Environment.MEDIA_NOFS)) {
-	    	return context.getResources().getString(R.string.sdcard_state_format);
-
-	    } else if (sdcardStatus.equals(Environment.MEDIA_REMOVED)) {
-	    	return context.getResources().getString(R.string.sdcard_state_missing);
-
-	    } else if (sdcardStatus.equals(Environment.MEDIA_SHARED)) {
-	    	return context.getResources().getString(R.string.sdcard_state_ums);
-
-	    } else if (sdcardStatus.equals(Environment.MEDIA_UNMOUNTABLE)) {
-	    	return context.getResources().getString(R.string.sdcard_state_mount_failure);
-
-	    } else if (sdcardStatus.equals(Environment.MEDIA_UNMOUNTED)) {
-	    	return context.getResources().getString(R.string.sdcard_state_mount);
-	    }
-
-	    return null;
-	}
-	
-	public static boolean checkLicenseKey(Context context) {
-	    PackageManager manager = context.getPackageManager();
-	    
-	    return manager.checkSignatures(context.getPackageName(), "com.spazedog.mounts2sd.unlock")
-	    		== PackageManager.SIGNATURE_MATCH;
-	}
-	
-	public static void wait(int time) {
-		try {
-			Thread.sleep(time);
-			
-		} catch (Throwable e) {}
 	}
 }

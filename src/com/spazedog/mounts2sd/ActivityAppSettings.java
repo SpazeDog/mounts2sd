@@ -19,11 +19,9 @@
 
 package com.spazedog.mounts2sd;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,6 +32,7 @@ import android.widget.Toast;
 
 import com.spazedog.lib.rootfw3.RootFW;
 import com.spazedog.lib.taskmanager.Task;
+import com.spazedog.mounts2sd.tools.Common;
 import com.spazedog.mounts2sd.tools.ExtendedActivity;
 import com.spazedog.mounts2sd.tools.ExtendedLayout;
 import com.spazedog.mounts2sd.tools.ExtendedLayout.OnMeasure;
@@ -42,10 +41,9 @@ import com.spazedog.mounts2sd.tools.Root;
 import com.spazedog.mounts2sd.tools.Utils;
 import com.spazedog.mounts2sd.tools.ViewEventHandler;
 import com.spazedog.mounts2sd.tools.ViewEventHandler.ViewClickListener;
-import com.spazedog.mounts2sd.tools.interfaces.DialogConfirmResponse;
-import com.spazedog.mounts2sd.tools.interfaces.DialogListener;
+import com.spazedog.mounts2sd.tools.interfaces.IDialogConfirmResponse;
 
-public class ActivityAppSettings extends ExtendedActivity implements OnMeasure, ViewClickListener, DialogListener, DialogConfirmResponse {
+public class ActivityAppSettings extends ExtendedActivity implements OnMeasure, ViewClickListener, IDialogConfirmResponse {
 	
 	private static String REQUEST_LOADER_SCRIPT = "script";
 	private static String REQUEST_LOADER_SQLITE = "sqlite";
@@ -60,14 +58,12 @@ public class ActivityAppSettings extends ExtendedActivity implements OnMeasure, 
 	private TextView mTextScriptInstalled;
 	private TextView mTextScriptBundled;
 	private TextView mTextScriptButton;
-	
+
 	private Preferences mPreferences;
-	
-	private ProgressDialog mProgressDialog;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		mPreferences = new Preferences((Context) this);
+		mPreferences = Preferences.getInstance((Context) this);
 		
 		setTheme( mPreferences.theme() );
 		
@@ -76,7 +72,7 @@ public class ActivityAppSettings extends ExtendedActivity implements OnMeasure, 
 		LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		ExtendedLayout layoutOuter = (ExtendedLayout) inflater.inflate(R.layout.activity_app_settings, null);
 		
-		if (mPreferences.settings().use_tablet_settings() || getResources().getString(R.string.config_screen_type).equals("xlarge")) {
+		if (mPreferences.applicationSettings.use_tablet_settings() || getResources().getString(R.string.config_screen_type).equals("xlarge")) {
 			requestWindowFeature(Window.FEATURE_NO_TITLE);
 			
 			getWindow().setBackgroundDrawable(new ColorDrawable(0));
@@ -108,7 +104,7 @@ public class ActivityAppSettings extends ExtendedActivity implements OnMeasure, 
 		}
 		
 		mCheckboxBusybox = (LinearLayout) findViewById(R.id.settings_general_item_busybox);
-		if (mPreferences.deviceSetup().environment_multiple_binaries() && mPreferences.isUserOwner()) {
+		if (mPreferences.deviceSetup.environment_multiple_binaries() && mPreferences.isUserOwner()) {
 			mCheckboxBusybox.setOnTouchListener(new ViewEventHandler(this));
 			
 		} else {
@@ -133,55 +129,10 @@ public class ActivityAppSettings extends ExtendedActivity implements OnMeasure, 
 		
 		mTextScriptInstalled = (TextView) findViewById(R.id.settings_script_item_installed);
 		mTextScriptBundled = (TextView) findViewById(R.id.settings_script_item_bundled);
+		
+		handleViewContent();
 	}
 	
-	@Override
-	protected void onResume() {
-		super.onResume();
-		
-		if (mPreferences == null) {
-			mPreferences = new Preferences((Context) this);
-		}
-		
-		fillContent();
-	}
-	
-	@Override
-	protected void onPause() {
-		super.onPause();
-		
-		mPreferences = null;
-	}
-	
-	public void fillContent() {
-		mCheckboxTheme.setSelected(mPreferences.settings().use_dark_theme());
-		mCheckboxLayout.setSelected(mPreferences.settings().use_global_settings_style());
-		mTextScriptBundled.setText(R.string.config_script_version);
-		
-		if (!getResources().getString(R.string.config_screen_type).equals("xlarge")) {
-			mCheckboxDialog.setSelected(mPreferences.settings().use_tablet_settings());
-		}
-		
-		if (mPreferences.deviceSetup().environment_multiple_binaries() && mPreferences.isUserOwner()) {
-			mCheckboxBusybox.setSelected(mPreferences.deviceSetup() != null && mPreferences.deviceSetup().environment_busybox_internal());
-		}
-		
-		if (mPreferences.deviceSetup().environment_startup_script()) {
-			mTextScriptInstalled.setText( mPreferences.deviceSetup() == null || mPreferences.deviceSetup().version_startup_script() == null ? getResources().getString(R.string.status_unknown) : mPreferences.deviceSetup().version_startup_script() );
-			
-			if (!getResources().getString(R.string.config_script_id).equals( "" + mPreferences.deviceSetup().id_startup_script() )) {
-				mTextScriptButton.setText(R.string.settings_btn_script_update);
-				
-			} else {
-				mTextScriptButton.setText(R.string.settings_btn_script_remove);
-			}
-
-		} else {
-			mTextScriptInstalled.setText("");
-			mTextScriptButton.setText(R.string.settings_btn_script_install);
-		}
-	}
-
 	@Override
 	public void spec(View view, Integer height, Integer width) {
 		
@@ -200,7 +151,7 @@ public class ActivityAppSettings extends ExtendedActivity implements OnMeasure, 
 		
 		((LinearLayout) ((ViewGroup) view).getChildAt(0)).setLayoutParams(new LinearLayout.LayoutParams(lWidth, lHeight));
 	}
-
+	
 	@Override
 	public void onViewClick(View v) {
 		if (v == mCheckboxTheme || 
@@ -208,236 +159,248 @@ public class ActivityAppSettings extends ExtendedActivity implements OnMeasure, 
 				v == mCheckboxDialog) {
 			
 			switch (v.getId()) {
-				case R.id.settings_style_item_theme: mPreferences.settings().use_dark_theme( !v.isSelected() ); break;
-				case R.id.settings_style_item_layout: mPreferences.settings().use_global_settings_style( !v.isSelected() ); break;
-				case R.id.settings_style_item_dialog: mPreferences.settings().use_tablet_settings( !v.isSelected() );
+				case R.id.settings_style_item_theme: mPreferences.applicationSettings.use_dark_theme( !v.isSelected() ); break;
+				case R.id.settings_style_item_layout: mPreferences.applicationSettings.use_global_settings_style( !v.isSelected() ); break;
+				case R.id.settings_style_item_dialog: mPreferences.applicationSettings.use_tablet_settings( !v.isSelected() );
 			}
 			
 			v.setSelected( !v.isSelected() );
 			
 		} else if (v == mCheckboxBusybox) {
-			requestLoader(REQUEST_LOADER_BUSYBOX);
+			confirmInstallation(REQUEST_LOADER_BUSYBOX);
 			
 		} else if (v == mTextScriptButton) {
-			requestLoader(REQUEST_LOADER_SCRIPT);
+			confirmInstallation(REQUEST_LOADER_SCRIPT);
 			
 		} else if (v == mViewSqlite) {
-			requestLoader(REQUEST_LOADER_SQLITE);
+			confirmInstallation(REQUEST_LOADER_SQLITE);
 		}
 	}
 
-	public void requestLoader(String loader) {
-		if (!mPreferences.deviceSetup().environment_secure_flag_off()) {
+	@Override
+	public void onDialogConfirm(String tag, Boolean confirm, Bundle extra) {
+		if (confirm) {
+			startInstallation( (String) extra.getString("loader") );
+		}
+	}
+	
+	private void handleViewContent() {
+		mCheckboxTheme.setSelected(mPreferences.applicationSettings.use_dark_theme());
+		mCheckboxLayout.setSelected(mPreferences.applicationSettings.use_global_settings_style());
+		mTextScriptBundled.setText(R.string.config_script_version);
+		
+		if (!getResources().getString(R.string.config_screen_type).equals("xlarge")) {
+			mCheckboxDialog.setSelected(mPreferences.applicationSettings.use_tablet_settings());
+		}
+		
+		if (mPreferences.deviceSetup.environment_multiple_binaries() && mPreferences.isUserOwner()) {
+			mCheckboxBusybox.setSelected(mPreferences.deviceSetup != null && mPreferences.deviceSetup.environment_busybox_internal());
+		}
+		
+		if (mPreferences.deviceSetup.environment_startup_script()) {
+			mTextScriptInstalled.setText( mPreferences.deviceSetup == null || mPreferences.deviceSetup.version_startup_script() == null ? getResources().getString(R.string.status_unknown) : mPreferences.deviceSetup.version_startup_script() );
+			
+			if (!getResources().getString(R.string.config_script_id).equals( "" + mPreferences.deviceSetup.id_startup_script() )) {
+				mTextScriptButton.setText(R.string.settings_btn_script_update);
+				
+			} else {
+				mTextScriptButton.setText(R.string.settings_btn_script_remove);
+			}
+
+		} else {
+			mTextScriptInstalled.setText("");
+			mTextScriptButton.setText(R.string.settings_btn_script_install);
+		}
+	}
+	
+	private void confirmInstallation(String loader) {
+		if (!mPreferences.deviceSetup.environment_secure_flag_off()) {
 			if (!loader.equals(REQUEST_LOADER_BUSYBOX)) {
-				new FragmentDialog.Builder(this, loader, "S-On Protection").showConfirmDialog("Your device is S-On protected which means that the appliction cannot write to the system partition from within Android.\n\nDo you want to launch the recovery fallback handler?");
+				Bundle extra = new Bundle();
+				extra.putString("loader", loader);
+				
+				new FragmentDialog.Builder(this, "confirmInstallation", "S-On Protection", extra).showConfirmDialog("Your device is S-On protected which means that the appliction cannot write to the system partition from within Android.\n\nDo you want to launch the recovery fallback handler?");
 				
 				return;
 			}
 		}
 		
-		onDialogConfirm(loader, true);
+		startInstallation(loader);
 	}
 	
-	@Override
-	public void onDialogConfirm(final String loader, final Boolean confirm) {
-		if (confirm) {
-			new Task<Context, String, Boolean>(this, "settings_loader") {
-				private String mProgressMessage;
-				private String mErrorMessage;
+	private void startInstallation(final String loader) {
+		new Task<Context, String, Boolean>(this, "startInstallation") {
+			private String mErrorMessage;
+			
+			@Override
+			protected Boolean doInBackground(Context... params) {
+				Preferences preferences = Preferences.getInstance((Context) params[0]);
+				RootFW root = Root.initiate();
+				Boolean status = false;
+				Boolean remount = !loader.equals(REQUEST_LOADER_BUSYBOX);
+				Boolean remove = false;
+				String[] resources = null, files = null;
 				
-				@Override
-				protected void onUIReady() {
-					if (mProgressMessage != null) {
-						ActivityAppSettings activity = (ActivityAppSettings) getObject();
-						
-						if (activity.mProgressDialog == null) {
-							activity.mProgressDialog = ProgressDialog.show((FragmentActivity) getActivityObject(), "", mProgressMessage + "...");
-							
-						} else {
-							activity.mProgressDialog.setMessage(mProgressMessage + "...");
-						}
-					}
-				}
-				
-				@Override
-				protected void onProgressUpdate(String... progressMessage) {
-					mProgressMessage = progressMessage[0];
-					onUIReady();
-				}
-				
-				@Override
-				protected Boolean doInBackground(Context... params) {
-					Preferences preferences = new Preferences((Context) params[0]);
-					RootFW rootfw = Root.open();
-					Boolean status = false;
-					Boolean remount = !loader.equals(REQUEST_LOADER_BUSYBOX);
-					Boolean remove = false;
-					String[] resources = null, files = null;
+				if (loader.equals(REQUEST_LOADER_BUSYBOX) && preferences.deviceSetup.environment_busybox_internal()) {
+					remove = true;
 					
-					if (loader.equals(REQUEST_LOADER_BUSYBOX) && preferences.deviceSetup().environment_busybox_internal()) {
-						remove = true;
-						
-					} else if (loader.equals(REQUEST_LOADER_SCRIPT) && preferences.deviceSetup().environment_startup_script() && getResources().getString(R.string.config_script_id).equals( "" + mPreferences.deviceSetup().id_startup_script() )) {
-						remove = true;
-					}
-									
-					if (!loader.equals(REQUEST_LOADER_BUSYBOX) && !preferences.deviceSetup().environment_secure_flag_off()) {
-						String dataLocation = preferences.deviceConfig().location_storage_data();
-						
-						if (!loader.equals(REQUEST_LOADER_SCRIPT) || !remove) {
-							resources = loader.equals(REQUEST_LOADER_SQLITE) ? 
-									new String[] {"sqlite3"} : 
-									new String[] {"mounts2sd.sh", "10mounts2sd-runner", "a2sd_cleanup"};
-							
-							files = loader.equals(REQUEST_LOADER_SQLITE) ? 
-									new String[] {dataLocation + "/local/sqlite3"} : 
-									new String[] {dataLocation + "/local/mounts2sd.sh", dataLocation + "/local/10mounts2sd-runner", dataLocation + "/local/a2sd_cleanup"};
-						}
+				} else if (loader.equals(REQUEST_LOADER_SCRIPT) && preferences.deviceSetup.environment_startup_script() && getResources().getString(R.string.config_script_id).equals( "" + mPreferences.deviceSetup.id_startup_script() )) {
+					remove = true;
+				}
 								
-						_WRAPPER_:
-						while (true) {
-							if (resources != null) {
-								for (int i=0; i < resources.length; i++) {
-									publishProgress( String.format(getResources().getString(R.string.resource_copying_to_disk), resources[i], files[i]) );
-									
-									Utils.wait(750);
-									
-									if (!rootfw.file(files[i]).extractFromResource((Context) params[0], resources[i])) {
-										mErrorMessage = String.format(getResources().getString(R.string.resource_copy_to_disk_failed), resources[i], files[i]); break _WRAPPER_;
-									}
-								}
-							}
-							
-							publishProgress( String.format(getResources().getString(R.string.resource_copying_to_disk), "fallback.zip", dataLocation + "/local/fallback.zip") );
-							
-							Utils.wait(750);
-							
-							if (!rootfw.file(dataLocation + "/local/fallback.zip").extractFromResource((Context) params[0], "fallback.zip")) {
-								mErrorMessage = String.format(getResources().getString(R.string.resource_copy_to_disk_failed), "fallback.zip", dataLocation + "/local/fallback.zip"); break _WRAPPER_;
-							}
-							
-							/* If data is not mounted at /data, we need an empty temp file to trick runInRecovery()
-							 * into running our file. It will not run a file that does not exist, and since we make sure to extract the resources into the
-							 * real data partition, this location will be correct from within the recovery
-							 */
-							rootfw.file("/data/local").createDirectory();
-							rootfw.file("/data/local/fallback.zip").createFile();
-							rootfw.file("/data/local/fallback.zip").runInRecovery(loader, (remove ? "remove" : "install"));
-							
-							/*
-							 * This will only be displayed if the device did not reboot
-							 */
-							mErrorMessage = getResources().getString(R.string.resource_fallback_failed);
-							
-							break;
-						}
-						
-					} else {
+				if (!loader.equals(REQUEST_LOADER_BUSYBOX) && !preferences.deviceSetup.environment_secure_flag_off()) {
+					String dataLocation = preferences.deviceConfig.location_storage_data();
+					
+					if (!loader.equals(REQUEST_LOADER_SCRIPT) || !remove) {
 						resources = loader.equals(REQUEST_LOADER_SQLITE) ? 
 								new String[] {"sqlite3"} : 
-									loader.equals(REQUEST_LOADER_BUSYBOX) ? 
-											new String[] {"busybox"} : 
-											new String[] {"mounts2sd.sh", "10mounts2sd-runner"};
-											
-						files = loader.equals(REQUEST_LOADER_SQLITE) ? 
-								new String[] {"/system/xbin/sqlite3"} : 
-									loader.equals(REQUEST_LOADER_BUSYBOX) ? 
-											new String[] {"/data/local/busybox"} : 
-											new String[] {"/system/etc/mounts2sd.sh", "/system/etc/init.d/10mounts2sd-runner"};
-							
-						if (remount) {
-							rootfw.filesystem("/system").addMount(new String[]{"remount", "rw"});
+								new String[] {"mounts2sd.sh", "10mounts2sd-runner", "a2sd_cleanup"};
 						
-							publishProgress( String.format(getResources().getString(R.string.resource_running_script), "a2sd_cleanup") );
+						files = loader.equals(REQUEST_LOADER_SQLITE) ? 
+								new String[] {dataLocation + "/local/sqlite3"} : 
+								new String[] {dataLocation + "/local/mounts2sd.sh", dataLocation + "/local/10mounts2sd-runner", dataLocation + "/local/a2sd_cleanup"};
+					}
 							
-							Utils.wait(750);
-							
-							if (loader.equals(REQUEST_LOADER_SCRIPT) && !preferences.deviceSetup().environment_startup_script()) {
-								rootfw.file().runFromResource((Context) params[0], "a2sd_cleanup");
-								
-								/*
-								 * Be absolutely sure that we do not have the old 2.x app script laying around
-								 */
-								rootfw.file("/system/etc/init.d/10mounts2sd").remove();
-							}
-						}
-
-						_WRAPPER_:
-						while (true) {
+					_WRAPPER_:
+					while (true) {
+						if (resources != null) {
 							for (int i=0; i < resources.length; i++) {
-								if (remove) {
-									publishProgress( String.format(getResources().getString(R.string.resource_deleting_from_disk), resources[i], files[i]) );
-									
-									Utils.wait(750);
-									
-									if (!rootfw.file(files[i]).remove()) {
-										mErrorMessage = String.format(getResources().getString(R.string.resource_delete_from_disk_failed), resources[i], files[i]); break _WRAPPER_;
-									}
-									
-								} else {
-									String perm = loader.equals(REQUEST_LOADER_SQLITE) ? "0755" : "0775";
-									String group = loader.equals(REQUEST_LOADER_SQLITE) ? "2000" : "0";
-									
-									publishProgress( String.format(getResources().getString(R.string.resource_copying_to_disk), resources[i], files[i]) );
-									
-									Utils.wait(750);
-									
-									if (!rootfw.file(files[i]).extractFromResource((Context) params[0], resources[i], perm, "0", group)) {
-										mErrorMessage = String.format(getResources().getString(R.string.resource_copy_to_disk_failed), resources[i], files[i]); break _WRAPPER_;
-									}
+								publishProgress( String.format(getResources().getString(R.string.resource_copying_to_disk), resources[i], files[i]) );
+								
+								Common.wait(750);
+								
+								if (!root.file(files[i]).extractFromResource((Context) params[0], resources[i])) {
+									mErrorMessage = String.format(getResources().getString(R.string.resource_copy_to_disk_failed), resources[i], files[i]); break _WRAPPER_;
 								}
 							}
+						}
+						
+						publishProgress( String.format(getResources().getString(R.string.resource_copying_to_disk), "fallback.zip", dataLocation + "/local/fallback.zip") );
+						
+						Common.wait(750);
+						
+						if (!root.file(dataLocation + "/local/fallback.zip").extractFromResource((Context) params[0], "fallback.zip")) {
+							mErrorMessage = String.format(getResources().getString(R.string.resource_copy_to_disk_failed), "fallback.zip", dataLocation + "/local/fallback.zip"); break _WRAPPER_;
+						}
+						
+						/* If data is not mounted at /data, we need an empty temp file to trick runInRecovery()
+						 * into running our file. It will not run a file that does not exist, and since we make sure to extract the resources into the
+						 * real data partition, this location will be correct from within the recovery
+						 */
+						root.file("/data/local").createDirectory();
+						root.file("/data/local/fallback.zip").createFile();
+						root.file("/data/local/fallback.zip").runInRecovery(loader, (remove ? "remove" : "install"));
+						
+						/*
+						 * This will only be displayed if the device did not reboot
+						 */
+						mErrorMessage = getResources().getString(R.string.resource_fallback_failed);
+						
+						break;
+					}
+					
+				} else {
+					resources = loader.equals(REQUEST_LOADER_SQLITE) ? 
+							new String[] {"sqlite3"} : 
+								loader.equals(REQUEST_LOADER_BUSYBOX) ? 
+										new String[] {"busybox"} : 
+										new String[] {"mounts2sd.sh", "10mounts2sd-runner"};
+										
+					files = loader.equals(REQUEST_LOADER_SQLITE) ? 
+							new String[] {"/system/xbin/sqlite3"} : 
+								loader.equals(REQUEST_LOADER_BUSYBOX) ? 
+										new String[] {"/data/local/busybox"} : 
+										new String[] {"/system/etc/mounts2sd.sh", "/system/etc/init.d/10mounts2sd-runner"};
+						
+					if (remount) {
+						root.filesystem("/system").addMount(new String[]{"remount", "rw"});
+					
+						publishProgress( String.format(getResources().getString(R.string.resource_running_script), "a2sd_cleanup") );
+						
+						Common.wait(750);
+						
+						if (loader.equals(REQUEST_LOADER_SCRIPT) && !preferences.deviceSetup.environment_startup_script()) {
+							root.file().runFromResource((Context) params[0], "a2sd_cleanup");
 							
-							if (loader.equals(REQUEST_LOADER_SCRIPT)) {
-								Bundle bundle = new Bundle();
+							/*
+							 * Be absolutely sure that we do not have the old 2.x app script laying around
+							 */
+							root.file("/system/etc/init.d/10mounts2sd").remove();
+						}
+					}
+
+					_WRAPPER_:
+					while (true) {
+						for (int i=0; i < resources.length; i++) {
+							if (remove) {
+								publishProgress( String.format(getResources().getString(R.string.resource_deleting_from_disk), resources[i], files[i]) );
 								
-								String scriptId = remove ? null : rootfw.file("/system/etc/mounts2sd.sh").readOneMatch("@id");
-								String scriptVersion = remove ? null : rootfw.file("/system/etc/mounts2sd.sh").readOneMatch("@version");
+								Common.wait(750);
 								
-								try {
-									bundle.putBoolean("environment_startup_script", !remove);
-									bundle.putString("version_startup_script", scriptVersion == null ? null : (scriptVersion = scriptVersion.trim()).substring( scriptVersion.lastIndexOf(" ") + 1 ) );
-									bundle.putInt("id_startup_script", scriptId == null ? -1 : Integer.parseInt( (scriptId = scriptId.trim()).substring( scriptId.lastIndexOf(" ") + 1 ) ));
+								if (!root.file(files[i]).remove()) {
+									mErrorMessage = String.format(getResources().getString(R.string.resource_delete_from_disk_failed), resources[i], files[i]); break _WRAPPER_;
+								}
 								
-								} catch (Throwable e) {}
-									
-								preferences.cached("DeviceSetup").putAll(bundle);
+							} else {
+								String perm = loader.equals(REQUEST_LOADER_SQLITE) ? "0755" : "0775";
+								String group = loader.equals(REQUEST_LOADER_SQLITE) ? "2000" : "0";
 								
-							} else if (loader.equals(REQUEST_LOADER_BUSYBOX)) {
-								preferences.cached("DeviceSetup").putBoolean("environment_busybox_internal", !remove);
+								publishProgress( String.format(getResources().getString(R.string.resource_copying_to_disk), resources[i], files[i]) );
+								
+								Common.wait(750);
+								
+								if (!root.file(files[i]).extractFromResource((Context) params[0], resources[i], perm, "0", group)) {
+									mErrorMessage = String.format(getResources().getString(R.string.resource_copy_to_disk_failed), resources[i], files[i]); break _WRAPPER_;
+								}
 							}
+						}
+						
+						if (loader.equals(REQUEST_LOADER_SCRIPT)) {
+							String scriptId = remove ? null : root.file("/system/etc/mounts2sd.sh").readOneMatch("@id");
+							String scriptVersion = remove ? null : root.file("/system/etc/mounts2sd.sh").readOneMatch("@version");
 							
-							status = true; break;
+							try {
+								preferences.deviceSetup.environment_startup_script(!remove);
+								preferences.deviceSetup.version_startup_script( scriptVersion == null ? null : (scriptVersion = scriptVersion.trim()).substring( scriptVersion.lastIndexOf(" ") + 1 ) );
+								preferences.deviceSetup.id_startup_script( scriptId == null ? -1 : Integer.parseInt( (scriptId = scriptId.trim()).substring( scriptId.lastIndexOf(" ") + 1 ) ) );
+								
+							} catch (Throwable e) {}
+							
+						} else if (loader.equals(REQUEST_LOADER_BUSYBOX)) {
+							preferences.deviceSetup.environment_busybox_internal(!remove);
+							
+						} else if (loader.equals(REQUEST_LOADER_SQLITE)) {
+							preferences.deviceSetup.support_binary_sqlite3( root.binary("sqlite3").exists() );
 						}
 						
-						if (remount) {
-							rootfw.filesystem("/system").addMount(new String[]{"remount", "ro"});
-						}
+						status = true; break;
 					}
 					
-					Root.close();
-					
-					return status;
-				}
-				
-				@Override
-				protected void onPostExecute(Boolean result) {
-					ActivityAppSettings activity = (ActivityAppSettings) getObject();
-					
-					if (activity.mProgressDialog != null) {
-						activity.mProgressDialog.dismiss();
-						activity.mProgressDialog = null;
-					}
-					
-					if (!result) {
-						Toast.makeText(activity, mErrorMessage, Toast.LENGTH_LONG).show();
-						
-					} else {
-						activity.fillContent();
+					if (remount) {
+						root.filesystem("/system").addMount(new String[]{"remount", "ro"});
 					}
 				}
 				
-			}.execute(getApplicationContext());
-		}
+				Root.release();
+				
+				return status;
+			}
+			
+			@Override
+			protected void onProgressUpdate(String... progress) {
+				setProgressMessage(progress[0]);
+			}
+			
+			@Override
+			protected void onPostExecute(Boolean result) {
+				if (!result) {
+					Toast.makeText((ActivityAppSettings) getObject(), mErrorMessage, Toast.LENGTH_LONG).show();
+					
+				} else {
+					((ActivityAppSettings) getObject()).handleViewContent();
+				}
+			}
+			
+		}.execute(getApplicationContext());
 	}
 }
