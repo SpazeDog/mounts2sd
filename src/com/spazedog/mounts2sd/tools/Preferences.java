@@ -80,20 +80,26 @@ public final class Preferences {
 	
 	public static Preferences getInstance(Context context) {
 		synchronized (oClassLock) {
-			if (oContextReference == null || oContextReference.get() == null)
-				oContextReference = new WeakReference<Context>(context.getApplicationContext());
+			Preferences tmpPreferences = oClassReference != null ? 
+					oClassReference.get() : null;
+					
+			Context tmpContext = oContextReference != null ? 
+					oContextReference.get() : null;
 			
-			if (oClassReference == null || oClassReference.get() == null)
-				oClassReference = new WeakReference<Preferences>(new Preferences());
+			if (tmpContext == null)
+				oContextReference = new WeakReference<Context>( (tmpContext = context.getApplicationContext()) );
 			
-			if (oClassReference.get().mSharedPreferences.size() == 0) {
-				oClassReference.get().mSharedPreferences.put("cache", oContextReference.get().getSharedPreferences("cache", 0x00000000));
-				oClassReference.get().mSharedPreferences.put("persistent", oContextReference.get().getSharedPreferences("persistent", 0x00000000));
+			if (tmpPreferences == null)
+				oClassReference = new WeakReference<Preferences>( (tmpPreferences = new Preferences()) );
+			
+			if (tmpPreferences.mSharedPreferences.size() == 0) {
+				tmpPreferences.mSharedPreferences.put("cache", tmpContext.getSharedPreferences("cache", 0x00000000));
+				tmpPreferences.mSharedPreferences.put("persistent", tmpContext.getSharedPreferences("persistent", 0x00000000));
 			}
 			
 			if (!oClassChecks.get("initiated.cache")) {
-				String appid = oContextReference.get().getResources().getString(R.string.config_application_id);
-				SharedPreferences sharedPreferences = oClassReference.get().mSharedPreferences.get("cache");
+				String appid = tmpContext.getResources().getString(R.string.config_application_id);
+				SharedPreferences sharedPreferences = tmpPreferences.mSharedPreferences.get("cache");
 				
 				if (!appid.equals("" + sharedPreferences.getInt("android.appId", 0)) || !new java.io.File("/boot.chk").exists()) {
 					RootFW root = Root.initiate();
@@ -134,7 +140,7 @@ public final class Preferences {
 				oClassChecks.put("initiated.cache", true);
 			}
 			
-			return oClassReference.get();
+			return tmpPreferences;
 		}
 	}
 	
@@ -328,10 +334,10 @@ public final class Preferences {
 								mountStat = root.filesystem(loopContainer[i]).statFstab();
 							}
 							
-							if (i == 0) {
+							if (i == 0 && mountStat != null) {
 								path_device_map_data(mountStat.device());
 							
-							} else {
+							} else if (mountStat != null) {
 								path_device_map_cache(mountStat.device());
 							}
 						}
