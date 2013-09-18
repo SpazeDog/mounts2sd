@@ -465,8 +465,8 @@ public final class Preferences {
 					DiskStat diskStat = null;
 					String additLocationDevice = null;
 					
-					for (int i=0; i <= (loopContainer = new String[]{"/data", configDirSdext}).length; i++) {
-						if (i < loopContainer.length) {
+					for (int i=0; i <= (loopContainer = new String[]{"/data", configDirSdext, null}).length; i++) {
+						if (loopContainer[i] != null) {
 							diskStat = root.filesystem(loopContainer[i]).statDisk();
 						}
 					
@@ -482,12 +482,18 @@ public final class Preferences {
 							
 						} else if (additLocationDevice != null) {
 							if (root.filesystem(additLocationDevice).isMounted()) {
-								diskStat = root.filesystem(additLocationDevice).statDisk(); continue;
+								diskStat = root.filesystem(additLocationDevice).statDisk();
+								
+								if (diskStat != null) {
+									loopContainer[i] = diskStat.location();
+
+									continue;
+								}
 							}
 						}
 						
 						if (additLocationDevice == null) {
-							additLocationDevice = diskStat != null && diskStat.device().equals(deviceSetup.path_device_map_data()) ? deviceSetup.path_device_map_data() : deviceSetup.path_device_map_sdext(); continue;
+							additLocationDevice = diskStat == null || diskStat.device().equals(deviceSetup.path_device_map_data()) ? deviceSetup.path_device_map_sdext() : deviceSetup.path_device_map_data(); continue;
 						}
 							
 						break;
