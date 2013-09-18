@@ -32,6 +32,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Build;
 import android.os.UserManager;
+import android.util.Log;
 
 import com.spazedog.lib.rootfw3.RootFW;
 import com.spazedog.lib.rootfw3.RootFW.ConnectionListener;
@@ -303,7 +304,7 @@ public final class Preferences {
 								}
 								
 							} else {
-								if (path_device_map_immc() != null) {
+								if (path_device_map_immc() == null) {
 									if (root.file("/dev/block/mtdblock0").exists()) {
 										path_device_map_immc("/dev/block/mtdblock0");
 										
@@ -357,7 +358,7 @@ public final class Preferences {
 								if (fileStat != null) {
 									FileExtender.File readaheadFile = root.file("/sys/devices/virtual/bdi/" + fileStat.mm() + "/read_ahead_kb");
 									FileExtender.File schedulerFile = root.file("/sys/block/" + loopContainer[i].substring(loopContainer[i].lastIndexOf("/") + 1) + "/queue/scheduler");
-									
+
 									if (i == 0) {
 										path_device_readahead_immc(readaheadFile.exists() ? readaheadFile.getResolvedPath() : null);
 										path_device_scheduler_immc(schedulerFile.exists() ? schedulerFile.getResolvedPath() : null);
