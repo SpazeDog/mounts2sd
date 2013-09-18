@@ -634,6 +634,7 @@ ProcessStorage() {
                     DetachMount $iDirSdext
                 fi
             fi
+        fi
     fi
 }
 
