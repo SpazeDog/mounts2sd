@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <resources>
-    <string name="config_application_id" translatable="false">2013091801</string>
+    <string name="config_application_id" translatable="false">2013091803</string>
     
     <string name="config_script_id" translatable="false">2013091701</string>
     <string name="config_script_version" translatable="false">6.0.12</string>
@@ -18,5 +18,5 @@
     
     <string name="config_screen_type" translatable="false">normal</string>
     
-    <bool name="config_unlocked" translatable="false">false</bool>
+    <bool name="config_unlocked" translatable="false">true</bool>
 </resources>
