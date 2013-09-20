@@ -19,8 +19,6 @@
 
 package com.spazedog.mounts2sd.tools;
 
-import java.lang.ref.WeakReference;
-
 import android.graphics.Rect;
 import android.os.Handler;
 import android.view.MotionEvent;
@@ -75,7 +73,7 @@ public class ViewEventHandler implements OnTouchListener {
 		
 		@Override
 		public void run() {
-			mListener.get().onViewClick(mView);
+			mListener.onViewClick(mView);
 			
 			mView.setPressed(false);
 			
@@ -85,7 +83,7 @@ public class ViewEventHandler implements OnTouchListener {
 	
 	private Handler mHandler = new Handler();
 	
-	private WeakReference<ViewClickListener> mListener;
+	private ViewClickListener mListener;
 	
 	private Boolean mEventDown = false;
 	
@@ -96,7 +94,7 @@ public class ViewEventHandler implements OnTouchListener {
 	}
 	
 	public ViewEventHandler(ViewClickListener aListener) {
-		mListener = new WeakReference<ViewClickListener>((ViewClickListener) aListener);
+		mListener = aListener;
 	}
 
 	@Override
