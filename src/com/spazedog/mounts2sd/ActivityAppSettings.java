@@ -367,7 +367,8 @@ public class ActivityAppSettings extends ExtendedActivity implements OnMeasure, 
 							} catch (Throwable e) {}
 							
 						} else if (loader.equals(REQUEST_LOADER_BUSYBOX)) {
-							preferences.deviceSetup.environment_busybox_internal(!remove);
+							preferences.deviceSetup.environment_busybox_internal(root.file("/data/local/busybox").exists());
+							preferences.applicationSettings.use_builtin_busybox(!remove);
 							
 						} else if (loader.equals(REQUEST_LOADER_SQLITE)) {
 							preferences.deviceSetup.support_binary_sqlite3( root.binary("sqlite3").exists() );
