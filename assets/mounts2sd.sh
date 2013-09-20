@@ -1,7 +1,7 @@
 #!/system/bin/sh
 #####
-# @id 2013091701
-# @version 6.0.12
+# @id 2013092001
+# @version 6.0.14
 #####
 # This file is part of the Mounts2SD Project: https://github.com/spazedog/mounts2sd
 #  
@@ -80,6 +80,7 @@ $_echo $iDirTmp/function.list_properties.tmp
 ListCommands() {
 $_cat <<'EOF' > $iDirTmp/function.list_commands.tmp
 cat
+cut
 echo
 tee
 test
@@ -560,10 +561,15 @@ ProcessStorage() {
         local lMountParamsLimited="noatime,nodiratime,relatime,nosuid,nodev"
         local lStatus
 
-        if $_grep -q "$lDevice" /proc/mounts; then
-            Log e "The device '$lDevice' is already in use by another process. Mounts2SD will not move any content between the partitions to avoid any conflicts!"
+        if $_test "`$_grep "$lDevice" /proc/mounts | $_tr -s ' ' | $_cut -d ':' -f1`" = "/data"; then
+            Log e "The device '$lDevice' is beeing used as the /data partition. Skipping sd-ext handling to avoid conflicts!"
 
         else
+            if $_grep -q "$lDevice" /proc/mounts; then
+                Log i "The device '$lDevice' has been mounted by some other process. Unmounting in order to continue"
+                DetachMount "$lDevice"
+            fi
+
             if $_test $(Session get prop_run_sdext_fschk 0) -eq 1; then
                 if ! $_test -z "$_e2fsck"; then
                     Log v "Running a file system check on '$lDevice'"
