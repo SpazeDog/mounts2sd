@@ -889,7 +889,7 @@ public final class Preferences {
 				String newValue = "";
 				
 				for (int i=0; i < value.length; i++) {
-					newValue += (i > 0 ? "," : "") + newValue.replaceAll(",", "*comma*");
+					newValue += (i > 0 ? "," : "") + value[i].replaceAll(",", ";c;");
 				}
 				
 				return putString(name, newValue);
@@ -960,7 +960,7 @@ public final class Preferences {
 			String[] value = mSharedPreferences.get(mStorageName).getString(mName + ":" + name, "").split(",");
 			
 			for (int i=0; i < value.length; i++) {
-				value[i] = value[i].replaceAll("*comma*", ",");
+				value[i] = value[i].replaceAll(";c;", ",");
 			}
 			
 			return value;
