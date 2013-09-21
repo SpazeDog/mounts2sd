@@ -83,10 +83,12 @@
     <string name="toast_log_copied">Il file Registro è stato copiato in %1$s</string>
     <string name="toast_log_unsuccessful">Impossibile copiare il file registro nella sdcard</string>
 
+    <string name="progress_load_debug_file">Preparazione del file di debug</string>
+
     <!-- ######################################################
        - Used by the progress dialog when loading AsyncTask
     ####################################################### -->
-    <string name="progress_load_setup">Sto controllando la configurazione del dispositivo</string>
+    <string name="progress_load_setup">Sto controllando l\'impostazione del dispositivo</string>
     <string name="progress_load_config">Sto recuperando le configurazioni del dispositivo</string>
     <string name="progress_load_properties">Sto recuperando i valori delle proprietà dello script</string>
 
@@ -95,6 +97,7 @@
     ####################################################### -->
     <string name="menu_overview_reload">Ricarica stato</string>
     <string name="menu_log_save">Memorizza il registro sulla sdcard</string>
+    <string name="menu_log_build_debug">Compila il file di debug</string>
     <string name="menu_controller_app_settings">Impostazioni Applicazione</string>
     
     <!-- ######################################################
@@ -167,6 +170,7 @@
     <string name="option_system_item_threshold">Soglia di Archiviazione</string>
     
     <string name="option_content_item_apps">Applicativi</string>
+    <string name="option_content_item_sysapps">Applicativi di sistema</string>
     <string name="option_content_item_libs">Librerie</string>
     <string name="option_content_item_data">Dati</string>
     <string name="option_content_item_dalvik">Cache Dalvik</string>
@@ -195,6 +199,7 @@
     <string name="option_system_description_threshold">Quanto spazio deve essere lasciato in data per poter installare le applicazioni</string>
     
     <string name="option_content_description_apps">Sposta le applicazioni in sd-ext</string>
+    <string name="option_content_description_sysapps">Sposta le applicazioni di sistema convertite in sd-ext</string>
     <string name="option_content_description_libs">Sposta le librerie delle applicazioni in sd-ext</string>
     <string name="option_content_description_data">Sposta i dati delle applicazioni in sd-ext</string>
     <string name="option_content_description_dalvik">Sposta le caches dalvikvm delle applicazioni in sd-ext</string>
@@ -207,7 +212,7 @@
     
     <string name="option_filesystem_description_fschk">Esegui il controllo del file system nella sd-ext durante l\'avvio</string>
     <string name="option_filesystem_description_fstype">Selezionare il tipo di file system con cui montare la sd-ext</string>
-    <string name="option_filesystem_description_journal">Cambia le configurazioni del journal sulla sd-ext durante l\'avvio</string>
+    <string name="option_filesystem_description_journal">Cambia le impostazioni del journal sulla sd-ext durante l\'avvio</string>
     
     <string name="option_misc_description_safemode">Impedisci che lo script di avvio entri in modalità sicura (Abilita un workaround per le implementazioni scorrette di init.d)</string>
     <string name="option_misc_description_debug">Ottieni dallo script di avvio voci del registro più dettagliate</string>
