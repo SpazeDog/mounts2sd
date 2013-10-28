@@ -1,7 +1,7 @@
 #!/system/bin/sh
 #####
-# @id 2013092001
-# @version 6.0.14
+# @id 2013102801
+# @version 6.0.18
 #####
 # This file is part of the Mounts2SD Project: https://github.com/spazedog/mounts2sd
 #  
@@ -213,145 +213,151 @@ ProcessEnviroment() {
         ;;
 
         *) 
-            if $iBusybox test true > /dev/null 2>&1; then
-                # This is a compatibillity test which will check to see if the current busybox will work with this script. This test is based on a lot of different reported issues that has been gattered over a long period of time, and it has proven to fetch any busybox version that will cause problems.
-                if $iBusybox test "52223abccbcf00eb3c81300545d63126" != "`( $iBusybox [ 1 -eq 0 ] || $iBusybox [ 0 -eq 1 ] ) && $iBusybox echo no || $iBusybox echo 'remove this part okay:bla=no-4' | $iBusybox grep -e '.*bla=no-[1-9]*' | $iBusybox sed -e 's/^remove //' | $iBusybox awk '{print $3}' | $iBusybox cut -d ':' -f1 | $iBusybox md5sum | $iBusybox awk '{print $1}'`"; then
-                    # Do NOT break here. We might have more busybox paths to search
-                    lMessage="The current busybox is outdated!"
+            for tmpBusybox in $iBusybox busybox; do
+                iBusybox=$tmpBusybox
 
-                elif $iBusybox test "`$iBusybox id | $iBusybox sed -ne "s/^uid=\([0-9]*\)[^0-9].*$/\1/p"`" != "0"; then
-                    lMessage="The script has been invoked without super user permissions!"
+                if $iBusybox test true > /dev/null 2>&1; then
+                    # This is a compatibillity test which will check to see if the current busybox will work with this script. This test is based on a lot of different reported issues that has been gattered over a long period of time, and it has proven to fetch any busybox version that will cause problems.
+                    if $iBusybox test "52223abccbcf00eb3c81300545d63126" != "`( $iBusybox [ 1 -eq 0 ] || $iBusybox [ 0 -eq 1 ] ) && $iBusybox echo no || $iBusybox echo 'remove this part okay:bla=no-4' | $iBusybox grep -e '.*bla=no-[1-9]*' | $iBusybox sed -e 's/^remove //' | $iBusybox awk '{print $3}' | $iBusybox cut -d ':' -f1 | $iBusybox md5sum | $iBusybox awk '{print $1}'`"; then
+                        # Do NOT break here. We might have more busybox paths to search
+                        lMessage="The current busybox is outdated!"
 
-                else
-                    # This has not yet been created when we call 'ListCommands'
-                    export _cat="$iBusybox cat"
-                    export _echo="$iBusybox echo"
-
-                    # This has not yet been created when we call 'ExportVar' and 'Session'
-                    export _test="$iBusybox test"
-
-                    # Check whether we need eval or not to export variables
-                    export $(echo iSimpleExport)=true
-
-                    Session set test_session test
-
-                    if ! $iBusybox test "$(Session get test_session)" = "test"; then
-                        lMessage="The device shell environment does not support dynamic variables!"
+                    elif $iBusybox test "`$iBusybox id | $iBusybox sed -ne "s/^uid=\([0-9]*\)[^0-9].*$/\1/p"`" != "0"; then
+                        lMessage="The script has been invoked without super user permissions!"; break
 
                     else
-                        # We need to save the current state for later usage. We will add them to our session storage later
-                        local lModRoot=$($iBusybox grep ' / ' /proc/mounts | $iBusybox sed 's/.*[ ,]\(r[ow]\)[ ,].*/\1/') && $iBusybox mount -o remount,rw /
-                        local lModSystem=$($iBusybox grep ' /system ' /proc/mounts | $iBusybox sed 's/.*[ ,]\(r[ow]\)[ ,].*/\1/') && $iBusybox mount -o remount,rw /system
+                        # This has not yet been created when we call 'ListCommands'
+                        export _cat="$iBusybox cat"
+                        export _echo="$iBusybox echo"
 
-                        # This is needed by devices including 'mksh'.
-                        # If this is missing, the below error will be thrown when piping output to 'read' or 'cat'
-                        # Error = can't create temporary file /sqlite_stmt_journals/mksh.(random): No such file or directory
-                        $iBusybox test ! -d /sqlite_stmt_journals && $iBusybox mkdir /sqlite_stmt_journals
+                        # This has not yet been created when we call 'ExportVar' and 'Session'
+                        export _test="$iBusybox test"
 
-                        # We need this directory before preparing anything
-                        $iBusybox test ! -d $iDirTmp && ( $iBusybox mkdir -p $iDirTmp || $iBusybox mkdir $iDirTmp )
+                        # Check whether we need eval or not to export variables
+                        export $(echo iSimpleExport)=true
 
-                        local lCommand
-                        local lType
+                        Session set test_session test
 
-                        while read lCommand lType; do
-                            case "$lType" in
-                                "toolbox")
-                                    # The -h will make sure that the command does not end up with an un-ending sub-process
-                                    /system/bin/toolbox "$lCommand" -h > /dev/null 2>&1
+                        if ! $iBusybox test "$(Session get test_session)" = "test"; then
+                            lMessage="The device shell environment does not support dynamic variables!"
 
-                                    if $iBusybox test $? -ne 255; then
-                                        ExportVar _$lCommand "/system/bin/toolbox $lCommand"
+                        else
+                            # We need to save the current state for later usage. We will add them to our session storage later
+                            local lModRoot=$($iBusybox grep ' / ' /proc/mounts | $iBusybox sed 's/.*[ ,]\(r[ow]\)[ ,].*/\1/') && $iBusybox mount -o remount,rw /
+                            local lModSystem=$($iBusybox grep ' /system ' /proc/mounts | $iBusybox sed 's/.*[ ,]\(r[ow]\)[ ,].*/\1/') && $iBusybox mount -o remount,rw /system
 
-                                    elif $iBusybox which "$lCommand" > /dev/null; then
-                                        ExportVar _$lCommand $($iBusybox which $lCommand)
+                            # This is needed by devices including 'mksh'.
+                            # If this is missing, the below error will be thrown when piping output to 'read' or 'cat'
+                            # Error = can't create temporary file /sqlite_stmt_journals/mksh.(random): No such file or directory
+                            $iBusybox test ! -d /sqlite_stmt_journals && $iBusybox mkdir /sqlite_stmt_journals
 
-                                    else
-                                        ExportVar _$lCommand "$iBusybox $lCommand"
-                                    fi
-                                ;;
+                            # We need this directory before preparing anything
+                            $iBusybox test ! -d $iDirTmp && ( $iBusybox mkdir -p $iDirTmp || $iBusybox mkdir $iDirTmp )
 
-                                "binary")
-                                    if $iBusybox which "$lCommand" > /dev/null; then
-                                        ExportVar _$lCommand $($iBusybox which $lCommand)
+                            local lCommand
+                            local lType
 
-                                    else
-                                        if $iBusybox test ! -z "`$iBusybox --list | $iBusybox grep -e "^$lCommand$"`"; then
+                            while read lCommand lType; do
+                                case "$lType" in
+                                    "toolbox")
+                                        # The -h will make sure that the command does not end up with an un-ending sub-process
+                                        /system/bin/toolbox "$lCommand" -h > /dev/null 2>&1
+
+                                        if $iBusybox test $? -ne 255; then
+                                            ExportVar _$lCommand "/system/bin/toolbox $lCommand"
+
+                                        elif $iBusybox which "$lCommand" > /dev/null; then
+                                            ExportVar _$lCommand $($iBusybox which $lCommand)
+
+                                        else
                                             ExportVar _$lCommand "$iBusybox $lCommand"
                                         fi
+                                    ;;
+
+                                    "binary")
+                                        if $iBusybox which "$lCommand" > /dev/null; then
+                                            ExportVar _$lCommand $($iBusybox which $lCommand)
+
+                                        else
+                                            if $iBusybox test ! -z "`$iBusybox --list | $iBusybox grep -e "^$lCommand$"`"; then
+                                                ExportVar _$lCommand "$iBusybox $lCommand"
+                                            fi
+                                        fi
+                                    ;;
+
+                                    *)
+                                        ExportVar _$lCommand "$iBusybox $lCommand"
+                                    ;;
+                                esac
+
+                            done < $(ListCommands)
+
+                            local lExportName
+                            local lExportValue
+
+                            while read lExportName lExportValue; do
+                                # Some binaries like sqlite3 and so, needs a path variable to it's library files in order to work.
+                                # Some init.d implementations like CM's internal sysinit does not provide anything other than PATH in /system/bin/sysinit, 
+                                # and Android's init system does not parse these along when using the "exec" from within init.rc
+                                ExportVar $lExportName "$lExportValue"
+
+                            done < $(ListExports)
+
+                            # Make sure that this was created by init
+                            TouchDir --skip-existing --user 0 --group 0 --mod 0700 $iDirProperty
+
+                            # We will also be needing this
+                            TouchDir --skip-existing --user 1000 --group 1000 --mod 0771 $iDirSdext
+
+                            Session set modRoot $lModRoot
+                            Session set modSystem $lModSystem
+
+                            # This should be at the top, but for obvious reasons it can't
+                            Log v "Setting up the script enviroment"
+                            Log v "Using the shell environment '$iShell'"
+                            Log v "Using the busybox binary located at '$iBusybox'"
+
+                            $_rm -rf /data/m2sd.fallback.log 2> /dev/null
+
+                            local lPropName
+                            local lPropValue
+
+                            # Since script version 6.x, R-Mount is no longer available. This below code is used as backward compatibility with updating from older versions
+                            if $_test -e $iDirProperty/m2sd.enable_reversed_mount && $_test "`$_cat $iDirProperty/m2sd.enable_reversed_mount`" = "1"; then
+                                Log i "Found old reversed mount option which is no longer supported. Correcting an conflicts"
+
+                                $_rm -rf $iDirProperty/m2sd.enable_reversed_mount
+
+                                for lPropName in move_apps move_dalvik move_data; do
+                                    if $_test -e $iDirProperty/m2sd.$lPropName; then
+                                        lPropValue=$($_test "`$_cat $iDirProperty/m2sd.$lPropName`" = "1" && $_echo 0 || $_echo 1)
+                                        $_echo $lPropValue > $iDirProperty/m2sd.$lPropName
                                     fi
-                                ;;
-
-                                *)
-                                    ExportVar _$lCommand "$iBusybox $lCommand"
-                                ;;
-                            esac
-
-                        done < $(ListCommands)
-
-                        local lExportName
-                        local lExportValue
-
-                        while read lExportName lExportValue; do
-                            # Some binaries like sqlite3 and so, needs a path variable to it's library files in order to work.
-                            # Some init.d implementations like CM's internal sysinit does not provide anything other than PATH in /system/bin/sysinit, 
-                            # and Android's init system does not parse these along when using the "exec" from within init.rc
-                            ExportVar $lExportName "$lExportValue"
-
-                        done < $(ListExports)
-
-                        # Make sure that this was created by init
-                        TouchDir --skip-existing --user 0 --group 0 --mod 0700 $iDirProperty
-
-                        # We will also be needing this
-                        TouchDir --skip-existing --user 1000 --group 1000 --mod 0771 $iDirSdext
-
-                        Session set modRoot $lModRoot
-                        Session set modSystem $lModSystem
-
-                        # This should be at the top, but for obvious reasons it can't
-                        Log v "Setting up the script enviroment"
-                        Log v "Using the shell environment '$iShell'"
-                        Log v "Using the busybox binary located at '$iBusybox'"
-
-                        $_rm -rf /data/m2sd.fallback.log 2> /dev/null
-
-                        local lPropName
-                        local lPropValue
-
-                        # Since script version 6.x, R-Mount is no longer available. This below code is used as backward compatibility with updating from older versions
-                        if $_test -e $iDirProperty/m2sd.enable_reversed_mount && $_test "`$_cat $iDirProperty/m2sd.enable_reversed_mount`" = "1"; then
-                            Log i "Found old reversed mount option which is no longer supported. Correcting an conflicts"
-
-                            $_rm -rf $iDirProperty/m2sd.enable_reversed_mount
-
-                            for lPropName in move_apps move_dalvik move_data; do
-                                if $_test -e $iDirProperty/m2sd.$lPropName; then
-                                    lPropValue=$($_test "`$_cat $iDirProperty/m2sd.$lPropName`" = "1" && $_echo 0 || $_echo 1)
-                                    $_echo $lPropValue > $iDirProperty/m2sd.$lPropName
-                                fi
-                            done
-                        fi
-
-                        # Make sure that all the properties exist and add them all to our session system so that we don't have to re-open files all the time
-                        while read lPropName lPropValue; do
-                            if ! $_test -e $iDirProperty/m2sd.$lPropName; then
-                                Log v "Creating missing property '$iDirProperty/m2sd.$lPropName'"
-                                $_echo $lPropValue > $iDirProperty/m2sd.$lPropName
-
-                            elif $_test -z "`$_cat $iDirProperty/m2sd.$lPropName`"; then
-                                Log i "The property '$iDirProperty/m2sd.$lPropName' contains empty value. Resetting it to default value '$lPropValue'"
-                                $_echo $lPropValue > $iDirProperty/m2sd.$lPropName
+                                done
                             fi
 
-                            Session set prop_$lPropName $($_cat $iDirProperty/m2sd.$lPropName)
+                            # Make sure that all the properties exist and add them all to our session system so that we don't have to re-open files all the time
+                            while read lPropName lPropValue; do
+                                if ! $_test -e $iDirProperty/m2sd.$lPropName; then
+                                    Log v "Creating missing property '$iDirProperty/m2sd.$lPropName'"
+                                    $_echo $lPropValue > $iDirProperty/m2sd.$lPropName
 
-                        done < $(ListProperties)
+                                elif $_test -z "`$_cat $iDirProperty/m2sd.$lPropName`"; then
+                                    Log i "The property '$iDirProperty/m2sd.$lPropName' contains empty value. Resetting it to default value '$lPropValue'"
+                                    $_echo $lPropValue > $iDirProperty/m2sd.$lPropName
+                                fi
 
-                        export iEnviroment=true && return 0
+                                Session set prop_$lPropName $($_cat $iDirProperty/m2sd.$lPropName)
+
+                            done < $(ListProperties)
+
+                            export iEnviroment=true && return 0
+                        fi
+
+                        break
                     fi
                 fi
-            fi
+            done
         ;;
     esac
 
@@ -889,8 +895,17 @@ ProcessLinks() {
     done
 
     # Make sure that the device has not got the HTC S-On flag on the /system partition
+    # --------------------------------------------------------------------------------
+    # Some devices has a tendency to hang on this test, why I don't know.
+    # But to be sure that does not become a problem, we handle this in a sub-process
+    # which can later be killed and let the script continue.
+    # --------------------------------------------------------------------------------
     Log d "Running an S-On protection test on '/system'"
-    $_echo 1 > /system/s-off 2> /dev/null; sync
+    ( $_echo 1 > /system/s-off 2> /dev/null; sync ) & 
+
+    pid=$!
+    $_sleep 1
+    $_kill "$pid" 2> /dev/null
 
     if $_test -e /system/s-off; then
         $_rm -rf /system/s-off

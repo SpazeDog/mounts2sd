@@ -238,12 +238,24 @@ public final class Preferences {
 					}
 					
 					for (int i=0; i < (loopContainer = new String[]{"/system/xbin/busybox", "/system/bin/busybox", "/system/sbin/busybox", "/sbin/busybox"}).length; i++) {
-						if (root.file(loopContainer[i]).exists()) {
+						if (root.busybox(loopContainer[i]).exists()) {
 							environment_multiple_binaries(true); break;
 						}
 					}
+					
+					Boolean internalCheck;
 
-					if (root.busybox().exists()) {
+					if ( (internalCheck = root.busybox().exists()) || environment_multiple_binaries()) {
+						/*
+						 * If the internal busybox is used, but did not parse the check,
+						 * then we remove it and stick with the ROM's own.
+						 */
+						if (!internalCheck) {
+							root.file(configPathBusybox).remove();
+							applicationSettings.use_builtin_busybox(false);
+							environment_busybox_internal(false);
+						}
+						
 						environment_busybox(true);
 						
 						/* ================================================================
@@ -477,12 +489,12 @@ public final class Preferences {
 							diskStat = root.filesystem(loopContainer[i]).statDisk();
 						}
 					
-						if (diskStat != null && diskStat.device().equals(deviceSetup.path_device_map_data())) {
+						if (diskStat != null && diskStat.device() != null && diskStat.device().equals(deviceSetup.path_device_map_data())) {
 							location_storage_data(loopContainer[i]);
 							size_storage_data(diskStat.size());
 							usage_storage_data(diskStat.usage());
 							
-						} else if (diskStat != null && diskStat.device().equals(deviceSetup.path_device_map_sdext())) {
+						} else if (diskStat != null && diskStat.device() != null && diskStat.device().equals(deviceSetup.path_device_map_sdext())) {
 							location_storage_sdext(loopContainer[i]);
 							size_storage_sdext(diskStat.size());
 							usage_storage_sdext(diskStat.usage());
@@ -500,7 +512,7 @@ public final class Preferences {
 						}
 						
 						if (additLocationDevice == null) {
-							additLocationDevice = diskStat == null || diskStat.device().equals(deviceSetup.path_device_map_data()) ? deviceSetup.path_device_map_sdext() : deviceSetup.path_device_map_data(); continue;
+							additLocationDevice = diskStat == null || (diskStat.device() != null && diskStat.device().equals(deviceSetup.path_device_map_data())) ? deviceSetup.path_device_map_sdext() : deviceSetup.path_device_map_data(); continue;
 						}
 							
 						break;
@@ -508,8 +520,8 @@ public final class Preferences {
 
 					if ((diskStat = root.filesystem("/cache").statDisk()) != null) {
 						location_storage_cache(
-							diskStat.device().equals(deviceSetup.path_device_map_sdext()) ? location_storage_sdext() + "/cache" : 
-								diskStat.device().equals(deviceSetup.path_device_map_data()) ? location_storage_data() + "/cache" : "/cache"
+								diskStat.device() != null && diskStat.device().equals(deviceSetup.path_device_map_sdext()) ? location_storage_sdext() + "/cache" : 
+								diskStat.device() != null && diskStat.device().equals(deviceSetup.path_device_map_data()) ? location_storage_data() + "/cache" : "/cache"
 						);
 						
 						size_storage_cache(diskStat.size());
@@ -551,7 +563,7 @@ public final class Preferences {
 							if (sdextMounted && curState >= 0) {
 								DiskStat curStat = root.filesystem("/data/" + curFolders[x]).statDisk();
 								
-								curState = curStat == null || curStat.device().equals(deviceSetup.path_device_map_data()) ? 
+								curState = curStat == null || curStat.device() == null || curStat.device().equals(deviceSetup.path_device_map_data()) ? 
 										(x == 0 || curState == 0 ? 0 : -1) : 
 											(x == 0 || curState == 1 ? 1 : -1);
 							}
@@ -653,15 +665,17 @@ public final class Preferences {
 						
 						if (swapList != null) {
 							for (int i=0; i < swapList.length; i++) {
-								if (swapList[i].device().equals(deviceSetup.path_device_map_swap())) {
-									size_memory_swap(swapList[i].size());
-									usage_memory_swap(swapList[i].usage());
-									
-								} else if (deviceSetup.support_option_zram() 
-										&& swapList[i].device().equals(deviceSetup.path_device_map_zram())) {
-									
-									size_memory_zram(swapList[i].size());
-									usage_memory_zram(swapList[i].usage());
+								if (swapList[i].device() != null) {
+									if (swapList[i].device().equals(deviceSetup.path_device_map_swap())) {
+										size_memory_swap(swapList[i].size());
+										usage_memory_swap(swapList[i].usage());
+										
+									} else if (deviceSetup.support_option_zram() 
+											&& swapList[i].device().equals(deviceSetup.path_device_map_zram())) {
+										
+										size_memory_zram(swapList[i].size());
+										usage_memory_zram(swapList[i].usage());
+									}
 								}
 							}
 						}
