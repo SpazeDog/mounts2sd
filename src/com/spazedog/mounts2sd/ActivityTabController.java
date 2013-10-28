@@ -266,64 +266,67 @@ public class ActivityTabController extends ExtendedActivity implements OnClickLi
 		if (!mLoaderIsRunning) {
 			mLoaderIsRunning = true;
 			
-			new Task<Context, String, Integer>(this, "loadDeviceConfigurations") {
-				@Override
-				protected Integer doInBackground(Context... params) {
-					Context context = (Context) params[0];
-					
-					if (Root.initiate().isConnected()) {
-						Preferences preferences = Preferences.getInstance(context);
+			try {
+				new Task<Context, String, Integer>(this, "loadDeviceConfigurations") {
+					@Override
+					protected Integer doInBackground(Context... params) {
+						Context context = (Context) params[0];
 						
-						if (!preferences.deviceSetup.isLoaded()) {
-							publishProgress( context.getResources().getString(R.string.progress_load_setup) + "..." );
+						if (Root.initiate().isConnected()) {
+							Preferences preferences = Preferences.getInstance(context);
 							
-							Common.wait(350);
-							
-							if (!preferences.deviceSetup.load(false)) {
-								return RESULT_FAILED_GENERAL;
+							if (!preferences.deviceSetup.isLoaded()) {
+								publishProgress( context.getResources().getString(R.string.progress_load_setup) + "..." );
+								
+								Common.wait(350);
+								
+								if (!preferences.deviceSetup.load(false)) {
+									return RESULT_FAILED_GENERAL;
+								}
 							}
+							
+							if (!preferences.deviceConfig.isLoaded()) {
+								publishProgress( context.getResources().getString(R.string.progress_load_config) + "..." );
+								
+								Common.wait(350);
+								
+								if (!preferences.deviceConfig.load(false)) {
+									return RESULT_FAILED_GENERAL;
+								}
+							}
+							
+							if (!preferences.deviceProperties.isLoaded()) {
+								publishProgress( context.getResources().getString(R.string.progress_load_properties) + "..." );
+								
+								Common.wait(350);
+								
+								if (!preferences.deviceProperties.load(false)) {
+									return RESULT_FAILED_GENERAL;
+								}
+							}
+							
+							return RESULT_SUCCESS;
 						}
 						
-						if (!preferences.deviceConfig.isLoaded()) {
-							publishProgress( context.getResources().getString(R.string.progress_load_config) + "..." );
-							
-							Common.wait(350);
-							
-							if (!preferences.deviceConfig.load(false)) {
-								return RESULT_FAILED_GENERAL;
-							}
-						}
-						
-						if (!preferences.deviceProperties.isLoaded()) {
-							publishProgress( context.getResources().getString(R.string.progress_load_properties) + "..." );
-							
-							Common.wait(350);
-							
-							if (!preferences.deviceProperties.load(false)) {
-								return RESULT_FAILED_GENERAL;
-							}
-						}
-						
-						return RESULT_SUCCESS;
+						return RESULT_FAILED_ROOT;
 					}
 					
-					return RESULT_FAILED_ROOT;
-				}
-				
-				@Override
-				protected void onProgressUpdate(String... progress) {
-					setProgressMessage(progress[0]);
-				}
-				
-				@Override
-				protected void onPostExecute(Integer result) {
-					ActivityTabController activity = (ActivityTabController) getObject();
+					@Override
+					protected void onProgressUpdate(String... progress) {
+						setProgressMessage(progress[0]);
+					}
 					
-					activity.mLoaderIsRunning = false;
-					activity.handleDeviceConfigurations(result);
-				}
+					@Override
+					protected void onPostExecute(Integer result) {
+						ActivityTabController activity = (ActivityTabController) getObject();
+						
+						activity.mLoaderIsRunning = false;
+						activity.handleDeviceConfigurations(result);
+					}
+					
+				}.execute( getApplicationContext() );
 				
-			}.execute( getApplicationContext() );
+			} catch (IllegalStateException e) {}
 		}
 	}
 	
