@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <resources>
-    <string name="config_application_id" translatable="false">2013091902</string>
+    <string name="config_application_id" translatable="false">2013102801</string>
     
-    <string name="config_script_id" translatable="false">2013092001</string>
-    <string name="config_script_version" translatable="false">6.0.14</string>
+    <string name="config_script_id" translatable="false">2013102801</string>
+    <string name="config_script_version" translatable="false">6.0.18</string>
     
     <string name="config_busybox_checksum" translatable="false">73c7c43183c501064b3dffdd0d5f84f1</string>
     
