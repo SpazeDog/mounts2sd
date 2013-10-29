@@ -1,0 +1,258 @@
+<resources>
+    
+    <!-- ######################################################
+       - General strings
+    ####################################################### -->
+    <string name="app_name">Mounts2SD</string>
+    <string name="app_settings">Alkalmazás beállításai</string>
+    
+    <string name="size_structure">%1$s a %2$s -ból</string>
+    
+    <string name="status_unknown">Ismeretlen</string>
+    <string name="status_disabled">Letiltva</string>
+    <string name="status_enabled">Engedélyezve</string>
+    <string name="status_okay">Ok</string>
+    <string name="status_warning">Figyelmeztetés</string>
+    <string name="status_error">Hiba</string>
+    
+    <string name="device_not_mounted">Nincs csatlakoztatva</string>
+    <string name="log_empty">A log fájl üres</string>
+    
+    <!-- ######################################################
+       - Tab names
+    ####################################################### -->
+    <string name="tab_name_overview">Áttekintés</string>
+    <string name="tab_name_configure">Beállítás</string>
+    <string name="tab_name_log">Log</string>
+    <string name="tab_name_appmanager">Alkalmazások kezelése</string>
+    
+    <!-- ######################################################
+       - General strings
+    ####################################################### -->
+    <string name="settings_btn_script_update">Indító szkript frissítése</string>
+    <string name="settings_btn_script_remove">Indító szkript törlése</string>
+    <string name="settings_btn_script_install">Indító szkript telepítése</string>
+    
+    <!-- ######################################################
+       - Used in Application Settings when handling internal
+       - busybox and the upstart script in AsyncTask
+    ####################################################### -->
+    <string name="resource_copying_to_disk">%1$s másolása ide: %2$s</string>
+    <string name="resource_deleting_from_disk">%1$s eltávolítása innen: %2$s</string>
+    <string name="resource_copy_to_disk_failed">%1$s másolása sikertelen ide: %2$s</string>
+    <string name="resource_delete_from_disk_failed">%1$s eltávolítása sikertelen innen: %2$s</string>
+    <string name="resource_running_script">%1$s szkript futtatása</string>
+    <string name="resource_fallback_failed">Nem lehet recovery módban újraindítani az eszközt a korlátozott eszközök miatt</string>
+    
+    <!-- ######################################################
+       - Names and Comments for Selectors. Used in the Configure
+       - Tab for everything not providing a checkbox to select
+       - the value of a script property
+    ####################################################### -->
+    <string name="selector_journal_name_default">Alapértelmezett megtartása</string>
+    <string name="selector_journal_name_enable">Engedélyez</string>
+    <string name="selector_journal_name_disable">Letilt</string>
+    <string name="selector_filesystem_name_auto">Automatikus észlelés</string>
+    <string name="selector_zram_name_disabled">Letiltva</string>
+    <string name="selector_swappiness_name_low">Alacsony</string>
+    <string name="selector_swappiness_name_medium">Közepes</string>
+    <string name="selector_swappiness_name_high">Magas</string>
+    <string name="selector_cache_name_enabled">Engedélyezve</string>
+    <string name="selector_cache_name_forced">Kényszerített</string>
+    <string name="selector_cache_name_disabled">Letiltva</string>
+    
+    <string name="selector_swappiness_comment_low">Ajánlott</string>
+    <string name="selector_swappiness_comment_medium">Linux alapértelmezett</string>
+    <string name="selector_swappiness_comment_high">Aggresszív</string>
+    <string name="selector_cache_comment_enabled">Legnagyobb partíció használata</string>
+    <string name="selector_cache_comment_forced">Sd-ext használata, ha elérhető</string>
+    
+    <!-- ######################################################
+       - Messages returned by the method Utils.sdcardStateMessage()
+    ####################################################### -->
+    <string name="sdcard_state_ro">A memóriakártya csak olvashatóként van csatlakoztatva</string>
+    <string name="sdcard_state_format">A memóriakártya nincs megfelelő formátumban formázva</string>
+    <string name="sdcard_state_missing">A memóriakártya nincs jelen</string>
+    <string name="sdcard_state_ums">A memóriakártya jelenleg meg van osztva USB-n</string>
+    <string name="sdcard_state_mount_failure">A memóriakártya nincs csatlakoztatva, mert probléma van a partícióval, vagy a kártyával</string>
+    <string name="sdcard_state_mount">A memóriakártya nincs csatlakoztatva</string>
+    
+    <!-- ######################################################
+       - Toast messages used by the Log Fragment
+    ####################################################### -->
+    <string name="toast_log_copied">Fájl elmentve ide: %1$s</string>
+    <string name="toast_log_unsuccessful">Nem lehet a fájlt a memóriakártyára menteni</string>
+    
+    <string name="progress_load_debug_file">Hibakeresési fájl összeállítása</string>
+
+    <!-- ######################################################
+       - Used by the progress dialog when loading AsyncTask
+    ####################################################### -->
+    <string name="progress_load_setup">Eszköz beállításainak ellenőrzése</string>
+    <string name="progress_load_config">Eszköz beállításainak betöltése</string>
+    <string name="progress_load_properties">Szkript tulajdonságainak összegyűjtése</string>
+    
+    <!-- ######################################################
+       - Names for the menu entries
+    ####################################################### -->
+    <string name="menu_overview_reload">Állapot újratöltése</string>
+    <string name="menu_log_save">Log mentése a memóriakártyára</string>
+    <string name="menu_log_build_debug">Hibakeresési fájl készítése</string>
+    <string name="menu_controller_app_settings">Alkalmazás beállításai</string>
+    
+    <!-- ######################################################
+       - Group names used by the Application Settings Activity
+    ####################################################### -->
+    <string name="settings_style_header">Alkalmazás stílus</string>
+    <string name="settings_general_header">Általános</string>
+    
+    <!-- ######################################################
+       - Item names used by the Application Settings Activity
+    ####################################################### -->
+    <string name="settings_style_theme_name">Sötét téma</string>
+    <string name="settings_style_theme_description">Sötét téma használata az alapértelmezett világos helyett</string>
+    <string name="settings_style_layout_name">Beállítások stílusa</string>
+    <string name="settings_style_layout_description">Beállítások stílusának általános használata</string>
+    <string name="settings_style_dialog_name">Tablet beállítások</string>
+    <string name="settings_style_dialog_description">Párbeszédablakok használata az alkalmazás beállításaihoz</string>
+    
+    <string name="settings_general_profiles_name">Minden profil engedélyezése</string>
+    <string name="settings_general_profiles_description">Minden profilban engedélyezi a szkript beállításait</string>
+    <string name="settings_general_busybox_name">Beépített busybox használata</string>
+    <string name="settings_general_busybox_description">Az alkalmazás beépített busybox-ának használata</string>
+    <string name="settings_general_sqlite_name">SQLite3 javítása</string>
+    <string name="settings_general_sqlite_description">Use this if you are having problems getting Storage Threshold working</string>
+    
+    <string name="settings_script_header">Indító szkript</string>
+    <string name="settings_script_versions">Verziók</string>
+    <string name="settings_script_installed">Telepített</string>
+    <string name="settings_script_bundled">Csomagban</string>
+    
+    <!-- ######################################################
+       - Used the Tab Controller Activity to display
+       - in the Message Dialog opon error
+    ####################################################### -->
+    <string name="message_error_su_headline">Hiányzó SuperUser</string>
+    <string name="message_error_su_text">Az alkalmazás nem tud SuperUser (root) jogokat szerezni. Erre szüksége van az alkalmazásnak, hogy ellenőrizni tudja az eszköz konfigurációját és módosítani tudja a szkripteket. Menj a xda-developer.com weblapra és keresd meg, hogy tudod root-olni a készüléked</string>
+
+    <string name="message_error_busybox_headline">Hiányzó Busybox</string>
+    <string name="message_error_busybox_text">Az alkalmazás nem találja a busybox-ot az eszközön. A busybox egy \'minden az egyben\' program, ami olyan rendszer funkciókat tartalmaz amire szüksége van az alkalmazásnak és az indító szkriptnek is. Kérlek keresd meg és telepítsd a busybox-ot a Google áruházból</string>
+    
+    <string name="message_error_unknown_headline">Ismeretlen probléma</string>
+    <string name="message_error_unknown_text">Valami oknál fogva az alkalmazás nem tudta befejezni a beállításait</string>
+    
+    <!-- ######################################################
+       - Button text for the Dialog
+    ####################################################### -->
+    <string name="button_close">Bezár</string>
+    <string name="button_cancel">Mégse</string>
+    <string name="button_okay">Oké</string>
+    
+    <!-- ######################################################
+       - Group names used by both Overview and Configure Fragments
+    ####################################################### -->
+    <string name="option_storage_header">Tároló</string>
+    <string name="option_system_header">Rendszer</string>
+    <string name="option_content_header">Tartalom</string>
+    <string name="option_memory_header">Memória</string>
+    <string name="option_filesystem_header">Fájlrendszer</string>
+    <string name="option_immc_header">Belső MMC</string>
+    <string name="option_emmc_header">Külső MMC</string>
+    <string name="option_misc_header">Egyéb</string>
+
+    <!-- ######################################################
+       - Item names used by both Overview and Configure Fragments
+    ####################################################### -->
+    <string name="option_storage_item_internal">Belső</string>
+    <string name="option_storage_item_external">Külső</string>
+    <string name="option_storage_item_cache">Gyorsítótár</string>
+    
+    <string name="option_system_item_threshold">Storage Threshold</string>
+    
+    <string name="option_content_item_apps">Alkalmazások</string>
+    <string name="option_content_item_sysapps">Rendszer alkalmazások</string>
+    <string name="option_content_item_libs">Könyvtárak</string>
+    <string name="option_content_item_data">Adat</string>
+    <string name="option_content_item_dalvik">Dalvik Cache</string>
+    <string name="option_content_item_media">Média</string>
+    <string name="option_content_item_system">Rendszer összetevők</string>
+    
+    <string name="option_memory_item_swap">SWAP</string>
+    <string name="option_memory_item_zram">ZRAM</string>
+    <string name="option_memory_item_swappiness">Swappiness</string>
+    
+    <string name="option_filesystem_item_fschk">Fájlrendszer ellenőrzés</string>
+    <string name="option_filesystem_item_fstype">Meghajtó</string>
+    <string name="option_filesystem_item_journal">Napló</string>
+    
+    <string name="option_mmc_item_readahead">Előreolvasás</string>
+    <string name="option_mmc_item_scheduler">Ütemező</string>
+    
+    <string name="option_misc_item_safemode">Biztonságos mód letiltása</string>
+    <string name="option_misc_item_debug">Hibakeresési mód engedélyezése</string>
+    
+    <!-- ######################################################
+       - Item description used by the Configure Fragment
+    ####################################################### -->
+    <string name="option_storage_description_cache">Gyorsítótár partíció áthelyezése az adat partícióra vagy az sd-ext-re</string>
+    
+    <string name="option_system_description_threshold">Mennyi helynek kell maradnia az adat partíción az alkalmazások telepítéséhez</string>
+    
+    <string name="option_content_description_apps">Alkalmazások áthelyezése az sd-ext-re</string>
+    <string name="option_content_description_sysapps">Rendszerré konvertált alkalmazások áthelyezése az sd-ext-re</string>
+    <string name="option_content_description_libs">Alkalmazás könyvtárak áthelyezése az sd-ext-re</string>
+    <string name="option_content_description_data">Alkalmazás adatok áthelyezése az sd-ext-re</string>
+    <string name="option_content_description_dalvik">Dalvikvm alkalmazás gyórsítótárak áthelyezése az sd-ext-re</string>
+    <string name="option_content_description_media">Belső tárolóhely (/data/media) áthelyezése az sd-ext-re</string>
+    <string name="option_content_description_system">Minden rendszer alkalmazás adat áthelyezése az sd-ext-re</string>
+    
+    <string name="option_memory_description_swap">SWAP engedélyezése (3. memóriakártya partíció)</string>
+    <string name="option_memory_description_zram">ZRAM engedélyezése (Kis memória a SWAP partíción az indexeléshez)</string>
+    <string name="option_memory_description_swappiness">\'Swapping\' agresszivitásának megadása</string>
+    
+    <string name="option_filesystem_description_fschk">Fájlrendszer ellenőrzés futtatása az sd-ext-en indítás alatt</string>
+    <string name="option_filesystem_description_fstype">Fájlrendszer típus kiválasztása az sd-ext csatlakoztatásához</string>
+    <string name="option_filesystem_description_journal">Naplózási beállítások megváltoztatása az sd-ext-en indítás közben</string>
+    
+    <string name="option_misc_description_safemode">Indító szkript letiltása, hogy biztonsági módba lépjen (Kerülőút engedélyezése a nem megfelelő init.d átlépéséhez)</string>
+    <string name="option_misc_description_debug">Részletesebb naplóbejegyzések az indító szkriptről</string>
+    
+    <string name="option_mmc_description_readahead">MMC előreolvasás beállítása</string>
+    <string name="option_mmc_description_scheduler">MMC ütemezés beállítása</string>
+    
+    <!-- ######################################################
+       - Item messages used for warnings in the Overview Fragment
+    ####################################################### -->
+    <string name="option_message_mount_mismatch">Egy vagy több könyvár nem lett áthelyezve vagy linkelve. Ellenőrizd a szabad helyet vagy nézd meg a naplót a részletesebb leíráshoz.</string>
+    <string name="option_message_fschk_warning">A fájlrendszer ellenőrzés egy vagy több hibát talált az sd-ext partíción. Minden probléma ki lett javítva.</string>
+    <string name="option_message_fschk_error">A fájlrendszer ellenőrzés egy vagy több hibát talált az sd-ext partíción. Nem lehetséges a hibák kijavítása. </string>
+    
+    
+    <!-- ######################################################
+       - Messages to be displayed in the infobox by the
+       - Tab Controller
+    ####################################################### -->
+    <string name="infobox_safemode">A szkript jelenleg biztonságos módban fut. Le tudod tiltani ezt a módot a beállítások oldalon!</string>
+    <string name="infobox_no_sdext">Nem található az SD-EXT partíció. Ennek egy második partíciónak kéne lennie a memóriakártyán!</string>
+    <string name="infobox_no_script">Nincs indító szkript az eszközön. Menj az alkalmazás beállításaiba és telepítsd!</string>
+    <string name="infobox_update_script">A jelenlegi indító szkript elavult. Menj az alkalmazás beállításaiba és frissítsd!</string>
+    <string name="infobox_errors">A napló egy vagy több hibát/figyelmeztetést tartalmaz. Ellenőrizd a napló nézegetővel további részletekért!</string>
+    
+    <!-- ######################################################
+       - Messages to be displayed in the notification
+    ####################################################### -->
+    <string name="notify_no_config">Nem lehet betölteni az alkalmazás beállításait</string>
+    <string name="notify_log_details">Egy vagy több hiba/figyelmeztetés észlelve a naplóban</string>
+    
+    <!-- ######################################################
+       - Strings for the app manager
+    ####################################################### -->
+    <string name="manager_app_list_loader">Alkalmazás lista összeállítása</string>
+    <string name="manager_app_conversion_loader">Alkalmazás átalakításának kezelése</string>
+    <string name="manager_app_converted_reboot">A változtatások érvénybe lépéséhez újra kell indítani a készüléket</string>
+    <string name="manager_app_conversion_failed">Az alkalmazás átalakítása nem sikerült</string>
+    <string name="manager_app_unregister_message">Szeretnéd törölni az alkalmazást a rendszer alkalmazások közül és visszaállítani az eredeti állapotát normál alkalmazásként?</string>
+    <string name="manager_app_register_message">Szeretnéd regisztrálni az alkalmazást rendszer alkalmazásként? Vedd figyelembe, hogy a rendszer alkalmazásoknak magasabb a jogosultsága! Továbbá vedd figyelembe, hogy az alkalmazás nem lesz áthelyezve a rendszer partícióra. A jelenlegi helyén marad, csak a státusza lesz átállítva.</string>
+    <string name="manager_app_conversion_notice">A változtatások érvénybe lépéséhez újra kell indítani a készüléket. Addig az alkalmazás nem lesz elérhető!</string>
+    
+</resources>
