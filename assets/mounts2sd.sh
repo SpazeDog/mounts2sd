@@ -1,7 +1,7 @@
 #!/system/bin/sh
 #####
-# @id 2013102801
-# @version 6.0.18
+# @id 2013110101
+# @version 6.0.20
 #####
 # This file is part of the Mounts2SD Project: https://github.com/spazedog/mounts2sd
 #  
