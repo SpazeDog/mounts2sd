@@ -437,6 +437,7 @@ ProcessMMC() {
     local mmcPartition
     local mmcDevice
     local mmcDeviceMM
+    local mmcLegacy=false
     local i
 
     Log v "Collecting MMC partition information"
@@ -493,6 +494,8 @@ ProcessMMC() {
             Session set device_immc /dev/block/bml0!c
             Session set device_immc_mm $($_ls -l /dev/block/bml0!c | $_tr -s ' ' | $_sed -ne "s/^.*[ ]\([0-9]*\),[ ]\([0-9]*\)[ ].*$/\1:\2/p")
         fi
+
+        mmcLegacy=true
     fi
 
     for mmcPartition in system data cache; do
@@ -548,8 +551,10 @@ ProcessMMC() {
         fi
 
         if $_test "$mmcDevice" != "immc" && $_test "$mmcDevice" != "emmc"; then
-            Log v "Setting optimized mount parameters on '$lDevice'"
-            $_mount -o remount,noatime,nodiratime,relatime /$mmcDevice
+            if ! mmcLegacy; then
+                Log v "Setting optimized mount parameters on '$lDevice'"
+                $_mount -o remount,noatime,nodiratime,relatime /$mmcDevice
+            fi
         fi
     done
 }
@@ -563,7 +568,7 @@ ProcessStorage() {
     if Session check device_sdext; then
         local lDevice=$(Session get device_sdext)
         local lFsType=$(Session get prop_set_sdext_fstype)
-        local lMountParamsFull="noatime,nodiratime,relatime,noauto_da_alloc,data=ordered,commit=15,barrier=1,nouser_xattr,errors=continue,nosuid,nodev"
+        local lMountParamsFull="noatime,nodiratime,relatime,noauto_da_alloc,data=writeback,commit=15,barrier=1,nouser_xattr,errors=continue,nosuid,nodev"
         local lMountParamsLimited="noatime,nodiratime,relatime,nosuid,nodev"
         local lStatus
 
