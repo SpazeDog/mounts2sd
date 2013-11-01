@@ -484,7 +484,7 @@ public final class Preferences {
 					DiskStat diskStat = null;
 					String additLocationDevice = null;
 					
-					for (int i=0; i <= (loopContainer = new String[]{"/data", configDirSdext, null}).length; i++) {
+					for (int i=0; i < (loopContainer = new String[]{"/data", configDirSdext, null}).length; i++) {
 						if (loopContainer[i] != null) {
 							diskStat = root.filesystem(loopContainer[i]).statDisk();
 						}
