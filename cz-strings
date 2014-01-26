@@ -183,7 +183,7 @@
     
     <string name="option_filesystem_item_fschk">Kontrola souborového systému</string>
     <string name="option_filesystem_item_fstype">Ovladač</string>
-    <string name="option_filesystem_item_journal">Journal</string>
+    <string name="option_filesystem_item_journal">Žurnál</string>
     
     <string name="option_mmc_item_readahead">Readahead</string>
     <string name="option_mmc_item_scheduler">Scheduler</string>
