@@ -242,7 +242,7 @@
        - Messages to be displayed in the notification
     ####################################################### -->
     <string name="notify_no_config">Nemohu nahrát nastavení aplikace</string>
-    <string name="notify_log_details">Jedna nabo více chyb/upozornění bylo detekováno v logu</string>
+    <string name="notify_log_details">Jedna nebo více chyb/upozornění bylo detekováno v logu</string>
     
     <!-- ######################################################
        - Strings for the app manager
