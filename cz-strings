@@ -1,0 +1,258 @@
+<resources>
+    
+    <!-- ######################################################
+       - General strings
+    ####################################################### -->
+    <string name="app_name">Mounts2SD</string>
+    <string name="app_settings">Nastavení aplikace</string>
+    
+    <string name="size_structure">%1$s z %2$s</string>
+    
+    <string name="status_unknown">Neznámý</string>
+    <string name="status_disabled">Neaktivní</string>
+    <string name="status_enabled">Aktivní</string>
+    <string name="status_okay">Ok</string>
+    <string name="status_warning">Upozornění</string>
+    <string name="status_error">Chyba</string>
+    
+    <string name="device_not_mounted">není připojeno</string>
+    <string name="log_empty">Log soubor je prázdný</string>
+    
+    <!-- ######################################################
+       - Tab names
+    ####################################################### -->
+    <string name="tab_name_overview">Přehled</string>
+    <string name="tab_name_configure">Nastavení</string>
+    <string name="tab_name_log">Log</string>
+    <string name="tab_name_appmanager">Správce aplikací</string>
+    
+    <!-- ######################################################
+       - General strings
+    ####################################################### -->
+    <string name="settings_btn_script_update">Aktualizovat spouštěcí skript</string>
+    <string name="settings_btn_script_remove">Odstranit spouštěcí skript</string>
+    <string name="settings_btn_script_install">Instalovat spouštěcí skript</string>
+    
+    <!-- ######################################################
+       - Used in Application Settings when handling internal
+       - busybox and the upstart script in AsyncTask
+    ####################################################### -->
+    <string name="resource_copying_to_disk">Kopíruji %1$s ze zdroje do %2$s</string>
+    <string name="resource_deleting_from_disk">Odstraňuji %1$s z %2$s</string>
+    <string name="resource_copy_to_disk_failed">Selhalo kopírování %1$s do %2$s</string>
+    <string name="resource_delete_from_disk_failed">Selhalo odstraňování %1$s z %2$s</string>
+    <string name="resource_running_script">Běží zdrojový skript %1$s</string>
+    <string name="resource_fallback_failed">Zařízení nelze restartovat do recovery kvůli omezením toolbox binary</string>
+    
+    <!-- ######################################################
+       - Names and Comments for Selectors. Used in the Configure
+       - Tab for everything not providing a checkbox to select
+       - the value of a script property
+    ####################################################### -->
+    <string name="selector_journal_name_default">Ponechat výchozí</string>
+    <string name="selector_journal_name_enable">Aktivní</string>
+    <string name="selector_journal_name_disable">Neaktivní</string>
+    <string name="selector_filesystem_name_auto">Autodetekce</string>
+    <string name="selector_zram_name_disabled">Neaktivní</string>
+    <string name="selector_swappiness_name_low">Nízké</string>
+    <string name="selector_swappiness_name_medium">Střední</string>
+    <string name="selector_swappiness_name_high">Vysoké</string>
+    <string name="selector_cache_name_enabled">Aktivní</string>
+    <string name="selector_cache_name_forced">Vynucené</string>
+    <string name="selector_cache_name_disabled">Neaktivní</string>
+    
+    <string name="selector_swappiness_comment_low">Doporučené</string>
+    <string name="selector_swappiness_comment_medium">Linux výchozí</string>
+    <string name="selector_swappiness_comment_high">Agresivní</string>
+    <string name="selector_cache_comment_enabled">Použít největší oddíl</string>
+    <string name="selector_cache_comment_forced">Použít sd-ext pokud je dostupný</string>
+    
+    <!-- ######################################################
+       - Messages returned by the method Utils.sdcardStateMessage()
+    ####################################################### -->
+    <string name="sdcard_state_ro">SD karta je připojena jen pro čtení</string>
+    <string name="sdcard_state_format">SD karta je naformátována v nesprávném formátu</string>
+    <string name="sdcard_state_missing">SD karta chybí</string>
+    <string name="sdcard_state_ums">SD karta je právě sdílena přes USB</string>
+    <string name="sdcard_state_mount_failure">SD karta není připojenu kvůli problémům s oddílem, nebo je poškozena</string>
+    <string name="sdcard_state_mount">SD karta není připojena</string>
+    
+    <!-- ######################################################
+       - Toast messages used by the Log Fragment
+    ####################################################### -->
+    <string name="toast_log_copied">Soubor byl uložen do %1$s</string>
+    <string name="toast_log_unsuccessful">Soubor nelze uložit na SD kartu</string>
+    
+    <string name="progress_load_debug_file">Sestavuji debug soubor</string>
+
+    <!-- ######################################################
+       - Used by the progress dialog when loading AsyncTask
+    ####################################################### -->
+    <string name="progress_load_setup">Kontroluji nastavení zařízení</string>
+    <string name="progress_load_config">Zjišťuji konfiguraci zařízení</string>
+    <string name="progress_load_properties">Zjišťuji nastavení hodnot skriptu</string>
+    
+    <!-- ######################################################
+       - Names for the menu entries
+    ####################################################### -->
+    <string name="menu_overview_reload">Obnovit status</string>
+    <string name="menu_log_save">Uložit log na SD kartu</string>
+    <string name="menu_log_build_debug">Vytovořit debug soubor</string>
+    <string name="menu_controller_app_settings">Nastavení aplikace</string>
+    
+    <!-- ######################################################
+       - Group names used by the Application Settings Activity
+    ####################################################### -->
+    <string name="settings_style_header">Vzhled</string>
+    <string name="settings_general_header">Obecné</string>
+    
+    <!-- ######################################################
+       - Item names used by the Application Settings Activity
+    ####################################################### -->
+    <string name="settings_style_theme_name">Tmavé téma</string>
+    <string name="settings_style_theme_description">Použít tmavé téma místo výchozího světlého</string>
+    <string name="settings_style_layout_name">Nastavení vzhledu</string>
+    <string name="settings_style_layout_description">Použít nastavení vzhledu globálně</string>
+    <string name="settings_style_dialog_name">Tablet nastavení</string>
+    <string name="settings_style_dialog_description">Použít dialog jako okno pro nastavení aplikace</string>
+    
+    <string name="settings_general_profiles_name">Povolit všechny profily</string>
+    <string name="settings_general_profiles_description">Povolit všem profilům editaci nastavení skriptu</string>
+    <string name="settings_general_busybox_name">Použít vestavěný busybox</string>
+    <string name="settings_general_busybox_description">Použít vestavěný busybox této aplikace</string>
+    <string name="settings_general_sqlite_name">Opravit SQLite3 binary</string>
+    <string name="settings_general_sqlite_description">Použijte v případě problémů s fungováním Storage Threshold</string>
+    
+    <string name="settings_script_header">Spouštěcí skript</string>
+    <string name="settings_script_versions">Verze</string>
+    <string name="settings_script_installed">Aktivní</string>
+    <string name="settings_script_bundled">Poslední</string>
+    
+    <!-- ######################################################
+       - Used the Tab Controller Activity to display
+       - in the Message Dialog opon error
+    ####################################################### -->
+    <string name="message_error_su_headline">Chybějící SuperUser</string>
+    <string name="message_error_su_text">Aplikace nezjistila rootnuté zařízení (práva superuser). Pro fungování je root nutný.</string>
+
+    <string name="message_error_busybox_headline">Chybějící Busybox</string>
+    <string name="message_error_busybox_text">Aplikace zjistila chybějící busybox. Je možné ho stáhnout z Google Play (marketu)</string>
+    
+    <string name="message_error_unknown_headline">Neznámý problém</string>
+    <string name="message_error_unknown_text">Z neznámého důvodu aplikace nemohla načíst konfiguraci</string>
+    
+    <!-- ######################################################
+       - Button text for the Dialog
+    ####################################################### -->
+    <string name="button_close">Zavřít</string>
+    <string name="button_cancel">Zrušit</string>
+    <string name="button_okay">OK</string>
+    
+    <!-- ######################################################
+       - Group names used by both Overview and Configure Fragments
+    ####################################################### -->
+    <string name="option_storage_header">Úložiště</string>
+    <string name="option_system_header">Systém</string>
+    <string name="option_content_header">Obsah</string>
+    <string name="option_memory_header">Paměť</string>
+    <string name="option_filesystem_header">Souborový systém</string>
+    <string name="option_immc_header">Vniřní MMC</string>
+    <string name="option_emmc_header">Externí MMC</string>
+    <string name="option_misc_header">Ostatní</string>
+
+    <!-- ######################################################
+       - Item names used by both Overview and Configure Fragments
+    ####################################################### -->
+    <string name="option_storage_item_internal">Vnitřní</string>
+    <string name="option_storage_item_external">Externí</string>
+    <string name="option_storage_item_cache">Cache</string>
+    
+    <string name="option_system_item_threshold">Storage Threshold</string>
+    
+    <string name="option_content_item_apps">Aplikace</string>
+    <string name="option_content_item_sysapps">Systémové aplikace</string>
+    <string name="option_content_item_libs">Knihovny</string>
+    <string name="option_content_item_data">Data</string>
+    <string name="option_content_item_dalvik">Dalvik cache</string>
+    <string name="option_content_item_media">Média</string>
+    <string name="option_content_item_system">Obsah systému</string>
+    
+    <string name="option_memory_item_swap">SWAP</string>
+    <string name="option_memory_item_zram">ZRAM</string>
+    <string name="option_memory_item_swappiness">Swappiness</string>
+    
+    <string name="option_filesystem_item_fschk">Kontrola souborového systému</string>
+    <string name="option_filesystem_item_fstype">Ovladač</string>
+    <string name="option_filesystem_item_journal">Žurnál</string>
+    
+    <string name="option_mmc_item_readahead">Readahead</string>
+    <string name="option_mmc_item_scheduler">Scheduler</string>
+    
+    <string name="option_misc_item_safemode">Zakázat bezpečný režim</string>
+    <string name="option_misc_item_debug">Povolit debug mód</string>
+    
+    <!-- ######################################################
+       - Item description used by the Configure Fragment
+    ####################################################### -->
+    <string name="option_storage_description_cache">Přesunout cache oddíl do /data nebo sd-ext</string>
+    
+    <string name="option_system_description_threshold">Kolik prostoru je potřeba ponechat v /data pro bezproblémovou možnost instalace aplikací</string>
+    
+    <string name="option_content_description_apps">Přesunout aplikace do sd-ext</string>
+    <string name="option_content_description_sysapps">Přesunout systémové aplikace do sd-ext</string>
+    <string name="option_content_description_libs">Přesunout knihovny aplikací do sd-ext</string>
+    <string name="option_content_description_data">Přesunout data aplikací do sd-ext</string>
+    <string name="option_content_description_dalvik">Přesunout dalvik cache do sd-ext</string>
+    <string name="option_content_description_media">Přesunout vnitřní úložiště (/data/media) do sd-ext</string>
+    <string name="option_content_description_system">Přesunout všechna data uložená systémem do sd-ext</string>
+    
+    <string name="option_memory_description_swap">Povolit SWAP (3.oddíl na kartě)</string>
+    <string name="option_memory_description_zram">Povolit ZRAM (Malá pamět uložená ve SWAP oddílu pro indexování)</string>
+    <string name="option_memory_description_swappiness">Nastavte agresivitu swappování</string>
+    
+    <string name="option_filesystem_description_fschk">Spustit kontrolu souborového systému na sd-ext během bootování</string>
+    <string name="option_filesystem_description_fstype">Zvolte typ souborového systému pro připojení sd-ext</string>
+    <string name="option_filesystem_description_journal">Změnit nastavení žurnálu na sd-ext během bootování</string>
+    
+    <string name="option_misc_description_safemode">Don\'t allow the upstart script to enter into safe-mode (Enables a workaround for improper init.d implementations)</string>
+    <string name="option_misc_description_debug">Get a more detailed log entry from the upstart script</string>
+    
+    <string name="option_mmc_description_readahead">Specify the MMC readahead</string>
+    <string name="option_mmc_description_scheduler">Specify the MMC scheduler</string>
+    
+    <!-- ######################################################
+       - Item messages used for warnings in the Overview Fragment
+    ####################################################### -->
+    <string name="option_message_mount_mismatch">One or more directories within this option, has not been moved or linked. Check available space on the opposite partition or view the log for further details.</string>
+    <string name="option_message_fschk_warning">The file system check found one or more problems with the sd-ext partition. All problems has been corrected.</string>
+    <string name="option_message_fschk_error">The file system check found one or more problems with the sd-ext partition. It was not possible to correct these problems. </string>
+    
+    
+    <!-- ######################################################
+       - Messages to be displayed in the infobox by the
+       - Tab Controller
+    ####################################################### -->
+    <string name="infobox_safemode">The script is currently running in Safe-Mode. You can disable this mode in the configure tab!</string>
+    <string name="infobox_no_sdext">Could not locate the SD-EXT partition. This should be the second partition on the external sdcard!</string>
+    <string name="infobox_no_script">There is no startup script present on your device. Go to application settings and install it!</string>
+    <string name="infobox_update_script">The current startup script is outdated. Go to application settings and update it!</string>
+    <string name="infobox_errors">The log contains one or more Errors/Warnings. Check out the Log Viewer for further details!</string>
+    
+    <!-- ######################################################
+       - Messages to be displayed in the notification
+    ####################################################### -->
+    <string name="notify_no_config">Nemohu nahrát nastavení aplikace</string>
+    <string name="notify_log_details">Jedna nebo více chyb/upozornění bylo detekováno v logu</string>
+    
+    <!-- ######################################################
+       - Strings for the app manager
+    ####################################################### -->
+    <string name="manager_app_list_loader">Sestavuji seznam aplikací</string>
+    <string name="manager_app_conversion_loader">Provádím převod aplikací</string>
+    <string name="manager_app_converted_reboot">Musíte restartovat zařízení, aby se změny projevily</string>
+    <string name="manager_app_conversion_failed">Převod aplikací selhal</string>
+    <string name="manager_app_unregister_message">Chcete převést tuto systémovou aplikaci na uživatelskou?</string>
+    <string name="manager_app_register_message">Chcete převést tuto aplikaci na systémovou? Uvědomte si, že systémové aplikace mají vyšší oprávnění! Dále si pamatujte, že umístění aplikace se nezmění na systémový oddíl. Zůstane v současném oddíle, jen se změní její stav.</string>
+    <string name="manager_app_conversion_notice">Je požadován restart zařízení, aby se změny projevily. Jinak tato aplikace bude nedostupná!</string>
+    
+</resources>
