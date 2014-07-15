@@ -246,6 +246,11 @@ ProcessEnviroment() {
                             local lModRoot=$($iBusybox grep ' / ' /proc/mounts | $iBusybox sed 's/.*[ ,]\(r[ow]\)[ ,].*/\1/') && $iBusybox mount -o remount,rw /
                             local lModSystem=$($iBusybox grep ' /system ' /proc/mounts | $iBusybox sed 's/.*[ ,]\(r[ow]\)[ ,].*/\1/') && $iBusybox mount -o remount,rw /system
 
+                            if ! $iBusybox grep ' /system ' /proc/mounts | $iBusybox grep -q 'rw'; then
+                                $iBusybox blockdev --setrw $($iBusybox grep ' /system ' /proc/mounts | $iBusybox cut -d ' ' -f 0)
+                                $iBusybox mount -o remount,rw /system
+                            fi
+
                             # This is needed by devices including 'mksh'.
                             # If this is missing, the below error will be thrown when piping output to 'read' or 'cat'
                             # Error = can't create temporary file /sqlite_stmt_journals/mksh.(random): No such file or directory
